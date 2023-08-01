@@ -1,0 +1,1014 @@
+*,
+*::after,
+*::before {
+	box-sizing: border-box;
+}
+body {
+	margin: 0;
+	background: #9288f8;
+	font-family: Spiegel, "Arial Narrow", Arial, sans-serif;
+	padding: 5px 20px;
+}
+
+/* HEADER */
+header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	padding: 5px;
+
+	z-index: 3;
+	border-radius: 20px;
+	color: #ffd2d7;
+	gap: 5px;
+}
+header div {
+	display: flex;
+	align-items: center;
+	gap: 40px;
+	background-color: #322653;
+	width: 50%;
+	border-radius: 20px;
+}
+
+header div img {
+	width: 60px;
+	height: 60px;
+	border-radius: 30px;
+}
+nav {
+	background-color: #322653;
+	width: 50%;
+	height: 60px;
+	padding: 40px;
+	display: flex;
+	align-items: center;
+	border-radius: 20px;
+	justify-content: center;
+}
+
+nav ul {
+	display: flex;
+	gap: 40px;
+}
+nav ul li {
+	cursor: pointer;
+	transition: 0.5s;
+}
+nav ul li:hover {
+	cursor: pointer;
+	transform: scale(1.2);
+}
+li {
+	list-style: none;
+}
+/* 
+FIRST WRAPPER */
+
+.wrapper {
+	margin-top: 2px;
+	display: flex;
+	border-radius: 40px;
+	gap: 5px;
+
+	height: 100vh;
+}
+
+/* INFORMATION ABOUT GAME LEFT SIDE  */
+.information-about-game {
+	border-radius: 40px;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	position: relative;
+	background-color: #322653;
+	justify-content: center;
+}
+.flex-row {
+	display: flex;
+
+	justify-content: center;
+	padding: 20px;
+	gap: 40px;
+}
+.info-card {
+	background-color: #8062d6;
+	width: 40%;
+
+	border-radius: 40px;
+	padding: 20px 40px;
+	margin-bottom: 20px;
+	padding-top: 0;
+	color: #ffd2d7;
+	box-shadow: 5px 12px 15px 1px black;
+}
+.info-card h1 {
+	background-color: #322653;
+	padding: 1ch;
+	border-radius: 10px;
+	color: #ffd2d7;
+	font-size: 20px;
+	text-align: center;
+}
+
+.information-about-game p {
+	line-height: 22px;
+	color: #ffd2d7;
+	padding: 5px;
+	border-radius: 10px;
+	text-align: left;
+}
+.wings {
+	position: absolute;
+	top: 5%;
+	width: 1200px;
+}
+
+/* ROLE MININGS RIGHT SIDE */
+.chapions {
+	border-radius: 40px;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 40px;
+	background-color: #322653;
+	color: #ffd2d7;
+}
+.img-class {
+	width: 80%;
+	border-radius: 25px;
+}
+
+.icon-class {
+	width: 50px;
+	transition: 1s;
+}
+.icon-class:hover {
+	transform: scale(1.3);
+	cursor: pointer;
+}
+
+.class-inf-league-of-legends {
+	display: flex;
+	gap: 60px;
+}
+
+.class-inf-league-of-legends .flex-column-aic {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background-color: transparent !important;
+}
+.chapions h1 {
+	color: #ffd2d7;
+}
+.class-inf-league-of-legends p {
+	background-color: transparent !important;
+}
+
+/* JAVASCRIPT */
+.last-game {
+	display: grid;
+	grid-template-columns: repeat(5, 1fr);
+
+	gap: 10px;
+}
+
+.player {
+	background-color: #75c2f6;
+	border-radius: 20px;
+}
+.player .name-sumonner {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+	padding: 20px 40px;
+	font-size: 12px;
+}
+.name-level {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 20px;
+}
+.name-champion {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+	padding: 20px 40px;
+}
+.name-champion h2 {
+	margin-right: 50px;
+}
+.champ-icon {
+	width: 30%;
+}
+.icon {
+	width: 30%;
+}
+/* RANKINGS */
+
+section .wrapper2 {
+	height: 100vh;
+	overflow: hidden;
+	position: relative;
+	background-color: #322653;
+	margin-top: 10px;
+	border-radius: 40px;
+	color: #ffd2d7;
+}
+
+.info-ranking {
+	text-align: center;
+	margin-top: -40px;
+}
+.info-ranking h1 {
+	margin-top: -80px;
+}
+
+.emblems {
+	display: flex;
+	justify-content: center;
+}
+.emblems img {
+	width: 25%;
+}
+.summoners {
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+	width: 50%;
+
+	align-items: center;
+	margin: auto;
+}
+.rank {
+	width: 100%;
+	height: 60px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	border: 2px solid #8062d6;
+	gap: 50px;
+	padding-right: 20px;
+	border-bottom: none;
+}
+.rank:last-child {
+	border: 2px solid #8062d6;
+}
+.rank img {
+	height: 100%;
+}
+.alignment {
+	width: 30%;
+}
+.show-more-players {
+	position: absolute;
+	top: 93%;
+	right: 77%;
+	border: none;
+	padding: 20px;
+	border-radius: 20px;
+	background-color: black;
+	color: white;
+	cursor: pointer;
+}
+.hidde-more-players {
+	border: none;
+	padding: 20px;
+	border-radius: 20px;
+	background-color: black;
+	color: white;
+	cursor: pointer;
+	margin: auto;
+	display: flex;
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+/* myProfile */
+.wraperr3 {
+	height: 100vh;
+	background-color: #322653;
+	margin-top: 10px;
+
+	border-radius: 50px;
+}
+.wraperr3 h1 {
+	text-align: center;
+	color: #ffd2d7;
+	padding: 10px;
+}
+.wraperr3 h2 {
+	text-align: center;
+	color: #ffd2d7;
+}
+.top {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	background-color: #8062d6;
+	width: 50%;
+	margin: auto;
+	color: #ffd2d7;
+	padding-right: 20px;
+
+	border-radius: 20px;
+}
+.my-ranked {
+	display: flex;
+	gap: 10px;
+}
+.top img {
+	width: 100px;
+	border: 1px solid white;
+	border-radius: 20px;
+}
+
+.my-favorite-champs {
+	margin: auto;
+	width: 70%;
+
+	height: 100%;
+	padding: 10px;
+}
+.champ-card {
+	width: 60%;
+	margin: auto;
+	background-color: #8062d6;
+	border-radius: 40px;
+	color: #ffd2d7;
+	position: relative;
+}
+.info {
+	display: flex;
+	position: relative;
+
+	padding: 30px;
+}
+.header {
+	text-align: center;
+}
+
+.info img {
+	width: 35%;
+	cursor: pointer;
+}
+.text-lore {
+	width: 45%;
+	margin: 0 auto;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	letter-spacing: 1px;
+	line-height: 21px;
+}
+
+.lore {
+	display: flex;
+	justify-content: flex-end;
+	flex-direction: column;
+}
+.lore button {
+	border: none;
+	background: #322653;
+	color: #ffd2d7;
+	padding: 15px;
+	border-radius: 20px;
+	width: 100%;
+	cursor: pointer;
+}
+.abilities {
+	padding: 10px;
+	padding-top: 20px;
+
+	width: 32%;
+	background-color: black;
+	opacity: 0.9;
+	position: absolute;
+	height: 87%;
+	display: none;
+}
+.abilities-text {
+	top: 0;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background-color: rebeccapurple;
+	left: -100%;
+	font-size: 10px;
+	padding: 10px;
+	display: none;
+}
+
+.abilities-icon img {
+	width: 30%;
+	margin-bottom: 10px;
+}
+.abilities-icon {
+	display: flex;
+	gap: 20px;
+	height: 20%;
+}
+.close-abilities {
+	cursor: pointer;
+}
+
+.fa-arrow-left {
+	position: absolute;
+	left: -5%;
+	top: 50%;
+	cursor: pointer;
+}
+.fa-arrow-right {
+	position: absolute;
+	right: -5%;
+	top: 50%;
+	cursor: pointer;
+}
+
+.not-hidden {
+	display: block;
+}
+.close-abilities {
+	position: absolute;
+	right: 0;
+	top: 3%;
+}
+/* POPUP */
+
+.shadow {
+	top: 0;
+	width: 100%;
+	height: 200vh;
+	position: absolute;
+	background-color: rgb(0, 0, 0);
+	opacity: 0.5;
+	display: none;
+}
+.pop-up-class-info {
+	position: absolute;
+	top: 2%;
+
+	right: 35%;
+	width: 30%;
+
+	background-color: rgb(255, 255, 255);
+	z-index: 6;
+	border-radius: 20px;
+	display: none;
+}
+.pop-up-class-info h1,
+.card h2 {
+	background-color: #8eeafa;
+	text-align: center;
+	margin: 20px 60px;
+	border-radius: 10px;
+	width: 40%;
+}
+.info-class {
+	padding: 20px 100px;
+	line-height: 25px;
+	letter-spacing: 2px;
+	background-color: #8eeafa;
+	border-radius: 10px;
+	margin: 0px 30px;
+}
+.class-img-icon,
+.class-img-icon2 {
+	width: 100%;
+	display: grid;
+	grid-template-columns: repeat(5, 20%);
+	height: 12vh;
+	overflow: hidden;
+}
+
+.class-img-icon img {
+	width: 100%;
+	transition: 1s;
+}
+.class-img-icon img:hover {
+	transform: scale(1.1);
+}
+.card {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	position: relative;
+}
+.header-card {
+	display: flex;
+	align-items: center;
+}
+.btn-champion {
+	margin-top: 25px;
+	width: 30%;
+	border: none;
+	padding: 20px;
+	background-color: #8eeafa;
+	margin-bottom: 20px;
+	border-radius: 20px;
+	cursor: pointer;
+}
+.hide-all-class-champion {
+	display: none;
+}
+.card i {
+	position: absolute;
+	right: 0%;
+	top: 0%;
+
+	background: #8eeafa;
+	padding: 20px;
+	border-radius: 10px;
+	cursor: pointer;
+}
+
+/* FIND SUMONNER */
+
+.wrapper4 {
+	height: 100vh;
+	background-color: #322653;
+	margin-top: 10px;
+
+	border-radius: 50px;
+	width: 100%;
+	padding: 80px;
+}
+.history-game {
+	display: flex;
+	justify-content: center;
+}
+.history-game-btn,
+.history-game-btn-hidde {
+	border: none;
+	padding: 40px;
+	color: #ffd2d7;
+	background: #8062d6;
+	border-radius: 40px;
+	letter-spacing: 2px;
+	cursor: pointer;
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+.input {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	margin-bottom: 40px;
+}
+.region {
+	background-color: white;
+	width: 10%;
+	height: 100px;
+	border-radius: 30px 0 0 30px;
+	text-align: center;
+	background-color: #8062d6;
+	color: #ffd2d7;
+	position: relative;
+}
+
+.hidden {
+	display: none !important;
+}
+.pop-up-regions {
+	background-color: #9288f8;
+	position: absolute;
+	width: 80%;
+	bottom: -161%;
+	/* bottom: -156%; */
+	left: 15%;
+}
+input {
+	border: none;
+	outline: none;
+	font-size: 20px;
+}
+.name-region {
+	border-bottom: 1px solid #ffd2d7;
+	padding: 10px;
+	cursor: pointer;
+}
+.fa-chevron-down {
+	position: absolute;
+	right: 5%;
+	bottom: 25%;
+	cursor: pointer;
+}
+.fa-chevron-up {
+	position: absolute;
+	right: 5%;
+	bottom: 25%;
+	cursor: pointer;
+}
+.search {
+	width: 30%;
+	position: relative;
+}
+.fa-magnifying-glass {
+	position: absolute;
+	right: 10%;
+	top: 50%;
+	color: #322653;
+	cursor: pointer;
+}
+.find-acc {
+	width: 100%;
+	padding: 30px;
+	border-radius: 0 30px 30px 0;
+	height: 100px;
+	border: none;
+}
+
+.summoner-top {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	background-color: #8062d6;
+	width: 50%;
+	margin: auto;
+	color: #ffd2d7;
+	padding-right: 20px;
+
+	border-radius: 20px;
+}
+.error-summoner {
+	width: 40%;
+	background-color: rgb(235, 74, 74);
+	margin: auto;
+	padding: 40px;
+	border-radius: 40px;
+	color: white;
+	text-align: center;
+}
+
+.summoner-top img {
+	border-radius: 20px;
+	width: 150px;
+}
+.summoner-ranked {
+	display: flex;
+	justify-content: flex-start;
+	flex-direction: column;
+	align-self: baseline;
+	align-items: center;
+}
+.summoner-ranked div {
+	display: flex;
+	gap: 10px;
+}
+.last-games {
+	margin-top: 10px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 20px;
+	color: #ffd2d7;
+}
+.game {
+	display: flex;
+	gap: 10px;
+	border: 1px solid #8062d6;
+	padding: 20px;
+}
+.champ {
+	display: flex;
+	position: relative;
+	gap: 5px;
+}
+.your-champ {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+.your-stats {
+	margin: auto;
+	padding: 10px;
+	margin-right: 15px;
+}
+.font {
+	font-size: 20px;
+}
+.stats {
+	flex: 1;
+	text-align: center;
+}
+.stats h4 {
+	font-size: 25px;
+	margin: 0;
+}
+.type-game {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	padding: 20px;
+	text-align: center;
+}
+.type-game h5 {
+	margin: 0;
+	margin-bottom: 20px;
+}
+.type-game p {
+	text-align: center;
+	margin: 0;
+}
+.champ-items img {
+	width: 13%;
+}
+
+.level {
+	position: absolute;
+	background-color: black;
+	width: 30px;
+	height: 30px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 15px;
+	bottom: 0;
+	right: 78%;
+}
+.champ .champ-icon {
+	width: 100px;
+}
+.runes-summs img {
+	height: 50px;
+}
+.all-participants {
+	display: flex;
+	gap: 20px;
+	width: 400px;
+}
+.team1,
+.team2 {
+	width: 50%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+.all-participants img {
+	width: 35px;
+	height: 35px;
+}
+.team1 div,
+.team2 div {
+	display: flex;
+	align-items: center;
+}
+.team1 div p,
+.team2 div p {
+	margin: 5px;
+}
+.second-rune {
+	width: 35px;
+	height: 35px !important;
+}
+.runes {
+	display: flex;
+	align-items: center;
+}
+
+.win {
+	background-color: #3894c2;
+	color: var(--gray);
+	border-radius: 30px;
+	border: none;
+}
+.los {
+	background-color: #cf4b3f;
+	color: var(--gray);
+	border-radius: 30px;
+	border: none;
+}
+
+/* MEIDAQUERYS */
+
+@media (max-width: 1650px) {
+	.champ-card {
+		width: 70%;
+	}
+	.flex-row {
+		padding: 10px;
+		gap: 20px;
+	}
+	.info-card {
+		width: 45%;
+	}
+}
+
+@media (max-width: 1440px) {
+	.champ-card {
+		width: 80%;
+	}
+	.text-lore {
+		line-height: 19px;
+	}
+
+	.wrapper {
+		flex-direction: column;
+	}
+	.info-card {
+		width: 30%;
+		padding: 40px;
+	}
+	.champions {
+		margin-bottom: 10px;
+	}
+	.wrapper {
+		height: 100%;
+	}
+	.info-ranking h1 {
+		margin-top: -50px;
+	}
+	.search {
+		width: 40%;
+	}
+	.region {
+		width: 15%;
+	}
+	.summoner-top {
+		width: 60%;
+	}
+}
+@media (max-width: 1220px) {
+	.summoner-top {
+		width: 90%;
+	}
+	.summoners {
+		width: 70%;
+	}
+	.text-lore {
+		letter-spacing: 0px;
+	}
+}
+
+@media (max-width: 1070px) {
+	.champ-card {
+		width: 100%;
+	}
+	.top {
+		width: 70%;
+	}
+	.info-card {
+		width: 40%;
+	}
+}
+
+@media (max-width: 950px) {
+	.wraperr3 {
+		height: 100%;
+	}
+	.info-card {
+		width: 48%;
+	}
+	.top {
+		width: 95%;
+	}
+	.my-favorite-champs {
+		width: 95%;
+	}
+	.search {
+		width: 80%;
+	}
+	.region {
+		width: 30%;
+	}
+	.summoner-top {
+		width: 100%;
+	}
+	.wrapper4 {
+		padding: 20px;
+	}
+	.all-participants img {
+		width: 25px;
+		height: 25px;
+	}
+	.runes-summs img {
+		height: 25px;
+	}
+
+	.champ .champ-icon {
+		width: 50px;
+	}
+	.game {
+		width: 105%;
+		padding: 0;
+		gap: 0;
+		font-size: 12px !important;
+		border-radius: 0;
+	}
+	.your-champ {
+		justify-content: space-around;
+	}
+	.your-stats {
+		padding: 0;
+		margin: 0;
+	}
+	.second-rune {
+		width: 25px !important;
+		height: 25px !important;
+	}
+	.type-game {
+		justify-content: space-around;
+		padding: 0;
+	}
+	.font {
+		font-size: 13px;
+	}
+	body {
+		padding: 0;
+	}
+	.class-inf-league-of-legends {
+		gap: 30px;
+	}
+	.stats h4 {
+		font-size: 12px;
+	}
+	nav {
+		display: none;
+	}
+	header div {
+		width: 100%;
+	}
+	.flex-row {
+		flex-direction: column;
+	}
+	.info-card {
+		width: 50%;
+		margin: auto;
+	}
+	.info-ranking h1 {
+		margin-top: 0;
+	}
+	.summoners {
+		width: 90%;
+	}
+	.emblems img {
+		width: 45%;
+	}
+}
+@media (max-width: 700px) {
+	.info-card {
+		width: 70%;
+	}
+	.lore-text {
+		height: 250px;
+		overflow: hidden;
+	}
+
+	.title-champ {
+		margin: 0;
+	}
+	.champ-name {
+		margin: 0;
+	}
+	.top {
+		padding-right: 0;
+		gap: 2px;
+	}
+	.top img {
+		width: 50px;
+	}
+	.icon-class {
+		width: 30px;
+		gap: 15px;
+	}
+	.class-inf-league-of-legends {
+		gap: 15px;
+	}
+	.rank {
+		gap: 10px;
+	}
+	.info {
+		padding: 10px;
+	}
+}
+
+@media (max-width: 500px) {
+	.lore-text {
+		height: 150px;
+		overflow: hidden;
+	}
+	.info-card {
+		width: 90%;
+	}
+	.show-more-players {
+		right: 27%;
+	}
+	.class-inf-league-of-legends {
+		gap: 4px;
+	}
+	.summoner-top {
+		width: 105%;
+	}
+	.emblems img {
+		width: 55%;
+	}
+	.rank {
+		gap: 5px;
+	}
+}
