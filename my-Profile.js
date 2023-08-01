@@ -282,7 +282,7 @@ const myProfileData = async function () {
 const setMyData = (icon, idIcon, p, level) => {
 	icon.setAttribute(
 		"src",
-		`http://ddragon.leagueoflegends.com/cdn/13.14.1/img/profileicon/${idIcon}.png
+		`https://ddragon.leagueoflegends.com/cdn/13.14.1/img/profileicon/${idIcon}.png
   `
 	)
 
