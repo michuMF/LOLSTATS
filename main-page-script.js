@@ -66,7 +66,7 @@ const getIconClass = async function () {
 					case "Assassins":
 						imgClass.setAttribute(
 							"src",
-							` http://ddragon.leagueoflegends.com/cdn/img/champion/splash/Akali_0.jpg`
+							` https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Akali_0.jpg`
 						)
 
 						classHeadline.textContent = "Assasins"
@@ -75,7 +75,7 @@ const getIconClass = async function () {
 					case "Warriors":
 						imgClass.setAttribute(
 							"src",
-							` http://ddragon.leagueoflegends.com/cdn/img/champion/splash/Garen_0.jpg`
+							` https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Garen_0.jpg`
 						)
 						classHeadline.textContent = "Fighters"
 						infoClass.textContent = infoWarriors
@@ -83,7 +83,7 @@ const getIconClass = async function () {
 					case "Mages":
 						imgClass.setAttribute(
 							"src",
-							` http://ddragon.leagueoflegends.com/cdn/img/champion/splash/Azir_0.jpg`
+							` https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Azir_0.jpg`
 						)
 						classHeadline.textContent = "Mages"
 						infoClass.textContent = infoMages
@@ -91,7 +91,7 @@ const getIconClass = async function () {
 					case "Marksman":
 						imgClass.setAttribute(
 							"src",
-							` http://ddragon.leagueoflegends.com/cdn/img/champion/splash/Ashe_0.jpg`
+							` https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Ashe_0.jpg`
 						)
 						classHeadline.textContent = "Marksmen"
 						infoClass.textContent = infoMarksman
@@ -99,7 +99,7 @@ const getIconClass = async function () {
 					case "Supports":
 						imgClass.setAttribute(
 							"src",
-							` http://ddragon.leagueoflegends.com/cdn/img/champion/splash/Soraka_0.jpg`
+							` https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Soraka_0.jpg`
 						)
 						classHeadline.textContent = "Supports"
 						infoClass.textContent = infoSupports
@@ -107,7 +107,7 @@ const getIconClass = async function () {
 					case "Tanks":
 						imgClass.setAttribute(
 							"src",
-							` http://ddragon.leagueoflegends.com/cdn/img/champion/splash/Braum_0.jpg`
+							` https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Braum_0.jpg`
 						)
 						classHeadline.textContent = "Tanks"
 						infoClass.textContent = infoTanks
@@ -143,7 +143,7 @@ const getIconClass = async function () {
 
 							imgAssasinIcon.setAttribute(
 								"src",
-								`http://ddragon.leagueoflegends.com/cdn/13.14.1/img/champion/${assasin}.png`
+								`https://ddragon.leagueoflegends.com/cdn/13.14.1/img/champion/${assasin}.png`
 							)
 
 							classAssinsIcon.appendChild(linkToLore)
@@ -163,7 +163,7 @@ const getIconClass = async function () {
 
 							imgFighter.setAttribute(
 								"src",
-								`http://ddragon.leagueoflegends.com/cdn/13.14.1/img/champion/${fighter}.png`
+								`https://ddragon.leagueoflegends.com/cdn/13.14.1/img/champion/${fighter}.png`
 							)
 							classAssinsIcon.appendChild(linkToLore)
 							linkToLore.appendChild(imgFighter)
@@ -183,7 +183,7 @@ const getIconClass = async function () {
 
 							imgMageIcon.setAttribute(
 								"src",
-								`http://ddragon.leagueoflegends.com/cdn/13.14.1/img/champion/${mage}.png`
+								`https://ddragon.leagueoflegends.com/cdn/13.14.1/img/champion/${mage}.png`
 							)
 							classAssinsIcon.appendChild(linkToLore)
 							linkToLore.appendChild(imgMageIcon)
@@ -202,7 +202,7 @@ const getIconClass = async function () {
 
 							imgMarksmanIcon.setAttribute(
 								"src",
-								`http://ddragon.leagueoflegends.com/cdn/13.14.1/img/champion/${marksman}.png`
+								`https://ddragon.leagueoflegends.com/cdn/13.14.1/img/champion/${marksman}.png`
 							)
 							classAssinsIcon.appendChild(linkToLore)
 							linkToLore.appendChild(imgMarksmanIcon)
@@ -221,7 +221,7 @@ const getIconClass = async function () {
 
 							imgSupportIcon.setAttribute(
 								"src",
-								`http://ddragon.leagueoflegends.com/cdn/13.14.1/img/champion/${support}.png`
+								`https://ddragon.leagueoflegends.com/cdn/13.14.1/img/champion/${support}.png`
 							)
 							classAssinsIcon.appendChild(linkToLore)
 							linkToLore.appendChild(imgSupportIcon)
@@ -240,7 +240,7 @@ const getIconClass = async function () {
 
 							imgTankIcon.setAttribute(
 								"src",
-								`http://ddragon.leagueoflegends.com/cdn/13.14.1/img/champion/${tank}.png`
+								`https://ddragon.leagueoflegends.com/cdn/13.14.1/img/champion/${tank}.png`
 							)
 							classAssinsIcon.appendChild(linkToLore)
 							linkToLore.appendChild(imgTankIcon)

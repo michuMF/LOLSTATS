@@ -29,7 +29,7 @@ const rankingPlayers = async function () {
 
 				iconImg.setAttribute(
 					"src",
-					`http://ddragon.leagueoflegends.com/cdn/13.14.1/img/profileicon/${result.profileIconId}.png`
+					`https://ddragon.leagueoflegends.com/cdn/13.14.1/img/profileicon/${result.profileIconId}.png`
 				)
 				divRank.classList.add("rank")
 				alignment.classList.add("alignment")

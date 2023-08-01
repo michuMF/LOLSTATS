@@ -55,7 +55,7 @@ const findSummoner = async function () {
 		let puuID = summonerData.puuid
 		summonerIcon.setAttribute(
 			"src",
-			`http://ddragon.leagueoflegends.com/cdn/13.14.1/img/profileicon/${summonerData.profileIconId}.png`
+			`https://ddragon.leagueoflegends.com/cdn/13.14.1/img/profileicon/${summonerData.profileIconId}.png`
 		)
 		summonerName.textContent = summonerData.name
 		summonerLevel.textContent = summonerData.summonerLevel
