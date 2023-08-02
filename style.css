@@ -806,6 +806,10 @@ input {
 .menu-mobile {
 	display: none !important;
 }
+.menu-main-style {
+	height: 100vh;
+	overflow: hidden;
+}
 
 /* MEIDAQUERYS */
 
