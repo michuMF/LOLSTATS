@@ -30,6 +30,8 @@ header div {
 	background-color: #322653;
 	width: 50%;
 	border-radius: 20px;
+	padding-right: 10px;
+	height: 80px;
 }
 
 header div img {
@@ -37,31 +39,44 @@ header div img {
 	height: 60px;
 	border-radius: 30px;
 }
-nav {
+.desktop {
 	background-color: #322653;
 	width: 50%;
-	height: 60px;
+	height: 80px;
 	padding: 40px;
 	display: flex;
 	align-items: center;
 	border-radius: 20px;
 	justify-content: center;
 }
+.close-menu-popup-mobile {
+	color: #ffd2d7;
+	position: absolute;
+	right: 10%;
+}
 
-nav ul {
+.desktop ul {
 	display: flex;
 	gap: 40px;
+	align-items: center;
 }
-nav ul li {
+.desktop ul li {
 	cursor: pointer;
 	transition: 0.5s;
 }
-nav ul li:hover {
+.desktop ul li a {
+	text-decoration: none;
+	color: #ffd2d7;
+}
+.desktop ul li:hover {
 	cursor: pointer;
 	transform: scale(1.2);
 }
 li {
 	list-style: none;
+}
+.moblie-nav {
+	display: none;
 }
 /* 
 FIRST WRAPPER */
@@ -71,7 +86,7 @@ FIRST WRAPPER */
 	display: flex;
 	border-radius: 40px;
 	gap: 5px;
-
+	flex-direction: row;
 	height: 100vh;
 }
 
@@ -153,7 +168,7 @@ FIRST WRAPPER */
 
 .class-inf-league-of-legends {
 	display: flex;
-	gap: 60px;
+	gap: 20px;
 }
 
 .class-inf-league-of-legends .flex-column-aic {
@@ -168,7 +183,10 @@ FIRST WRAPPER */
 .class-inf-league-of-legends p {
 	background-color: transparent !important;
 }
-
+.flex-3column-aic {
+	display: flex;
+	gap: 20px;
+}
 /* JAVASCRIPT */
 .last-game {
 	display: grid;
@@ -209,6 +227,7 @@ FIRST WRAPPER */
 .icon {
 	width: 30%;
 }
+
 /* RANKINGS */
 
 section .wrapper2 {
@@ -784,6 +803,9 @@ input {
 	border-radius: 30px;
 	border: none;
 }
+.menu-mobile {
+	display: none !important;
+}
 
 /* MEIDAQUERYS */
 
@@ -797,6 +819,11 @@ input {
 	}
 	.info-card {
 		width: 45%;
+	}
+	.pop-up-class-info {
+		width: 40%;
+		left: 30%;
+		top: 10%;
 	}
 }
 
@@ -833,6 +860,11 @@ input {
 	.summoner-top {
 		width: 60%;
 	}
+	.pop-up-class-info {
+		width: 40%;
+		left: 30%;
+		top: 100%;
+	}
 }
 @media (max-width: 1220px) {
 	.summoner-top {
@@ -843,6 +875,11 @@ input {
 	}
 	.text-lore {
 		letter-spacing: 0px;
+	}
+	.pop-up-class-info {
+		width: 50%;
+		left: 25%;
+		top: 110%;
 	}
 }
 
@@ -856,12 +893,67 @@ input {
 	.info-card {
 		width: 40%;
 	}
+	.menu-mobile {
+		display: block !important;
+	}
+	.desktop {
+		display: none;
+	}
+	header div {
+		width: 100%;
+	}
+	.pop-up-class-info {
+		width: 60%;
+		left: 20%;
+		top: 110%;
+	}
+	.moblie-nav {
+		display: block;
+		position: absolute;
+		box-shadow: none;
+		width: 60%;
+		display: flex;
+		left: 20%;
+		top: 20%;
+		z-index: 4;
+		height: 50vh;
+		color: white !important;
+		background-color: black;
+		padding-right: 0 !important;
+	}
+	.phone {
+		box-shadow: none;
+		background-color: black;
+		width: 100%;
+
+		display: block;
+		padding: 60px;
+		border-radius: 40px;
+	}
+	.phone ul {
+		padding: 0 !important;
+		margin-top: 40px;
+		display: flex;
+		flex-direction: column;
+
+		align-items: center;
+		gap: 30px;
+		font-size: 25px;
+	}
+	.phone ul li a {
+		text-decoration: none;
+		color: #ffd2d7;
+	}
+	hr {
+		width: 100%;
+	}
 }
 
 @media (max-width: 950px) {
 	.wraperr3 {
 		height: 100%;
 	}
+
 	.info-card {
 		width: 48%;
 	}
@@ -883,35 +975,11 @@ input {
 	.wrapper4 {
 		padding: 20px;
 	}
-	.all-participants img {
-		width: 25px;
-		height: 25px;
-	}
-	.runes-summs img {
-		height: 25px;
-	}
 
-	.champ .champ-icon {
-		width: 50px;
-	}
-	.game {
-		width: 105%;
-		padding: 0;
-		gap: 0;
-		font-size: 12px !important;
-		border-radius: 0;
-	}
 	.your-champ {
 		justify-content: space-around;
 	}
-	.your-stats {
-		padding: 0;
-		margin: 0;
-	}
-	.second-rune {
-		width: 25px !important;
-		height: 25px !important;
-	}
+
 	.type-game {
 		justify-content: space-around;
 		padding: 0;
@@ -925,15 +993,13 @@ input {
 	.class-inf-league-of-legends {
 		gap: 30px;
 	}
+	.flex-3column-aic {
+		gap: 30px;
+	}
 	.stats h4 {
 		font-size: 12px;
 	}
-	nav {
-		display: none;
-	}
-	header div {
-		width: 100%;
-	}
+
 	.flex-row {
 		flex-direction: column;
 	}
@@ -950,10 +1016,27 @@ input {
 	.emblems img {
 		width: 45%;
 	}
+	.pop-up-class-info {
+		width: 70%;
+		left: 15%;
+		top: 180%;
+	}
+	.shadow {
+		height: 1000%;
+	}
+	.moblie-nav {
+		width: 70%;
+
+		left: 15%;
+		top: 20%;
+	}
 }
 @media (max-width: 700px) {
 	.info-card {
 		width: 70%;
+	}
+	.summoner-top img {
+		width: 75px;
 	}
 	.lore-text {
 		height: 250px;
@@ -986,12 +1069,44 @@ input {
 	.info {
 		padding: 10px;
 	}
+	.game {
+		flex-direction: column;
+		align-items: center;
+		gap: 20px;
+		width: 100%;
+	}
+	.champ-items img {
+		width: 14%;
+	}
+	.your-stats {
+		display: flex;
+		gap: 30px;
+	}
+
+	.champ .champ-icon {
+		width: 100px;
+	}
+	.pop-up-class-info {
+		width: 100%;
+		left: 0%;
+		top: 180%;
+	}
+	.moblie-nav {
+		width: 80%;
+
+		left: 10%;
+		top: 20%;
+	}
 }
 
 @media (max-width: 500px) {
 	.lore-text {
 		height: 150px;
 		overflow: hidden;
+	}
+
+	.top {
+		flex-direction: column;
 	}
 	.info-card {
 		width: 90%;
@@ -1000,15 +1115,59 @@ input {
 		right: 27%;
 	}
 	.class-inf-league-of-legends {
-		gap: 4px;
+		flex-direction: column;
+		align-items: center;
 	}
 	.summoner-top {
 		width: 105%;
+		flex-direction: column;
+		padding-top: 10px;
+	}
+	.summoner-ranked {
+		align-self: center;
+		align-items: center;
 	}
 	.emblems img {
 		width: 55%;
 	}
 	.rank {
 		gap: 5px;
+	}
+	.alignment {
+		font-size: 12px;
+	}
+	.rank {
+		width: 105%;
+		font-size: 12px;
+	}
+	.all-participants {
+		font-size: 12px;
+	}
+	.all-participants img {
+		width: 25px;
+	}
+	.team1 div {
+		margin-left: 50px;
+	}
+	.team2 div {
+		margin-left: 25px;
+	}
+	.wrapper4 {
+		height: 100%;
+	}
+	.pop-up-class-info {
+		width: 100%;
+
+		top: 220%;
+	}
+	.info-class {
+		padding: 10px 20px;
+		margin: 0;
+	}
+	.moblie-nav {
+		width: 100%;
+
+		left: 0%;
+		top: 28%;
 	}
 }

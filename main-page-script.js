@@ -11,7 +11,10 @@ const hideAllClassChampion = document.querySelector(".hide-all-class-champion")
 const infoClass = document.querySelector(".info-class")
 const classImgIconShowAll = document.querySelector(".class-img-icon")
 const classAssinsIcon = document.querySelector(".class-img-icon")
-
+const menuIcon = document.querySelector(".menu-mobile")
+const popUpMenu = document.querySelector(".moblie-nav ")
+const navBtnsMobile = document.querySelectorAll(".menu-btn-mobile")
+const closeMenuPopupMobile = document.querySelector(".close-menu-popup-mobile")
 const infoAssasins = ` Assassins are a class of champions in League of Legends that specialize in killing or disabling high-value
 targets. They are typically squishy and have high mobility, allowing them to quickly reach their targets and
 eliminate them before they can react. Assassins are most effective in solo queue, where they can focus on
@@ -280,3 +283,19 @@ const getIconClass = async function () {
 }
 
 getIconClass()
+
+menuIcon.addEventListener("click", () => {
+	popUpMenu.classList.remove("hidden")
+	shadow.style.display = "block"
+	console.log(shadow)
+})
+navBtnsMobile.forEach(btn => {
+	btn.addEventListener("click", () => {
+		popUpMenu.classList.add("hidden")
+		shadow.style.display = "none"
+	})
+})
+closeMenuPopupMobile.addEventListener("click", () => {
+	popUpMenu.classList.add("hidden")
+	shadow.style.display = "none"
+})

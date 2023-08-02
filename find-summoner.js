@@ -97,9 +97,12 @@ const findSummoner = async function () {
 
 			const responseMatch = await fetch(urlMatch)
 			const matchData = await responseMatch.json()
+			if (matchData.info.gameMode === "CLASSIC") {
+				lastMatechesArr.push(matchData.info.participants)
 
-			lastMatechesArr.push(matchData.info.participants)
-			gameTime.push(matchData.info.gameDuration)
+				gameTime.push(matchData.info.gameDuration)
+				console.log(matchData)
+			}
 		}
 
 		let mainChamp = ""
@@ -132,8 +135,10 @@ const findSummoner = async function () {
 			wrrapperHistoryGames.style.height = "100%"
 			hiddeHistroyGamesBtn.classList.remove("hidden")
 			showHistoryBtn.classList.add("hidden")
+
 			lastMatechesArr.forEach(match => {
-				if (match[0].puuid === puuID) {
+				console.log(match)
+				if (match[0]?.puuid === puuID) {
 					let index = 0
 					win = match[index].win
 					mainRune = match[index].perks.styles[0].selections[0].perk
@@ -168,7 +173,7 @@ const findSummoner = async function () {
 					goldEard = match[index].goldEarned
 				}
 
-				if (match[1].puuid === puuID) {
+				if (match[1]?.puuid === puuID) {
 					let index = 1
 
 					mainChamp = match[index].championName
@@ -199,7 +204,7 @@ const findSummoner = async function () {
 					secondRunes = match[index].perks.styles[1].style
 					win = match[index].win
 				}
-				if (match[2].puuid === puuID) {
+				if (match[2]?.puuid === puuID) {
 					let index = 2
 					mainChamp = match[index].championName
 					position = match[index].individualPosition
@@ -229,7 +234,7 @@ const findSummoner = async function () {
 					secondRunes = match[index].perks.styles[1].style
 					win = match[index].win
 				}
-				if (match[3].puuid === puuID) {
+				if (match[3]?.puuid === puuID) {
 					let index = 3
 					mainChamp = match[index].championName
 					position = match[index].individualPosition
@@ -258,7 +263,7 @@ const findSummoner = async function () {
 					secondRunes = match[index].perks.styles[1].style
 					win = match[index].win
 				}
-				if (match[4].puuid === puuID) {
+				if (match[4]?.puuid === puuID) {
 					let index = 4
 					console.log(match[0].item0)
 					mainChamp = match[index].championName
@@ -288,7 +293,7 @@ const findSummoner = async function () {
 					secondRunes = match[index].perks.styles[1].style
 					win = match[index].win
 				}
-				if (match[5].puuid === puuID) {
+				if (match[5]?.puuid === puuID) {
 					let index = 5
 
 					mainChamp = match[index].championName
@@ -318,7 +323,7 @@ const findSummoner = async function () {
 					secondRunes = match[index].perks.styles[1].style
 					win = match[index].win
 				}
-				if (match[6].puuid === puuID) {
+				if (match[6]?.puuid === puuID) {
 					let index = 6
 					mainChamp = match[index].championName
 					position = match[index].individualPosition
@@ -347,7 +352,7 @@ const findSummoner = async function () {
 					secondRunes = match[index].perks.styles[1].style
 					win = match[index].win
 				}
-				if (match[7].puuid === puuID) {
+				if (match[7]?.puuid === puuID) {
 					let index = 7
 					mainChamp = match[index].championName
 					position = match[index].individualPosition
@@ -376,7 +381,7 @@ const findSummoner = async function () {
 					secondRunes = match[index].perks.styles[1].style
 					win = match[index].win
 				}
-				if (match[8].puuid === puuID) {
+				if (match[8]?.puuid === puuID) {
 					let index = 8
 					mainChamp = match[index].championName
 					position = match[index].individualPosition
@@ -405,7 +410,7 @@ const findSummoner = async function () {
 					secondRunes = match[index].perks.styles[1].style
 					win = match[index].win
 				}
-				if (match[9].puuid === puuID) {
+				if (match[9]?.puuid === puuID) {
 					let index = 9
 					mainChamp = match[index].championName
 					position = match[index].individualPosition
@@ -667,7 +672,7 @@ const findSummoner = async function () {
 				nameMid2.textContent = match[7].summonerName
 
 				const divAdc2 = document.createElement("div")
-
+				console.log(match[8])
 				const iconAdc2 = document.createElement("img")
 				iconAdc2.setAttribute("src", `tiles/${match[8].championName}_0.jpg`)
 				const nameAdc2 = document.createElement("p")

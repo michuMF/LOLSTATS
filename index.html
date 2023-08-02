@@ -14,23 +14,41 @@
 
   <header>
     <div>
-      <img src="https://ddragon.leagueoflegends.com/cdn/13.14.1/img/champion/Ekko.png" alt="">
-      <h1>League of Legends</h1>
-
+      <div>
+        <img src="https://ddragon.leagueoflegends.com/cdn/13.14.1/img/champion/Ekko.png" alt="">
+        <h1>League of Legends</h1>
+      </div>
+      <i class="fa-solid fa-bars fa-2xl menu-mobile"></i>
     </div>
-    <nav>
+    <nav class="desktop">
 
 
       <ul>
 
-        <li>
-          Chamipons
-        </li>
-        <li>Best players</li>
-        <li>My profile</li>
-        <li>Find your profile</li>
+
+        <li><a href="#rankings">Best players</a></li>
+        <li><a href="#my-profile">My profile</a></li>
+        <li><a href="#find-your-acc">Find your profile</a></li>
       </ul>
     </nav>
+    <div class="moblie-nav  hidden">
+
+      <nav class="phone">
+        <i class="fa-solid fa-xmark fa-2xl close-menu-popup-mobile"></i>
+
+        <ul>
+
+          <li><a class="menu-btn-mobile" href="#champions">Champions</a></li>
+          <hr>
+          <li><a class="menu-btn-mobile" href="#rankings">Best players</a></li>
+          <hr>
+          <li><a class="menu-btn-mobile" href="#my-profile">My profile</a></li>
+          <hr>
+          <li><a class="menu-btn-mobile" href="#find-your-acc">Find your profile</a></li>
+          <hr>
+        </ul>
+      </nav>
+    </div>
   </header>
   <main>
     <div class="wrapper">
@@ -113,7 +131,7 @@
       </div>
 
 
-      <div class="chapions">
+      <div class="chapions" id="champions">
 
         <h1 class=" class-headline">Chamipons</h1>
 
@@ -122,58 +140,65 @@
 
 
         <div class="class-inf-league-of-legends">
-          <div class="flex-column-aic">
+          <div class="flex-3column-aic">
+            <div class="flex-column-aic">
 
-            <img class="icon-class" src="https://ddragon.leagueoflegends.com/cdn/13.14.1/img/item/3142.png"
-              alt="Assassins">
-            <p class="class">Assasins</p>
+              <img class="icon-class" src="https://ddragon.leagueoflegends.com/cdn/13.14.1/img/item/3142.png"
+                alt="Assassins">
+              <p class="class">Assasins</p>
 
+            </div>
+
+
+
+            <div class="flex-column-aic">
+              <img class="icon-class" src="https://ddragon.leagueoflegends.com/cdn/13.14.1/img/item/3071.png"
+                alt="Warriors">
+              <p class="class">Fighters</p>
+
+            </div>
+
+
+
+            <div class="flex-column-aic">
+              <img class="icon-class" src="https://ddragon.leagueoflegends.com/cdn/13.14.1/img/item/3089.png"
+                alt="Mages">
+              <p class="class">Mages</p>
+
+            </div>
           </div>
 
+          <div class="flex-3column-aic">
+            <div class="flex-column-aic">
+              <img class="icon-class" src="https://ddragon.leagueoflegends.com/cdn/13.14.1/img/item/3036.png"
+                alt="Marksman">
+              <p class="class">Marksman</p>
 
+            </div>
 
-          <div class="flex-column-aic">
-            <img class="icon-class" src="https://ddragon.leagueoflegends.com/cdn/13.14.1/img/item/3071.png"
-              alt="Warriors">
-            <p class="class">Fighters</p>
+            <div class="flex-column-aic">
+              <img class="icon-class" src="https://ddragon.leagueoflegends.com/cdn/13.14.1/img/item/3222.png"
+                alt="Supports">
+              <p class="class">Supports</p>
 
+            </div>
+
+            <div class="flex-column-aic">
+              <img class="icon-class" src="https://ddragon.leagueoflegends.com/cdn/13.14.1/img/item/3109.png"
+                alt="Tanks">
+              <p class="class">Tanks</p>
+
+            </div>
           </div>
-
-
-
-          <div class="flex-column-aic">
-            <img class="icon-class" src="https://ddragon.leagueoflegends.com/cdn/13.14.1/img/item/3089.png" alt="Mages">
-            <p class="class">Mages</p>
-
-          </div>
-
-          <div class="flex-column-aic">
-            <img class="icon-class" src="https://ddragon.leagueoflegends.com/cdn/13.14.1/img/item/3036.png"
-              alt="Marksman">
-            <p class="class">Marksman</p>
-
-          </div>
-
-          <div class="flex-column-aic">
-            <img class="icon-class" src="https://ddragon.leagueoflegends.com/cdn/13.14.1/img/item/3222.png"
-              alt="Supports">
-            <p class="class">Supports</p>
-
-          </div>
-
-          <div class="flex-column-aic">
-            <img class="icon-class" src="https://ddragon.leagueoflegends.com/cdn/13.14.1/img/item/3109.png" alt="Tanks">
-            <p class="class">Tanks</p>
-
-          </div>
-
-
         </div>
+
+
+
 
       </div>
     </div>
     <section title="myProfile">
-      <div class="wraperr3">
+      <div class="wraperr3" id="my-profile">
         <h1>MY ACCOUNT</h1>
         <div class="top">
           <img class="my-icon" src="" alt="my-icon">
@@ -204,7 +229,7 @@
             </div>
 
             <div class="info">
-              <img class="img-champ" src="" alt="">
+              <img class="img-champ" src="" alt="champ">
               <div class="abilities">
                 <i class="fa-solid fa-xmark fa-2xl close-abilities"></i>
                 <div class="abilities-icon">
@@ -232,7 +257,7 @@
                   <img class="r-img" src="" alt="abilitie">
                   <h4 class="r">
                   </h4>
-                  <div class="abilities-text">
+                  <!-- <div class="abilities-text">
                     <div>
                       <h5>Passive</h5>
                       <p>Every third attack or damaging spell on the same target deals bonus magic damage, and grants
@@ -262,7 +287,7 @@
                         time. He returns to whenever he was a few seconds ago.</p>
                     </div>
 
-                  </div>
+                  </div> -->
                 </div>
               </div>
               <div class="text-lore">
@@ -270,7 +295,8 @@
 
                   The Kinkou are the self-appointed keepers of Ionia’s sacred balance. The order’s loyal acolytes walk
                   the spirit and material realms, mediating conflicts between them and, when necessary, intervening by
-                  force. Born among their ranks was Akali, daughter of Mayym Jhomen Tethi, the renowned Fist of Shadow.
+                  force. Born among their ranks was Akali, daughter of Mayym Jhomen Tethi, the renowned Fist of
+                  Shadow.
                   Mayym and her partner Tahno raised their daughter within the Kinkou Order, under the watchful
                   leadership of Great Master Kusho, the Eye of Twilight.
 
@@ -294,7 +320,7 @@
       </div>
     </section>
     <section title="find-summoner">
-      <div class="wrapper4">
+      <div class="wrapper4" id="find-your-acc">
         <div class="input">
           <div class="region">
             <h5>Region</h5>
@@ -334,7 +360,7 @@
           <p>unfortunately this summoner does not exist</p>
         </div>
         <div class="history-game hidden">
-          <button class="history-game-btn">SHOW LAST 5 GAMES</button>
+          <button class="history-game-btn">SHOW LAST GAMES</button>
         </div>
         <div class="last-games">
 
@@ -346,7 +372,7 @@
     </section>
     <section title="rankings">
 
-      <div class="wrapper2">
+      <div class="wrapper2" id="rankings">
         <div class="info-ranking">
           <div class="emblems">
             <img class="ranking-emblem" src="ranked-emblem/emblem-grandmaster.png" alt="">
