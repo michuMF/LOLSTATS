@@ -885,7 +885,7 @@ input {
 
 @media (max-width: 1070px) {
 	.champ-card {
-		width: 100%;
+		width: 90%;
 	}
 	.top {
 		width: 70%;
@@ -900,7 +900,8 @@ input {
 		display: none;
 	}
 	header div {
-		width: 100%;
+		margin: auto;
+		width: 95%;
 	}
 	.pop-up-class-info {
 		width: 60%;
@@ -971,6 +972,24 @@ input {
 	}
 	.summoner-top {
 		width: 100%;
+	}
+	.game {
+		flex-direction: column;
+		align-items: center;
+		gap: 20px;
+		width: 95%;
+	}
+	.champ-items img {
+		width: 14%;
+	}
+	.your-stats {
+		display: flex;
+		gap: 30px;
+		margin: 0;
+	}
+
+	.champ .champ-icon {
+		width: 100px;
 	}
 	.wrapper4 {
 		padding: 20px;
@@ -1069,23 +1088,7 @@ input {
 	.info {
 		padding: 10px;
 	}
-	.game {
-		flex-direction: column;
-		align-items: center;
-		gap: 20px;
-		width: 100%;
-	}
-	.champ-items img {
-		width: 14%;
-	}
-	.your-stats {
-		display: flex;
-		gap: 30px;
-	}
 
-	.champ .champ-icon {
-		width: 100px;
-	}
 	.pop-up-class-info {
 		width: 100%;
 		left: 0%;
