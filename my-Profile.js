@@ -45,7 +45,6 @@ const myProfileData = async function () {
 
 		const responseWR = await fetch(urlMyWinRate)
 		const dataWR = await responseWR.json()
-		console.log(dataWR)
 
 		const responseAllChampion = await fetch(allChamipons)
 		const allDataChamp = await responseAllChampion.json()
@@ -274,8 +273,6 @@ const myProfileData = async function () {
 		let lossesSoloDuo = ""
 
 		dataWR.forEach(data => {
-			console.log(data)
-			console.log(data.queueType)
 			if (data.queueType) {
 				tierSoloDuo = `${data.tier}`
 				rankSOloDuo = `${data.rank}`
@@ -308,8 +305,6 @@ const setMyName = (h1, mySummonerN, tier, rank) => {
 	myRank.textContent = rank
 }
 const setWinRate = (win, lose) => {
-	console.log(23 / (27 + 23))
-	console.log()
 	wR.textContent = `WR: ${(win / (lose + win)) * 100}%`
 }
 
