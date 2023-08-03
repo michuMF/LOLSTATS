@@ -64,3 +64,5 @@ hideMoreSUmmoners.addEventListener("click", () => {
 	wrapper.scrollTop = 0
 	wrapper.scrollTop = 0
 })
+
+rankingPlayers()
