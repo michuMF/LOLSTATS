@@ -45,6 +45,7 @@ const myProfileData = async function () {
 
 		const responseWR = await fetch(urlMyWinRate)
 		const dataWR = await responseWR.json()
+		console.log(dataWR)
 
 		const responseAllChampion = await fetch(allChamipons)
 		const allDataChamp = await responseAllChampion.json()
@@ -266,16 +267,29 @@ const myProfileData = async function () {
 		champImg.addEventListener("click", () => {
 			champAbilities.classList.add("not-hidden")
 		})
+		let rankedSoloDUO = ""
+		let tierSoloDuo = ""
+		let rankSOloDuo = ""
+		let winsSoloDuo = ""
+		let lossesSoloDuo = ""
+
+		dataWR.forEach(data => {
+			console.log(data)
+			console.log(data.queueType)
+			if (data.queueType) {
+				tierSoloDuo = `${data.tier}`
+				rankSOloDuo = `${data.rank}`
+				winsSoloDuo = `${data.wins}`
+
+				lossesSoloDuo = `${data.losses}`
+			}
+		})
+		winsSoloDuo = Number(winsSoloDuo)
+		lossesSoloDuo = Number(lossesSoloDuo)
 
 		setMyData(myIcon, myData.profileIconId, myLevel, myData.summonerLevel)
-		setMyName(
-			mySummonerName,
-			myData.name,
-			dataWR[0].tier,
-			dataWR[0].rank,
-			dataWR[0].wins,
-			dataWR[0].losses
-		)
+		setMyName(mySummonerName, myData.name, tierSoloDuo, rankSOloDuo)
+		setWinRate(winsSoloDuo, lossesSoloDuo)
 	} catch (error) {}
 }
 
@@ -288,11 +302,15 @@ const setMyData = (icon, idIcon, p, level) => {
 
 	p.textContent = `Level: ${level}`
 }
-const setMyName = (h1, mySummonerN, tier, rank, win, los) => {
+const setMyName = (h1, mySummonerN, tier, rank) => {
 	h1.textContent = mySummonerN
 	myTier.textContent = tier
 	myRank.textContent = rank
-	wR.textContent = `WR: ${Math.floor((win / (los + win)) * 100)}%`
+}
+const setWinRate = (win, lose) => {
+	console.log(23 / (27 + 23))
+	console.log()
+	wR.textContent = `WR: ${(win / (lose + win)) * 100}%`
 }
 
 myProfileData()
