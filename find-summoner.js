@@ -101,7 +101,6 @@ const findSummoner = async function () {
 				lastMatechesArr.push(matchData.info.participants)
 
 				gameTime.push(matchData.info.gameDuration)
-				console.log(matchData)
 			}
 		}
 

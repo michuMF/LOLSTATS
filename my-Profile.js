@@ -271,9 +271,9 @@ const myProfileData = async function () {
 		let rankSOloDuo = ""
 		let winsSoloDuo = ""
 		let lossesSoloDuo = ""
-
+		console.log(dataWR)
 		dataWR.forEach(data => {
-			if (data.queueType) {
+			if (data.queueType === "RANKED_SOLO_5x5") {
 				tierSoloDuo = `${data.tier}`
 				rankSOloDuo = `${data.rank}`
 				winsSoloDuo = `${data.wins}`
@@ -305,7 +305,7 @@ const setMyName = (h1, mySummonerN, tier, rank) => {
 	myRank.textContent = rank
 }
 const setWinRate = (win, lose) => {
-	wR.textContent = `WR: ${(win / (lose + win)) * 100}%`
+	wR.textContent = `WR: ${((win / (lose + win)) * 100).toFixed(2)}%`
 }
 
 myProfileData()
