@@ -1,1 +1,1 @@
-const apiKey = "RGAPI-fb724f22-6514-4a39-944a-7192a2d8ec15"
+const apiKey = "RGAPI-cb89b525-c957-47a2-88ce-3f9db3e6a9d1"
