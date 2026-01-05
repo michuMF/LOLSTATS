@@ -200,6 +200,8 @@ export interface ParticipantType {
     wardsKilled: number;
     wardsPlaced: number;
     win: boolean;
+    riftHeraldKills: number; 
+    challenges?: Record<string, number>;
 }
 
 interface Ban {
