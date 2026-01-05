@@ -1,13 +1,9 @@
+import type { SummonerDataType } from "../types/types";
+
 export const SummonerDetails = ({
   summonerData,
 }: {
-  summonerData: {
-    gameName: string;
-    tagLine: string;
-    puuid: string;
-    summonerLevel?: number;
-    profileIconId?: number;
-  };
+  summonerData: SummonerDataType
 }) => {
   return (
     <div className="bg-white shadow-md rounded-lg p-6 max-w-md mx-auto">

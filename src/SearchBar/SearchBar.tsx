@@ -1,56 +1,36 @@
 import { useState } from "react";
 import { FaSearch } from "react-icons/fa";
-const API_KEY = import.meta.env.VITE_REACT_APP_RIOT_API_KEY;
+import { useNavigate } from "react-router-dom"; // Importujemy hook nawigacji
 
+export const SearchBar = () => {
+  const [input, setInput] = useState("");
+  const navigate = useNavigate();
 
-
-
-
-
-
-
-export const SearchBar = ({ onFetchSuccess }: { onFetchSuccess: (data: { puuid: string; gameName: string; tagLine: string }) => void }) => {
-  const [summonerName, setSummonerName] = useState("");
-
-  
-  const fetchSummonerProfile = async () => {
-   
-
-    try {
-      const response = await fetch(
-          `https://europe.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${summonerName}/MID?api_key=${API_KEY}`,
-          {
-          headers: {
-            "X-Riot-Token": API_KEY,
-          },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch summoner profile");
-      }
-
-      const data = await response.json();
-      
-      onFetchSuccess(data); // Przekazanie danych do komponentu nadrzędnego
-     
-    } catch (error) {
-      console.error("Error fetching summoner profile:", error);
+  const handleSearch = () => {
+    if (!input.includes("#")) {
+      alert("Format: Nick#TAG");
+      return;
     }
+    const [gameName, tagLine] = input.split("#");
+    // Przekieruj do URL profilu
+    navigate(`/profile/${gameName}/${tagLine}`);
   };
 
   return (
-    <div>
-      <label htmlFor="search-input" className="mr-2">Search:</label>
+    <div className="flex items-center bg-white rounded-lg border border-gray-300 overflow-hidden shadow-sm w-full max-w-md">
+      <span className="pl-3 text-gray-500 font-bold">Search:</span>
       <input
-        id="search-input"
         type="text"
-        placeholder="Enter name..."
-        value={summonerName}
-        onChange={(e) => setSummonerName(e.target.value)}
-        className="p-1 mr-2 border border-gray-300 rounded"
+        placeholder="Nick#TAG (np. Faker#KR1)"
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+        className="flex-grow p-2 outline-none text-gray-700"
       />
-      <button className="cursor-pointer" onClick={fetchSummonerProfile}>
+      <button 
+        onClick={handleSearch}
+        className="bg-blue-600 text-white p-3 hover:bg-blue-700 transition cursor-pointer"
+      >
         <FaSearch />
       </button>
     </div>

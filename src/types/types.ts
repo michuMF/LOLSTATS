@@ -276,3 +276,16 @@ export interface MatchDTO {
     info: Info;
 }
 
+
+
+
+export interface FullSummonerState {
+  puuid: string;
+  gameName: string;
+  tagLine: string;
+  summonerLevel?: number;
+  profileIconId?: number;
+  rankedData?: RankedDataType[];
+  matchHistory?: string[];
+  matchDetails?: MatchDetailsType[];
+}
