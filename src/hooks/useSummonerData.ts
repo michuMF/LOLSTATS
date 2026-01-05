@@ -4,7 +4,7 @@ import { fetchRankedData } from '../api/fetchRankedData';
 import { fetchMatchHistory } from '../api/fetchMatchHistory';
 import { fetchMatchDetails } from '../api/fetchMatchDetails';
 
-const API_KEY = import.meta.env.VITE_REACT_APP_RIOT_API_KEY;
+
 
 export const useSummonerData = (gameName: string, tagLine: string) => {
   
@@ -12,12 +12,16 @@ export const useSummonerData = (gameName: string, tagLine: string) => {
   const accountQuery = useQuery({
     queryKey: ['account', gameName, tagLine],
     queryFn: async () => {
-      const res = await fetch(
-        `https://europe.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${gameName}/${tagLine}?api_key=${API_KEY}`
-      );
-      if (!res.ok) throw new Error("Nie znaleziono gracza o takim Nicku/Tagu.");
-      return res.json();
-    },
+    if (!gameName || !tagLine) return null;
+    
+    // NOWY URL - wskazujący na Twój backend
+    const response = await fetch(`http://localhost:4000/api/account/${gameName}/${tagLine}`);
+    
+    if (!response.ok) {
+        throw new Error('Account not found');
+    }
+    return response.json();
+},
     enabled: !!gameName && !!tagLine, // Uruchom tylko gdy mamy parametry
   });
 
@@ -26,14 +30,14 @@ export const useSummonerData = (gameName: string, tagLine: string) => {
   // 2. Pobierz szczegóły profilu (Level, Ikona) - zależy od PUUID
   const summonerQuery = useQuery({
     queryKey: ['summoner', puuid],
-    queryFn: () => fetchSummonerDetails(puuid, API_KEY),
+    queryFn: () => fetchSummonerDetails(puuid),
     enabled: !!puuid, 
   });
 
   // 3. Pobierz rangi - zależy od PUUID
   const rankedQuery = useQuery({
     queryKey: ['ranked', puuid],
-    queryFn: () => fetchRankedData(puuid, API_KEY),
+    queryFn: () => fetchRankedData(puuid),
     enabled: !!puuid,
   });
 
@@ -42,12 +46,12 @@ export const useSummonerData = (gameName: string, tagLine: string) => {
     queryKey: ['matches', puuid],
     queryFn: async () => {
       // a) Pobierz listę ID meczów
-      const matchIds = await fetchMatchHistory(puuid, API_KEY);
+      const matchIds = await fetchMatchHistory(puuid);
       
       // b) Pobierz detale dla każdego meczu (Promise.all)
       // Pobieramy 10 ostatnich meczów, żeby nie zabić limitu API
       const detailsPromises = matchIds.slice(0, 10).map((id: string) => 
-        fetchMatchDetails(id, API_KEY)
+        fetchMatchDetails(id)
       );
       
       return Promise.all(detailsPromises);

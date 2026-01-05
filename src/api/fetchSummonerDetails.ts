@@ -1,16 +1,9 @@
 import type { SummonerProfileInfoType } from "../types/types";
 
-export const fetchSummonerDetails = async (
-  puuid: string,
-  apiKey: string
-): Promise<SummonerProfileInfoType> => {
-  const response = await fetch(
-    `https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${puuid}?api_key=${apiKey}`
-  );
 
-  if (!response.ok) {
-    throw new Error("Failed to fetch additional summoner data");
-  }
-
-  return await response.json();
+export const fetchSummonerDetails = async (puuid: string): Promise<SummonerProfileInfoType> => {
+  // Nie potrzebujemy już apiKey jako argumentu ani w URL
+  const response = await fetch(`http://localhost:4000/api/summoner/${puuid}`);
+  if (!response.ok) throw new Error("Failed to fetch summoner details");
+  return response.json();
 };
