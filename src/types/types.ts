@@ -83,18 +83,18 @@ interface Selection {
     var3: number;
 }
 
-interface StyleType {
+export interface StyleType {
     description: string;
     selections: Selection[];
     style: number;
 }
 
-interface PerksType {
+export interface PerksType {
     statPerks: StatPerksType;
     styles: StyleType[];
 }
 
-interface ParticipantType {
+export interface ParticipantType {
     assists: number;
     baronKills: number;
     bountyLevel: number;

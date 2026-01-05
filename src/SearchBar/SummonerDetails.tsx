@@ -20,7 +20,7 @@ export const SummonerDetails = ({
         {/* Ikona profilu */}
         {summonerData.profileIconId && (
           <img
-            src={`https://ddragon.leagueoflegends.com/cdn/15.20.1/img/profileicon/${summonerData.profileIconId}.png`}
+            src={`https://ddragon.leagueoflegends.com/cdn/15.24.1/img/profileicon/${summonerData.profileIconId}.png`}
             alt="Profile Icon"
             className="w-24 h-24 rounded-full border-4 border-gray-800"
           />

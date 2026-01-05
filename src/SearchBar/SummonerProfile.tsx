@@ -8,22 +8,12 @@ import { fetchSummonerDetails } from "../api/fetchSummonerDetails";
 import { fetchRankedData } from "../api/fetchRankedData";
 import { fetchMatchHistory } from "../api/fetchMatchHistory";
 import { fetchMatchDetails } from "../api/fetchMatchDetails";
-import type { MatchDetailsType, RankedDataType, SummonerBasicInfoType,SummonerDataType, } from "../types/types";
+import type { MatchDetailsType, SummonerBasicInfoType,SummonerDataType, } from "../types/types";
 
 
 
 
-const initialState: SummonerDataType = {
-  puuid: "",
-  gameName: "",
-  tagLine: "",
-  summonerLevel: undefined,
-  profileIconId: undefined,
-  rankedData: undefined,
-  matchHistory: undefined,
-  matchDetails: undefined,
-  
-};
+
 
 
 
@@ -113,7 +103,10 @@ export const SummonerProfile = () => {
           )}
           
           {summonerData.matchHistory && (
-             <MatchHistory matchDetails={summonerData.matchDetails} />
+             <MatchHistory 
+              matchDetails={summonerData.matchDetails} 
+              puuid={summonerData.puuid} // <--- Dodaliśmy tę linię
+            />
           )}
         </div>
       )}
