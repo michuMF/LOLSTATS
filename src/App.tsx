@@ -7,6 +7,7 @@ import { useSummonerData } from './hooks/useSummonerData';
 import { LoadingSpinner } from './components/ui/LoadingSpinner';
 import { ErrorMessage } from './components/ui/ErrorMessage';
 import './App.css';
+import PlayerSummary from './SearchBar/PlayerSummary';
 
 // -- STRONA STARTOWA --
 const HomePage = () => (
@@ -46,6 +47,7 @@ const ProfilePage = () => {
 
       <div className="space-y-6">
         {/* Dane profilowe */}
+        
         <SummonerDetails 
            summonerData={{
              ...summoner.data,
@@ -54,7 +56,7 @@ const ProfilePage = () => {
              puuid: summoner.data.puuid // fetchSummonerDetails zwraca puuid? sprawdzimy typy
            }} 
         />
-
+        <PlayerSummary matches={matches.data || []} leagueData={ranked.data || null} puuid={summoner.data.puuid} />
         {/* Rangi */}
         {ranked.isLoading ? <LoadingSpinner /> : (
            ranked.data && <RankedData rankedData={ranked.data} />
