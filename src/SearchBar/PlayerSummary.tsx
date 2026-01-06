@@ -1,133 +1,163 @@
-
-import type { MatchDTO, RankedDataType } from '../types/types'; // POPRAWIONE IMPORTY
+import React from 'react';
+import type { MatchDTO, RankedDataType } from '../types/types';
 import { calculatePlayerStats } from '../utils/calculateStats';
+import { FaTrophy, FaChartPie, FaFire, FaGamepad } from "react-icons/fa";
 
 interface PlayerSummaryProps {
   matches: MatchDTO[];
-  leagueData: RankedDataType[] | undefined | null; // POPRAWIONY TYP
+  leagueData: RankedDataType[] | undefined | null;
   puuid: string;
 }
 
 const PlayerSummary: React.FC<PlayerSummaryProps> = ({ matches, leagueData, puuid }) => {
   if (!matches || matches.length === 0) return null;
 
-  // 1. Obliczamy statystyki z ostatnich gier
+  // 1. Obliczamy statystyki z ostatnich gier (Local Helper)
   const recentStats = calculatePlayerStats(matches, puuid);
 
-  // 2. Szukamy danych z CAŁEGO SEZONU (RankedDataType)
-  // W Twoim types.ts pole nazywa się 'queueType', a wartość dla solo to 'RANKED_SOLO_5x5'
-  const soloDuo = leagueData?.find((entry) => entry.queueType === "RANKED_SOLO_5x5");
+  // 2. Szukamy danych RANGED (Priorytet: Solo/Duo -> Flex)
+  const soloQueue = leagueData?.find((entry) => entry.queueType === "RANKED_SOLO_5x5");
+  const flexQueue = leagueData?.find((entry) => entry.queueType === "RANKED_FLEX_SR");
   
-  const seasonWins = soloDuo ? soloDuo.wins : 0;
-  const seasonLosses = soloDuo ? soloDuo.losses : 0;
+  // Wybieramy "Główną" kolejkę do wyświetlenia (Solo, a jak nie ma to Flex)
+  const mainQueue = soloQueue || flexQueue;
+  
+  const hasRankedData = !!mainQueue;
+  const seasonWins = mainQueue ? mainQueue.wins : 0;
+  const seasonLosses = mainQueue ? mainQueue.losses : 0;
   const seasonGames = seasonWins + seasonLosses;
   const seasonWinRate = seasonGames > 0 ? Math.round((seasonWins / seasonGames) * 100) : 0;
+  const queueName = mainQueue?.queueType === "RANKED_SOLO_5x5" ? "Ranked Solo/Duo" : "Ranked Flex";
 
-  // Funkcja pomocnicza do kolorów KDA
-  const getKdaColor = (kda: string) => {
-    const num = parseFloat(kda);
-    if (num >= 4) return "text-yellow-400";
-    if (num >= 3) return "text-blue-400";
-    if (num >= 2) return "text-green-400";
-    return "text-gray-400";
+  // Helpery do kolorów (Dopasowane do stylu Slate)
+  const getWrColor = (wr: number) => {
+      if (wr >= 60) return "text-amber-500";
+      if (wr >= 50) return "text-blue-600";
+      return "text-slate-500";
   };
 
-  const getWrColor = (wr: number) => {
-      if (wr >= 55) return "text-yellow-400";
-      if (wr >= 50) return "text-green-400";
-      return "text-gray-400";
+  const getKdaColor = (kdaStr: string) => {
+    const kda = parseFloat(kdaStr);
+    if (kda >= 4.0) return "text-amber-500";
+    if (kda >= 3.0) return "text-blue-600";
+    if (kda >= 2.0) return "text-emerald-600";
+    return "text-slate-500";
   };
 
   return (
-    <div className="bg-gray-800 rounded-lg p-6 mb-6 shadow-lg border border-gray-700 text-white">
-      <div className="flex justify-between items-end border-b border-gray-600 pb-2 mb-4">
-        <h2 className="text-xl font-bold">Podsumowanie Gracza</h2>
-        <span className="text-xs text-gray-400 uppercase tracking-widest">Analiza Sezonu & Formy</span>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         
-        {/* LEWA STRONA: Główne Statystyki */}
-        <div className="space-y-6">
+        {/* KARTA 1: SEZON RANKEDOWY */}
+        <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between">
+            <div className="flex items-center gap-2 mb-4 border-b border-slate-100 pb-2">
+                <FaTrophy className="text-amber-400" />
+                <h3 className="font-bold text-slate-700 uppercase text-xs tracking-wider">
+                    Sezon 2024 ({hasRankedData ? queueName : "Unranked"})
+                </h3>
+            </div>
             
-            {/* Sekcja 1: CAŁY SEZON */}
-            <div className="bg-gray-700/50 p-4 rounded-lg border border-gray-600">
-                <h3 className="text-xs text-gray-400 uppercase font-bold mb-3">Cały Sezon (Solo/Duo)</h3>
-                <div className="flex justify-between items-center">
-                    <div className="text-center">
-                        <div className={`text-2xl font-bold ${getWrColor(seasonWinRate)}`}>{seasonWinRate}%</div>
-                        <div className="text-xs text-gray-400">Win Rate</div>
+            {hasRankedData ? (
+                <div className="flex flex-col items-center justify-center py-2 space-y-2">
+                    {/* Wielki Procent */}
+                    <div className="relative flex items-center justify-center w-24 h-24 rounded-full border-4 border-slate-100">
+                         <span className={`text-3xl font-black ${getWrColor(seasonWinRate)}`}>
+                             {seasonWinRate}%
+                         </span>
+                         <span className="absolute -bottom-2 text-[10px] bg-white px-2 text-slate-400 font-bold uppercase">Win Rate</span>
                     </div>
-                    <div className="h-8 w-px bg-gray-600 mx-4"></div>
-                    <div className="text-center">
-                        <div className="text-xl font-bold text-white">{seasonGames}</div>
-                        <div className="text-xs text-gray-400">Gier</div>
+                    
+                    {/* W/L */}
+                    <div className="text-center mt-2">
+                        <p className="text-sm font-bold text-slate-600">{seasonGames} Gier</p>
+                        <p className="text-xs text-slate-400">
+                           <span className="text-blue-600 font-bold">{seasonWins}W</span> - <span className="text-red-500 font-bold">{seasonLosses}L</span>
+                        </p>
                     </div>
-                    <div className="text-center ml-4">
-                        <div className="text-sm text-green-400">{seasonWins} W</div>
-                        <div className="text-sm text-red-400">{seasonLosses} L</div>
+                    <div className="mt-2 text-xs font-bold px-2 py-1 bg-slate-100 rounded text-slate-500">
+                        {mainQueue?.tier} {mainQueue?.rank}
                     </div>
                 </div>
+            ) : (
+                <div className="flex flex-col items-center justify-center h-full text-slate-400 text-sm italic">
+                    <p>Brak gier rankingowych</p>
+                    <p>w tym sezonie.</p>
+                </div>
+            )}
+        </div>
+
+        {/* KARTA 2: BIEŻĄCA FORMA (Ostatnie 20 gier) */}
+        <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-between">
+             <div className="flex items-center gap-2 mb-4 border-b border-slate-100 pb-2">
+                <FaChartPie className="text-blue-500" />
+                <h3 className="font-bold text-slate-700 uppercase text-xs tracking-wider">
+                    Forma (Ostatnie {recentStats.totalGames})
+                </h3>
             </div>
 
-            {/* Sekcja 2: FORMA (Ostatnie gry) */}
-            <div className="bg-gray-700/50 p-4 rounded-lg border border-gray-600">
-                <h3 className="text-xs text-gray-400 uppercase font-bold mb-3">Forma (Ostatnie {recentStats.totalGames} gier)</h3>
-                <div className="flex justify-between items-center">
-                    <div className="text-center">
-                        <div className={`text-2xl font-bold ${getKdaColor(recentStats.avgKda)}`}>{recentStats.avgKda}</div>
-                        <div className="text-xs text-gray-400">Śr. KDA</div>
-                    </div>
-                    <div className="h-8 w-px bg-gray-600 mx-4"></div>
-                     <div className="text-center">
-                        <div className="text-xl font-bold text-purple-400">{recentStats.preferredRole}</div>
-                        <div className="text-xs text-gray-400">Główna Rola</div>
-                    </div>
-                     <div className="text-center ml-4">
-                        <div className="text-xl font-bold text-gray-300">{recentStats.avgCs}</div>
-                        <div className="text-xs text-gray-400">CS/m</div>
-                    </div>
+            <div className="grid grid-cols-2 gap-4 h-full items-center">
+                <div className="text-center p-3 bg-slate-50 rounded-lg">
+                    <p className="text-xs text-slate-400 uppercase font-bold mb-1">KDA</p>
+                    <p className={`text-2xl font-black ${getKdaColor(recentStats.avgKda)}`}>{recentStats.avgKda}</p>
+                    <p className="text-[10px] text-slate-400">Średnia</p>
+                </div>
+                <div className="text-center p-3 bg-slate-50 rounded-lg">
+                    <p className="text-xs text-slate-400 uppercase font-bold mb-1">CS/Min</p>
+                    <p className="text-2xl font-black text-slate-700">{recentStats.avgCs}</p>
+                    <p className="text-[10px] text-slate-400">Farma</p>
+                </div>
+                <div className="col-span-2 text-center mt-1">
+                     <p className="text-xs text-slate-400">Główna rola</p>
+                     <p className="font-bold text-slate-800 text-lg flex items-center justify-center gap-2">
+                        <FaGamepad className="text-slate-400" /> {recentStats.preferredRole}
+                     </p>
                 </div>
             </div>
         </div>
 
-        {/* PRAWA STRONA: Top Postacie */}
-        <div>
-            <h3 className="text-xs text-gray-400 uppercase font-bold mb-3">Najczęściej grane (Ostatnie 20)</h3>
-            <div className="space-y-3">
+        {/* KARTA 3: TOP CHAMPIONS */}
+        <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+             <div className="flex items-center gap-2 mb-4 border-b border-slate-100 pb-2">
+                <FaFire className="text-red-500" />
+                <h3 className="font-bold text-slate-700 uppercase text-xs tracking-wider">
+                    Top Picks (Recent)
+                </h3>
+            </div>
+
+            <div className="space-y-2 max-h-[160px] overflow-y-auto pr-1 custom-scrollbar">
                 {recentStats.topChampions.map((champ) => {
                     const champWinRate = Math.round((champ.wins / champ.games) * 100);
-                    const champKda = ((champ.kills + champ.assists) / Math.max(1, champ.deaths)).toFixed(2);
+                    const isHighWr = champWinRate >= 50;
                     
                     return (
-                        <div key={champ.championName} className="flex items-center bg-gray-700 p-2 rounded-md hover:bg-gray-600 transition border border-gray-600">
-                            <img 
-                                src={`https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/${champ.championName}.png`} 
-                                alt={champ.championName}
-                                className="w-10 h-10 rounded-md mr-3 shadow-sm"
-                            />
-                            <div className="flex-1">
-                                <div className="flex justify-between items-center mb-1">
-                                    <span className="font-bold text-sm text-white">{champ.championName}</span>
-                                    <span className={`text-xs font-bold px-2 py-0.5 rounded ${champWinRate >= 50 ? 'bg-blue-900 text-blue-200' : 'bg-red-900 text-red-200'}`}>
-                                        {champWinRate}% WR
-                                    </span>
+                        <div key={champ.championName} className="flex items-center justify-between p-2 rounded hover:bg-slate-50 transition border border-transparent hover:border-slate-100 group">
+                            <div className="flex items-center gap-3">
+                                <img 
+                                    src={`https://ddragon.leagueoflegends.com/cdn/14.24.1/img/champion/${champ.championName}.png`} 
+                                    alt={champ.championName}
+                                    className="w-8 h-8 rounded bg-slate-200 object-cover"
+                                />
+                                <div>
+                                    <p className="text-xs font-bold text-slate-700 leading-none">{champ.championName}</p>
+                                    <p className="text-[10px] text-slate-400">{champ.games} Gier</p>
                                 </div>
-                                <div className="flex justify-between text-xs text-gray-400">
-                                    <span>{champ.games} gier</span>
-                                    <span className={getKdaColor(champKda)}>{champKda} KDA</span>
-                                </div>
+                            </div>
+                            
+                            <div className="text-right">
+                                <span className={`text-xs font-bold px-1.5 py-0.5 rounded ${isHighWr ? 'bg-blue-100 text-blue-700' : 'bg-red-100 text-red-600'}`}>
+                                    {champWinRate}%
+                                </span>
+                                <p className={`text-[10px] mt-0.5 font-medium ${getKdaColor(((champ.kills + champ.assists) / Math.max(1, champ.deaths)).toFixed(2))}`}>
+                                    {((champ.kills + champ.assists) / Math.max(1, champ.deaths)).toFixed(2)} KDA
+                                </p>
                             </div>
                         </div>
                     );
                 })}
-                {recentStats.topChampions.length === 0 && (
-                     <div className="text-gray-500 text-sm text-center py-4">Brak danych o postaciach</div>
+                 {recentStats.topChampions.length === 0 && (
+                     <div className="text-slate-400 text-xs text-center py-4 italic">Brak danych o postaciach</div>
                 )}
             </div>
         </div>
-
-      </div>
     </div>
   );
 };

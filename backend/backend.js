@@ -8,82 +8,105 @@ dotenv.config();
 const app = express();
 const PORT = 4000;
 
-app.use(cors({
-    origin: 'http://localhost:5173'
-}));
+app.use(cors({ origin: 'http://localhost:5173' }));
 
-// DIAGNOSTYKA: Sprawdź czy klucz jest widoczny
 const API_KEY = process.env.RIOT_API_KEY;
-if (!API_KEY) {
-    console.error("❌ BŁĄD KRYTYCZNY: Nie znaleziono RIOT_API_KEY w pliku .env!");
-} else {
-    console.log(`✅ Klucz API załadowany: ${API_KEY.substring(0, 5)}... (wygląda poprawnie)`);
-}
 
-const BASE_URL_EU = "https://europe.api.riotgames.com";
-const BASE_URL_EUN1 = "https://euw1.api.riotgames.com";
+// --- MAPA REGIONÓW ---
+// Tłumaczy wybór użytkownika na routing Riotu
+const REGION_MAP = {
+    'EUW': { platform: 'euw1', region: 'europe' },
+    'EUNE': { platform: 'eun1', region: 'europe' },
+    'NA': { platform: 'na1', region: 'americas' },
+    'KR': { platform: 'kr', region: 'asia' },
+    'BR': { platform: 'br1', region: 'americas' },
+    'LAN': { platform: 'la1', region: 'americas' },
+    'LAS': { platform: 'la2', region: 'americas' },
+    'OCE': { platform: 'oc1', region: 'sea' }, // SEA/Americas zależnie od endpointu, ale routing match-v5 dla OCE to 'sea' lub 'americas' (Riot zmieniał, bezpiecznie: 'sea')
+    'TR': { platform: 'tr1', region: 'europe' },
+    'RU': { platform: 'ru', region: 'europe' },
+    'JP': { platform: 'jp1', region: 'asia' },
+};
+
+// Funkcja pomocnicza do pobierania konfiguracji
+const getRegionConfig = (regionCode) => {
+    const config = REGION_MAP[regionCode.toUpperCase()];
+    if (!config) throw new Error("Invalid Region");
+    return config;
+};
 
 const fetchRiot = async (url, res) => {
-    console.log(`📡 Próba połączenia z: ${url}`); // LOGUJEMY ADRES
+    console.log(`📡 Fetching: ${url}`);
     try {
-        const response = await axios.get(url, {
-            headers: { "X-Riot-Token": API_KEY }
-        });
-        console.log("✅ Sukces!");
+        const response = await axios.get(url, { headers: { "X-Riot-Token": API_KEY } });
         res.json(response.data);
     } catch (error) {
-        // Lepsze logowanie błędu
+        console.error(`❌ Riot API Error: ${error.message}`);
         if (error.response) {
-            // Serwer odpowiedział kodem błędu (np. 403, 404)
-            console.error(`❌ Błąd API Riot (${error.response.status}):`, error.response.data);
             res.status(error.response.status).json(error.response.data);
-        } else if (error.request) {
-            // Nie otrzymano odpowiedzi (problem z siecią)
-            console.error("❌ Brak odpowiedzi od Riot (Błąd sieci/DNS):", error.message);
-            res.status(503).json({ error: "Network Error - No response from Riot" });
         } else {
-            // Inny błąd
-            console.error("❌ Błąd konfiguracji zapytania:", error.message);
-            res.status(500).json({ error: error.message });
+            res.status(500).json({ error: "Internal Server Error" });
         }
     }
 };
 
-app.get('/api/account/:gameName/:tagLine', (req, res) => {
-    const { gameName, tagLine } = req.params;
-    // Sprawdzamy czy frontend nie wysyła "undefined" jako tekstu
-    if (gameName === 'undefined' || tagLine === 'undefined') {
-        console.error("⚠️ Frontend wysyła błędne dane: gameName/tagLine jest undefined!");
-        return res.status(400).json({ error: "Invalid parameters" });
-    }
-    const url = `${BASE_URL_EU}/riot/account/v1/accounts/by-riot-id/${gameName}/${tagLine}`;
-    fetchRiot(url, res);
+// --- ENDPOINTY Z OBSŁUGĄ REGIONU ---
+
+// 1. KONTO (wymaga Regional Routing np. europe)
+app.get('/api/account/:region/:gameName/:tagLine', (req, res) => {
+    try {
+        const { region, gameName, tagLine } = req.params;
+        const { region: regionalRoute } = getRegionConfig(region);
+        
+        const url = `https://${regionalRoute}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${gameName}/${tagLine}`;
+        fetchRiot(url, res);
+    } catch (e) { res.status(400).json({ error: "Invalid Region" }); }
 });
 
-app.get('/api/summoner/:puuid', (req, res) => {
-    const { puuid } = req.params;
-    const url = `${BASE_URL_EUN1}/lol/summoner/v4/summoners/by-puuid/${puuid}`;
-    fetchRiot(url, res);
+// 2. SUMMONER (wymaga Platform Routing np. euw1)
+app.get('/api/summoner/:region/:puuid', (req, res) => {
+    try {
+        const { region, puuid } = req.params;
+        const { platform } = getRegionConfig(region);
+        
+        const url = `https://${platform}.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${puuid}`;
+        fetchRiot(url, res);
+    } catch (e) { res.status(400).json({ error: "Invalid Region" }); }
 });
 
-app.get('/api/ranked/:summonerId', (req, res) => {
-    const { summonerId } = req.params;
-    const url = `${BASE_URL_EUN1}/lol/league/v4/entries/by-summoner/${summonerId}`;
-    fetchRiot(url, res);
+// 3. RANKED (wymaga Platform Routing np. euw1)
+app.get('/api/ranked/:region/:summonerId', (req, res) => {
+    try {
+        const { region, summonerId } = req.params;
+        const { platform } = getRegionConfig(region);
+        
+        const url = `https://${platform}.api.riotgames.com/lol/league/v4/entries/by-summoner/${summonerId}`;
+        fetchRiot(url, res);
+    } catch (e) { res.status(400).json({ error: "Invalid Region" }); }
 });
 
-app.get('/api/matches/ids/:puuid', (req, res) => {
-    const { puuid } = req.params;
-    const url = `${BASE_URL_EU}/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=20`;
-    fetchRiot(url, res);
+// 4. MATCH HISTORY (wymaga Regional Routing np. europe)
+app.get('/api/matches/ids/:region/:puuid', (req, res) => {
+    try {
+        const { region, puuid } = req.params;
+        const { region: regionalRoute } = getRegionConfig(region);
+        
+        const url = `https://${regionalRoute}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=20`;
+        fetchRiot(url, res);
+    } catch (e) { res.status(400).json({ error: "Invalid Region" }); }
 });
 
-app.get('/api/matches/details/:matchId', (req, res) => {
-    const { matchId } = req.params;
-    const url = `${BASE_URL_EU}/lol/match/v5/matches/${matchId}`;
-    fetchRiot(url, res);
+// 5. MATCH DETAILS (wymaga Regional Routing np. europe)
+app.get('/api/matches/details/:region/:matchId', (req, res) => {
+    try {
+        const { region, matchId } = req.params;
+        const { region: regionalRoute } = getRegionConfig(region);
+        
+        const url = `https://${regionalRoute}.api.riotgames.com/lol/match/v5/matches/${matchId}`;
+        fetchRiot(url, res);
+    } catch (e) { res.status(400).json({ error: "Invalid Region" }); }
 });
 
 app.listen(PORT, () => {
-    console.log(`🚀 Backend działa na porcie ${PORT}`);
+    console.log(`🚀 Backend running on port ${PORT}`);
 });

@@ -11,75 +11,91 @@ import PlayerSummary from './SearchBar/PlayerSummary';
 
 // -- STRONA STARTOWA --
 const HomePage = () => (
-  <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-8 animate-fadeIn">
-    <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
-      LOLSTATS
-    </h1>
+  <div className="flex flex-col items-center justify-center min-h-[70vh] space-y-8 animate-fadeIn">
+    <div className="text-center space-y-2">
+       <h1 className="text-6xl font-black text-slate-800 tracking-tight">
+         LOL<span className="text-blue-600">STATS</span>
+       </h1>
+       <p className="text-slate-500 text-lg">Wyszukiwarka statystyk League of Legends z analizą AI</p>
+    </div>
     <SearchBar />
   </div>
 );
 
 // -- STRONA PROFILU --
 const ProfilePage = () => {
-  const { gameName, tagLine } = useParams(); // Pobierz parametry z URL
+  // Pobieramy region z URL
+  const { region, gameName, tagLine } = useParams(); 
   
-  // Używamy naszego hooka!
-  const { summoner, ranked, matches, isLoading, error } = useSummonerData(gameName!, tagLine!);
+  // Przekazujemy region do hooka
+  const { summoner, ranked, matches, isLoading, error } = useSummonerData(gameName!, tagLine!, region!);
 
-  if (isLoading) return <LoadingSpinner />;
+  if (isLoading) return <div className="min-h-screen flex items-center justify-center"><LoadingSpinner /></div>;
   
   if (error || (summoner.isError)) {
-    return <ErrorMessage message="Nie udało się znaleźć przywoływacza. Sprawdź poprawność Nicku#TAG." />;
+    return (
+      <div className="min-h-[50vh] flex flex-col items-center justify-center">
+         <ErrorMessage message={`Nie znaleziono gracza ${gameName}#${tagLine} na serwerze ${region}.`} />
+         <div className="mt-6"><SearchBar /></div>
+      </div>
+    );
   }
 
-  // Upewniamy się, że dane istnieją przed wyświetleniem
   if (!summoner.data) return null;
 
   return (
-    <div className="animate-fadeIn w-full max-w-4xl mx-auto">
-      {/* Nagłówek z powrotem i wyszukiwarką */}
-      <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
-        <Link to="/" className="text-2xl font-bold text-blue-600 hover:underline">LOLSTATS</Link>
-        <div className="w-full sm:w-auto">
+    <div className="animate-fadeIn w-full max-w-5xl mx-auto pt-6 pb-20">
+      {/* Navbar */}
+      <div className="flex flex-col md:flex-row justify-between items-center mb-10 gap-6 border-b border-slate-200 pb-6">
+        <Link to="/" className="text-3xl font-black text-slate-800 hover:text-blue-600 transition">
+          LOL<span className="text-blue-600">STATS</span>
+        </Link>
+        <div className="w-full md:w-auto">
           <SearchBar />
         </div>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-8">
         {/* Dane profilowe */}
-        
         <SummonerDetails 
            summonerData={{
              ...summoner.data,
              gameName: gameName!,
              tagLine: tagLine!,
-             puuid: summoner.data.puuid // fetchSummonerDetails zwraca puuid? sprawdzimy typy
+             puuid: summoner.data.puuid
            }} 
         />
-        <PlayerSummary matches={matches.data || []} leagueData={ranked.data || null} puuid={summoner.data.puuid} />
-        {/* Rangi */}
-        {ranked.isLoading ? <LoadingSpinner /> : (
-           ranked.data && <RankedData rankedData={ranked.data} />
-        )}
 
-        {/* Historia Meczów */}
-        {matches.isLoading ? (
-           <div className="py-10"><LoadingSpinner /></div>
-        ) : (
-           matches.data && <MatchHistory matchDetails={matches.data} puuid={summoner.data.puuid} />
-        )}
+        {/* Podsumowanie i Rangi obok siebie na dużych ekranach */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="lg:col-span-2 space-y-8">
+                <PlayerSummary matches={matches.data || []} leagueData={ranked.data || null} puuid={summoner.data.puuid} />
+                
+                {matches.isLoading ? (
+                  <div className="py-10 flex justify-center"><LoadingSpinner /></div>
+                ) : (
+                  matches.data && <MatchHistory matchDetails={matches.data} puuid={summoner.data.puuid} />
+                )}
+            </div>
+
+            <div className="lg:col-span-1">
+                {ranked.isLoading ? <LoadingSpinner /> : (
+                  ranked.data && <RankedData rankedData={ranked.data} />
+                )}
+            </div>
+        </div>
       </div>
     </div>
   );
 };
 
-// -- GŁÓWNA STRUKTURA --
 function App() {
   return (
-    <div className="min-h-screen bg-gray-100 p-4 font-sans">
+    <div className="min-h-screen bg-slate-100 p-4 font-sans text-slate-900">
        <Routes>
          <Route path="/" element={<HomePage />} />
-         <Route path="/profile/:gameName/:tagLine" element={<ProfilePage />} />
+         {/* Dodano :region do ścieżki */}
+         <Route path="/profile/:region/:gameName/:tagLine" element={<ProfilePage />} />
        </Routes>
     </div>
   );
