@@ -3,8 +3,8 @@ import { LoadingSpinner } from "../components/ui/LoadingSpinner";
 import { ErrorMessage } from "../components/ui/ErrorMessage";
 import { SummonerDetails } from "./SummonerDetails";
 import { RankedData } from "./RankedData";
-import { MatchHistory } from "./MatchHistory";
 import type { SummonerBasicInfoType } from "../types/types";
+import { MatchList } from "../match/MatchList";
 
 // Definiujemy propsy, dodając region (bo SummonerBasicInfoType go nie ma)
 interface SummonerProfileProps extends Partial<SummonerBasicInfoType> {
@@ -69,7 +69,7 @@ export const SummonerProfile = ({ gameName, tagLine, region }: SummonerProfilePr
                       Błąd pobierania historii gier.
                   </div>
               ) : (
-                 <MatchHistory matchDetails={matches.data || []} puuid={summoner.data.puuid} />
+                 <MatchList matchDetails={matches.data || []} puuid={summoner.data.puuid} />
               )}
           </div>
 

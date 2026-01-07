@@ -1,20 +1,9 @@
 import { useState } from "react";
 import { FaSearch, FaGlobe } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { REGIONS } from "../utils/constants";
 
-const REGIONS = [
-  { value: 'EUNE', label: 'EUNE' },
-  { value: 'EUW', label: 'EUW' },
-  { value: 'NA', label: 'NA' },
-  { value: 'KR', label: 'KR' },
-  { value: 'TR', label: 'TR' },
-  { value: 'RU', label: 'RU' },
-  { value: 'BR', label: 'BR' },
-  { value: 'LAN', label: 'LAN' },
-  { value: 'LAS', label: 'LAS' },
-  { value: 'OCE', label: 'OCE' },
-  { value: 'JP', label: 'JP' },
-];
+
 
 export const SearchBar = () => {
   const [input, setInput] = useState("");
