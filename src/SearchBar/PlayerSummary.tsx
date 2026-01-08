@@ -32,13 +32,14 @@ const RANK_ICONS: Record<string, string> = {
 };
 
 // --- KONFIGURACJA KOLEJEK ---
-const QUEUE_FILTERS = {
+const QUEUE_FILTERS : Record<string, { id: number | null; label: string }> = {
   ALL: { id: null, label: "Wszystkie" },
   SOLO: { id: 420, label: "Ranked Solo" },
   FLEX: { id: 440, label: "Ranked Flex" },
   ARAM: { id: 450, label: "ARAM" },
   ARENA: { id: 1700, label: "Arena" },
 };
+
 
 type QueueKey = keyof typeof QUEUE_FILTERS;
 
@@ -50,12 +51,14 @@ interface PlayerSummaryProps {
 
 export const PlayerSummary = ({ matches, leagueData, puuid }: PlayerSummaryProps) => {
   const [activeFilter, setActiveFilter] = useState<QueueKey>("ALL");
-
+ 
+  
   // --- 1. FILTROWANIE MECZÓW ---
   const filteredMatches = useMemo(() => {
     if (activeFilter === "ALL") return matches;
     return matches.filter((m) => m.info.queueId === QUEUE_FILTERS[activeFilter].id);
   }, [matches, activeFilter]);
+
 
   // --- 2. OBLICZANIE STATYSTYK ---
   const stats = useMemo(() => {
@@ -105,12 +108,15 @@ export const PlayerSummary = ({ matches, leagueData, puuid }: PlayerSummaryProps
     if (activeFilter === "FLEX") return leagueData.find(l => l.queueType === "RANKED_FLEX_SR");
     return null;
   }, [leagueData, activeFilter]);
+  
+
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden font-sans">
       
       {/* NAGŁÓWEK Z ZAKŁADKAMI */}
       <div className="bg-slate-50 border-b border-slate-200 flex flex-wrap">
+        
         {Object.entries(QUEUE_FILTERS).map(([key, config]) => (
           <button
             key={key}
@@ -125,7 +131,7 @@ export const PlayerSummary = ({ matches, leagueData, puuid }: PlayerSummaryProps
           </button>
         ))}
       </div>
-
+       
       {/* ZAWARTOŚĆ */}
       <div className="p-6">
         {stats ? (
@@ -177,11 +183,17 @@ export const PlayerSummary = ({ matches, leagueData, puuid }: PlayerSummaryProps
             </div>
 
             {/* 4. RANGA (Zaktualizowana o obrazek) */}
+
+            
+            
             <div className="flex flex-col items-center justify-center pl-0 md:pl-6 pt-4 md:pt-0 border-t md:border-t-0 border-slate-100 md:border-none">
                 {currentRank ? (
+
+                  
                     <>
                         {/* WYŚWIETLANIE EMBLEMATU */}
                         <div className="w-20 h-20 mb-2 transition-transform hover:scale-110 duration-300">
+                          <h2>test</h2>
                             <img 
                                 src={RANK_ICONS[currentRank.tier]} 
                                 alt={currentRank.tier} 

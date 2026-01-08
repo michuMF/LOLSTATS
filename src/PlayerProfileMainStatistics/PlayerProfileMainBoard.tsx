@@ -1,6 +1,5 @@
 import type { RankedDataType, SummonerProfileInfoType } from "../types/types";
 
-// Import grafik rang
 import Iron from "../assets/Ranked Emblems Latest/Rank=Iron.png";
 import Bronze from "../assets/Ranked Emblems Latest/Rank=Bronze.png";
 import Silver from "../assets/Ranked Emblems Latest/Rank=Silver.png";
@@ -25,38 +24,19 @@ const rankIcons: Record<string, string> = {
   CHALLENGER: Challenger,
 };
 
-export const SummonerDetails = ({
-  summoner,
-  ranked,
-  
-}: {
-  summoner: SummonerProfileInfoType;
-  ranked: RankedDataType[] | undefined;
-  gameName?: string;
-  tagLine?: string;
-}) => {
 
+export const PlayerProfileMainBoard = ({summoner,ranked}: {summoner: SummonerProfileInfoType, ranked: RankedDataType[] | undefined}) => {
 
-  
-  console.log(summoner);
-  console.log(ranked);
-  
-  
-  
-  
-  
-  if (!summoner) return null;
-
-  // Logika wyboru rangi
-  const soloRank = ranked?.find((r) => r.queueType === "RANKED_SOLO_5x5");
+   const soloRank = ranked?.find((r) => r.queueType === "RANKED_SOLO_5x5");
   const activeRank = soloRank || ranked?.find((r) => r.queueType === "RANKED_FLEX_SR");
 
   // Obliczenia do środkowej sekcji
   const totalGames = activeRank ? activeRank.wins + activeRank.losses : 0;
   const winRate = totalGames > 0 ? Math.round((activeRank!.wins / totalGames) * 100) : 0;
 
-  return (
-    <div className="w-full flex flex-row items-center justify-between p-6 bg-white rounded-xl shadow-md border border-slate-200">
+
+    return (
+        <div className="w-full flex flex-row items-center justify-between p-6 bg-white rounded-xl shadow-md border border-slate-200">
       
       {/* --- KOLUMNA 1: TOŻSAMOŚĆ (LEWA) --- */}
       <div className="flex items-center gap-5 w-1/3">
@@ -140,5 +120,5 @@ export const SummonerDetails = ({
         )}
       </div>
     </div>
-  );
-};
+    );
+}

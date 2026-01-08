@@ -2,8 +2,10 @@ import express from 'express';
 import cors from 'cors';
 import axios from 'axios';
 import dotenv from 'dotenv';
+import test from 'node:test';
 
 dotenv.config();
+console.log("Załadowany klucz:", process.env.RIOT_API_KEY ? "TAK (zaczyna się od " + process.env.RIOT_API_KEY.substring(0, 10) + "...)" : "NIE");
 
 const app = express();
 const PORT = 4000;
@@ -60,6 +62,8 @@ app.get('/api/account/:region/:gameName/:tagLine', (req, res) => {
         
         const url = `https://${regionalRoute}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${gameName}/${tagLine}`;
         fetchRiot(url, res);
+        
+        
     } catch (e) { res.status(400).json({ error: "Invalid Region" }); }
 });
 
@@ -74,15 +78,20 @@ app.get('/api/summoner/:region/:puuid', (req, res) => {
     } catch (e) { res.status(400).json({ error: "Invalid Region" }); }
 });
 
-// 3. RANKED (wymaga Platform Routing np. euw1)
-app.get('/api/ranked/:region/:summonerId', (req, res) => {
+// 3. RANKED (Zmienione na by-puuid zgodnie z dokumentacją)
+app.get('/api/ranked/:region/:puuid', (req, res) => {
     try {
-        const { region, summonerId } = req.params;
+        const { region, puuid } = req.params;
         const { platform } = getRegionConfig(region);
         
-        const url = `https://${platform}.api.riotgames.com/lol/league/v4/entries/by-summoner/${summonerId}`;
+        // Używamy endpointu by-puuid zamiast by-summoner
+        const url = `https://${platform}.api.riotgames.com/lol/league/v4/entries/by-puuid/${puuid}`;
+        
         fetchRiot(url, res);
-    } catch (e) { res.status(400).json({ error: "Invalid Region" }); }
+    } catch (e) { 
+        console.error("Ranked API Error:", e);
+        res.status(400).json({ error: "Invalid Region or PUUID" }); 
+    }
 });
 
 // 4. MATCH HISTORY (wymaga Regional Routing np. europe)

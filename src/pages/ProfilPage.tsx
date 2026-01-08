@@ -3,12 +3,13 @@ import { useSummonerData } from "../hooks/useSummonerData";
 import { LoadingSpinner } from "../components/ui/LoadingSpinner";
 import { ErrorMessage } from "../components/ui/ErrorMessage";
 import { SearchBar } from "../SearchBar/SearchBar";
-import { SummonerDetails } from "../SearchBar/SummonerDetails";
+// import { SummonerDetails } from "../SearchBar/SummonerDetails";
 
 
 import { RankedData } from "../SearchBar/RankedData";
 import { MatchList } from "../match/MatchList";
 import { PlayerSummary } from "../SearchBar/PlayerSummary";
+import { PlayerProfileMainBoard } from "../PlayerProfileMainStatistics/PlayerProfileMainBoard";
 
 export const ProfilePage = () => {
   // Pobieramy region z URL
@@ -44,15 +45,13 @@ export const ProfilePage = () => {
 
       <div className="space-y-8">
         {/* Dane profilowe */}
-        <SummonerDetails 
-           summonerData={{
-             ...summoner.data,
-             gameName: gameName!,
-             tagLine: tagLine!,
-             puuid: summoner.data.puuid
-           }} 
-        />
-
+        {/* <SummonerDetails 
+    summoner={summoner.data} 
+    ranked={ranked.data}
+    // 👇 DODAJ TE DWIE LINIJKI 👇
+    
+/> */}
+<PlayerProfileMainBoard summoner={summoner.data} ranked={ranked.data} />
         {/* Podsumowanie i Rangi obok siebie na dużych ekranach */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="lg:col-span-2 space-y-8">

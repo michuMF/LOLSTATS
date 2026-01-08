@@ -6,9 +6,9 @@ import { fetchMatchDetails } from '../api/fetchMatchDetails';
 
 export const useSummonerData = (gameName: string, tagLine: string, region: string) => {
   
-  // 1. ACCOUNT (PUUID)
+  // 1. ACCOUNT (Zwraca PUUID)
   const accountQuery = useQuery({
-    queryKey: ['account', region, gameName, tagLine], // Dodano region do klucza cache
+    queryKey: ['account', region, gameName, tagLine],
     queryFn: async () => {
       if (!gameName || !tagLine) return null;
       const response = await fetch(`http://localhost:4000/api/account/${region}/${gameName}/${tagLine}`);
@@ -20,24 +20,23 @@ export const useSummonerData = (gameName: string, tagLine: string, region: strin
   });
 
   const puuid = accountQuery.data?.puuid;
-  const summonerId = accountQuery.data?.id; // Jeśli backend zwraca summonerId z konta, jeśli nie - pobierzemy w kroku 2
 
-  // 2. SUMMONER DETAILS
+  // 2. SUMMONER DETAILS (Nadal potrzebne do ikony i levela)
   const summonerQuery = useQuery({
     queryKey: ['summoner', region, puuid],
     queryFn: () => fetchSummonerDetails(puuid, region),
     enabled: !!puuid, 
   });
 
-  const activeSummonerId = summonerQuery.data?.id; // ID potrzebne do rang
-
-  // 3. RANKED DATA
+  // 3. RANKED DATA (Teraz korzysta z PUUID!)
   const rankedQuery = useQuery({
-    queryKey: ['ranked', region, activeSummonerId],
-    queryFn: () => fetchRankedData(activeSummonerId, region),
-    enabled: !!activeSummonerId,
+    queryKey: ['ranked', region, puuid], // Klucz zależy teraz od PUUID
+    queryFn: () => fetchRankedData(puuid, region),
+    enabled: !!puuid, // Startuje od razu, gdy mamy PUUID (nie czeka na summonerId)
   });
 
+  
+  
   // 4. MATCHES
   const matchesQuery = useQuery({
     queryKey: ['matches', region, puuid],
