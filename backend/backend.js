@@ -116,6 +116,21 @@ app.get('/api/matches/details/:region/:matchId', (req, res) => {
     } catch (e) { res.status(400).json({ error: "Invalid Region" }); }
 });
 
+
+app.get('/api/spectator/:region/:puuid', (req, res) => {
+    try {
+        const { region, puuid } = req.params;
+        const { platform } = getRegionConfig(region);
+        
+        // Spectator V5 działa po PUUID
+        const url = `https://${platform}.api.riotgames.com/lol/spectator/v5/active-games/by-summoner/${puuid}`;
+        fetchRiot(url, res);
+    } catch (e) { 
+        res.status(400).json({ error: "Invalid Region" }); 
+    }
+});
+
+
 app.listen(PORT, () => {
     console.log(`🚀 Backend running on port ${PORT}`);
 });

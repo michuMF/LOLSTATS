@@ -25,8 +25,9 @@ const rankIcons: Record<string, string> = {
 };
 
 
-export const PlayerProfileMainBoard = ({summoner,ranked}: {summoner: SummonerProfileInfoType, ranked: RankedDataType[] | undefined}) => {
-
+export const PlayerMainPanel = ({summoner,ranked}: {summoner: SummonerProfileInfoType, ranked: RankedDataType[] | undefined}) => {
+  console.log(summoner);
+  
    const soloRank = ranked?.find((r) => r.queueType === "RANKED_SOLO_5x5");
   const activeRank = soloRank || ranked?.find((r) => r.queueType === "RANKED_FLEX_SR");
 
@@ -57,7 +58,7 @@ export const PlayerProfileMainBoard = ({summoner,ranked}: {summoner: SummonerPro
         <div className="flex flex-col">
           {/* Wyświetlamy gameName przekazany z propsów */}
           <h1 className="text-2xl font-black text-slate-800 tracking-tight leading-none">
-            { summoner.gameName}
+            {summoner.gameName}
           </h1>
           <span className="text-sm font-semibold text-slate-400">
             #{'test'}

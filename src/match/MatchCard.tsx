@@ -5,6 +5,7 @@ import { spellMap } from "../utils/constants";
 import { getQueueName } from "../utils/mappers";
 import { MatchAnalysis } from "./MatchAnalysis";
 import { TeamList } from "./TeamList";
+import { useMemo } from "react";
 
 interface MatchCardProps {
   match: MatchDetailsType;
@@ -18,9 +19,11 @@ export const MatchCard = ({ match, puuid, isExpanded, onToggle }: MatchCardProps
   const isWin = self?.win || false;
   
   // Obliczenia AI
-  const ai = self 
-    ? analyzeMatch(self, match.info.participants, match.info.gameDuration) 
-    : null;
+  const ai = useMemo(() => {
+    return self 
+      ? analyzeMatch(self, match.info.participants, match.info.gameDuration) 
+      : null;
+  }, [self, match.info.participants, match.info.gameDuration]);
 
   // Style
   const borderClass = isWin ? "border-l-blue-500" : "border-l-red-500";
@@ -56,7 +59,7 @@ export const MatchCard = ({ match, puuid, isExpanded, onToggle }: MatchCardProps
                 <img
                     src={`https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${self.championName}_0.jpg`}
                     alt={self.championName}
-                    className="w-14 h-14 rounded-lg object-cover shadow-sm border border-slate-300"
+                    className="w-14 h-14 rounded-lg object-cover shadow-sm border border-slate-300" loading="lazy"
                 />
                 <div className="absolute -bottom-2 -right-2 bg-slate-800 text-white text-[10px] font-bold px-1.5 py-0.5 rounded shadow">
                     {self.champLevel}
@@ -68,6 +71,7 @@ export const MatchCard = ({ match, puuid, isExpanded, onToggle }: MatchCardProps
                     <img
                     key={idx}
                     src={`https://ddragon.leagueoflegends.com/cdn/15.20.1/img/spell/${spellMap[spellId] || "SummonerFlash"}.png`}
+                    loading="lazy"
                     alt="Spell"
                     className="w-6 h-6 rounded bg-slate-900"
                     onError={(e) => { (e.target as HTMLImageElement).src = "https://ddragon.leagueoflegends.com/cdn/15.20.1/img/spell/SummonerFlash.png" }}
@@ -98,6 +102,7 @@ export const MatchCard = ({ match, puuid, isExpanded, onToggle }: MatchCardProps
               {itemId !== 0 && itemId && (
                 <img
                   src={`https://ddragon.leagueoflegends.com/cdn/15.20.1/img/item/${itemId}.png`}
+                  loading="lazy"
                   alt={`Item ${itemId}`}
                   className="w-full h-full object-cover opacity-90 hover:opacity-100"
                 />
@@ -108,6 +113,7 @@ export const MatchCard = ({ match, puuid, isExpanded, onToggle }: MatchCardProps
             {trinket !== 0 && trinket && (
               <img
                 src={`https://ddragon.leagueoflegends.com/cdn/15.20.1/img/item/${trinket}.png`}
+                loading="lazy"
                 alt="Trinket"
                 className="w-full h-full object-cover"
               />

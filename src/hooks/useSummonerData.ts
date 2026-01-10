@@ -4,6 +4,7 @@ import { fetchRankedData } from '../api/fetchRankedData';
 import { fetchMatchHistory } from '../api/fetchMatchHistory';
 import { fetchMatchDetails } from '../api/fetchMatchDetails';
 
+
 export const useSummonerData = (gameName: string, tagLine: string, region: string) => {
   
   // 1. ACCOUNT (Zwraca PUUID)
@@ -28,11 +29,11 @@ export const useSummonerData = (gameName: string, tagLine: string, region: strin
     enabled: !!puuid, 
   });
 
-  // 3. RANKED DATA (Teraz korzysta z PUUID!)
+  // 3. RANKED DATA 
   const rankedQuery = useQuery({
     queryKey: ['ranked', region, puuid], // Klucz zależy teraz od PUUID
     queryFn: () => fetchRankedData(puuid, region),
-    enabled: !!puuid, // Startuje od razu, gdy mamy PUUID (nie czeka na summonerId)
+    enabled: !!puuid, // Startuje od razu, gdy mamy PUUID 
   });
 
   
@@ -50,6 +51,11 @@ export const useSummonerData = (gameName: string, tagLine: string, region: strin
     enabled: !!puuid,
   });
 
+
+ 
+
+
+  
   return {
     account: accountQuery,
     summoner: summonerQuery,
