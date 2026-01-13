@@ -2,16 +2,21 @@
 // SUMMONER TYPES (Dane Przywoływacza)
 // ==========================================
 
-export interface SummonerBasicInfoType {
-  puuid: string;
-  gameName: string;
-  tagLine: string;
+export interface RiotAccountDTO {
+    puuid: string;
+    gameName: string;
+    tagLine: string;
+}
+export interface SummonerV4DTO {
+    id: string;            // Encrypted Summoner ID
+    accountId: string;     // Encrypted Account ID
+    puuid: string;
+    profileIconId: number;
+    revisionDate: number;
+    summonerLevel: number;
 }
 
-export interface SummonerProfileInfoType extends SummonerBasicInfoType {
-  summonerLevel?: number;
-  profileIconId?: number;
-}
+export interface SummonerProfileInfoType extends RiotAccountDTO, SummonerV4DTO {}
 
 export interface SummonerDataType extends SummonerProfileInfoType {
   rankedData?: RankedDataType[];

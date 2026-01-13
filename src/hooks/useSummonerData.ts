@@ -1,14 +1,15 @@
+// src/hooks/useSummonerData.ts
 import { useQuery } from '@tanstack/react-query';
 import { fetchSummonerDetails } from '../api/fetchSummonerDetails';
 import { fetchRankedData } from '../api/fetchRankedData';
 import { fetchMatchHistory } from '../api/fetchMatchHistory';
 import { fetchMatchDetails } from '../api/fetchMatchDetails';
-
+import type { RiotAccountDTO, SummonerProfileInfoType } from '../types/types';
 
 export const useSummonerData = (gameName: string, tagLine: string, region: string) => {
   
-  // 1. ACCOUNT (Zwraca PUUID)
-  const accountQuery = useQuery({
+  // 1. ACCOUNT (Pobiera PUUID, GameName, TagLine)
+  const accountQuery = useQuery<RiotAccountDTO>({
     queryKey: ['account', region, gameName, tagLine],
     queryFn: async () => {
       if (!gameName || !tagLine) return null;
@@ -20,29 +21,28 @@ export const useSummonerData = (gameName: string, tagLine: string, region: strin
     retry: 1
   });
 
-  const puuid = accountQuery.data?.puuid;
+  const accountData = accountQuery.data;
+  const puuid = accountData?.puuid;
 
-  // 2. SUMMONER DETAILS (Nadal potrzebne do ikony i levela)
+  // 2. SUMMONER DETAILS (Pobiera Level i Iconę po PUUID)
   const summonerQuery = useQuery({
     queryKey: ['summoner', region, puuid],
-    queryFn: () => fetchSummonerDetails(puuid, region),
+    queryFn: () => fetchSummonerDetails(puuid!, region),
     enabled: !!puuid, 
   });
 
   // 3. RANKED DATA 
   const rankedQuery = useQuery({
-    queryKey: ['ranked', region, puuid], // Klucz zależy teraz od PUUID
-    queryFn: () => fetchRankedData(puuid, region),
-    enabled: !!puuid, // Startuje od razu, gdy mamy PUUID 
+    queryKey: ['ranked', region, puuid],
+    queryFn: () => fetchRankedData(puuid!, region),
+    enabled: !!puuid, 
   });
-
-  
   
   // 4. MATCHES
   const matchesQuery = useQuery({
     queryKey: ['matches', region, puuid],
     queryFn: async () => {
-      const matchIds = await fetchMatchHistory(puuid, region);
+      const matchIds = await fetchMatchHistory(puuid!, region);
       const detailsPromises = matchIds.slice(0, 10).map((id: string) => 
         fetchMatchDetails(id, region)
       );
@@ -51,14 +51,26 @@ export const useSummonerData = (gameName: string, tagLine: string, region: strin
     enabled: !!puuid,
   });
 
+  // --- TWORZENIE OBIEKTU ZBIORCZEGO ---
+  // Łączymy dane z Account (name, tag) i Summoner (level, icon)
+  let combinedSummonerData: SummonerProfileInfoType | null = null;
 
- 
+  if (accountData && summonerQuery.data) {
+    combinedSummonerData = {
+        ...accountData,      // gameName, tagLine, puuid
+        ...summonerQuery.data // id, accountId, profileIconId, summonerLevel
+    };
+  }
 
-
-  
   return {
-    account: accountQuery,
-    summoner: summonerQuery,
+    // Zwracamy obiekt `summoner` który udaje zapytanie react-query, 
+    // ale w polu `data` ma nasze połączone dane.
+    summoner: {
+        data: combinedSummonerData,
+        isLoading: accountQuery.isLoading || summonerQuery.isLoading,
+        isError: accountQuery.isError || summonerQuery.isError,
+        error: accountQuery.error || summonerQuery.error
+    },
     ranked: rankedQuery,
     matches: matchesQuery,
     isLoading: accountQuery.isLoading || summonerQuery.isLoading,

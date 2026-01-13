@@ -10,7 +10,7 @@ import { RankedData } from "../SearchBar/RankedData";
 import { MatchList } from "../match/MatchList";
 import { PlayerSummary } from "../SearchBar/PlayerSummary";
 import { PlayerMainPanel } from "../ProfilePageComponents/PlayerMainPanel";
-import { SummonerDetails } from "../SearchBar/SummonerDetails";
+
 import { fetchLiveGame } from "../api/fetchLiveGame";
 import { useState } from "react";
 
@@ -106,7 +106,7 @@ const checkLiveGame = async () => {
         
     
 
-<PlayerMainPanel summoner={summoner.data} ranked={ranked.data} />
+<PlayerMainPanel summoner={summoner.data} ranked={ranked.data} matches={matches.data || []} />
         {/* Podsumowanie i Rangi obok siebie na dużych ekranach */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="lg:col-span-2 space-y-8">

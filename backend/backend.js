@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 import test from 'node:test';
 
 dotenv.config();
-console.log("Załadowany klucz:", process.env.RIOT_API_KEY ? "TAK (zaczyna się od " + process.env.RIOT_API_KEY.substring(0, 10) + "...)" : "NIE");
+
 
 const app = express();
 const PORT = 4000;
