@@ -1,19 +1,19 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route } from "react-router-dom";
+import {HomePage} from "./pages/HomePage";
 
-import './App.css';
-
-import { HomePage } from './pages/HomePage';
-import { ProfilePage } from './pages/ProfilPage';
-
-
+import LiveGamePage from "./pages/LiveGamePage";
+import { ProfilePage } from "./pages/ProfilPage";
 
 function App() {
   return (
-    <div className="min-h-screen bg-slate-100 p-4 font-sans text-slate-900">
-       <Routes>
-         <Route path="/" element={<HomePage />} />
-         <Route path="/profile/:region/:gameName/:tagLine" element={<ProfilePage />} />
-       </Routes>
+    <div className="min-h-screen bg-slate-900 text-white">
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/profile/:region/:gameName/:tagLine" element={<ProfilePage />} />
+        
+        {/* ZMIANA: Zamiast :puuid, używamy parametrów czytelnych dla człowieka */}
+        <Route path="/live/:region/:gameName/:tagLine" element={<LiveGamePage />} />
+      </Routes>
     </div>
   );
 }

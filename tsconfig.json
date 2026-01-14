@@ -4,8 +4,10 @@
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
   ],
-   "compilerOptions": {
-    "types": ["node"]
+  "compilerOptions": {
+    "types": ["node"],
+    "esModuleInterop": true,       
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true
   }
 }
-

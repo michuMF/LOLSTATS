@@ -7,13 +7,15 @@ import { fetchMatchDetails } from '../api/fetchMatchDetails';
 import type { RiotAccountDTO, SummonerProfileInfoType } from '../types/types';
 
 export const useSummonerData = (gameName: string, tagLine: string, region: string) => {
+
+  const apiUrl = import.meta.env.VITE_API_URL
   
   // 1. ACCOUNT (Pobiera PUUID, GameName, TagLine)
   const accountQuery = useQuery<RiotAccountDTO>({
     queryKey: ['account', region, gameName, tagLine],
     queryFn: async () => {
       if (!gameName || !tagLine) return null;
-      const response = await fetch(`http://localhost:4000/api/account/${region}/${gameName}/${tagLine}`);
+      const response = await fetch(`${apiUrl}/api/account/${region}/${gameName}/${tagLine}`);
       if (!response.ok) throw new Error('Account not found');
       return response.json();
     },
