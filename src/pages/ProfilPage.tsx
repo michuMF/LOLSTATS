@@ -26,7 +26,8 @@ export const ProfilePage = () => {
    
    const dataMatches = matches.data;
 
-    {dataMatches && console.log("Matches in ProfilePage:", dataMatches[0].info);}
+  
+   
     
     
 

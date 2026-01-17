@@ -59,6 +59,9 @@ export const fetchLiveGame = async (puuid: string, region: string): Promise<Live
     
     const rawData = await response.json();
 
+    
+    
+
     // --- ULEPSZONA WALIDACJA (Safe Parsing) ---
     // Zamiast rzucać błąd przy pierwszym niezgodnym polu, sprawdzamy sukces operacji.
     const result = LiveGameSchema.safeParse(rawData);

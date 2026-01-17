@@ -6,7 +6,8 @@ import { getQueueName } from "../utils/mappers";
 import { MatchAnalysis } from "./MatchAnalysis";
 import { TeamList } from "./TeamList";
 import { useMemo } from "react";
-import type { MatchDetailsType } from "../types";
+import type { MatchDetailsType } from "../api/fetchMatchDetails";
+
 
 interface MatchCardProps {
   match: MatchDetailsType;
@@ -33,6 +34,11 @@ export const MatchCard = ({ match, puuid, isExpanded, onToggle }: MatchCardProps
 
   const items = [self?.item0, self?.item1, self?.item2, self?.item3, self?.item4, self?.item5];
   const trinket = self?.item6;
+
+
+
+
+
 
   return (
     <li className={`bg-white rounded-r-xl rounded-l-md shadow-sm border border-slate-200 border-l-[6px] ${borderClass} overflow-hidden transition-all duration-200 ${bgHover}`}>
@@ -68,17 +74,18 @@ export const MatchCard = ({ match, puuid, isExpanded, onToggle }: MatchCardProps
             </div>
 
             <div className="flex flex-col gap-1">
-                {[self.summoner1Id, self.summoner2Id].map((spellId, idx) => (
-                    <img
-                    key={idx}
-                    src={`https://ddragon.leagueoflegends.com/cdn/15.20.1/img/spell/${spellMap[spellId] || "SummonerFlash"}.png`}
-                    loading="lazy"
-                    alt="Spell"
-                    className="w-6 h-6 rounded bg-slate-900"
-                    onError={(e) => { (e.target as HTMLImageElement).src = "https://ddragon.leagueoflegends.com/cdn/15.20.1/img/spell/SummonerFlash.png" }}
-                    />
-                ))}
-            </div>
+    {[self.summoner1Id, self.summoner2Id].map((spellId, idx) => (
+        <img
+            key={idx}
+           
+            src={`https://ddragon.leagueoflegends.com/cdn/15.20.1/img/spell/${spellMap[spellId as number] || "SummonerFlash"}.png`}
+            loading="lazy"
+            alt="Spell"
+            className="w-6 h-6 rounded bg-slate-900"
+            onError={(e) => { (e.target as HTMLImageElement).src = "https://ddragon.leagueoflegends.com/cdn/15.20.1/img/spell/SummonerFlash.png" }}
+        />
+    ))}
+</div>
 
             <div className="ml-2 sm:ml-6 text-center sm:text-left min-w-[100px]">
               <p className="text-xl font-bold text-slate-800 tracking-wide">

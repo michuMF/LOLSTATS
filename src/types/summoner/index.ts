@@ -1,7 +1,9 @@
 // ==========================================
 // RANKED DATA
 
-import type { MatchDetailsType } from "../match/Match";
+import type { MatchDetailsType } from "../../api/fetchMatchDetails";
+
+
 
 // ==========================================
 export interface RankedDataType {

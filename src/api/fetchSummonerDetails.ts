@@ -20,11 +20,15 @@ export const fetchSummonerDetails = async (puuid: string, region: string): Promi
   const rawData = await response.json();
 
   // DEBUG: Zobaczmy w konsoli co parsowany, jeśli znowu coś pójdzie nie tak
-  console.log("📥 Summoner Data received:", rawData);
+  // console.log("📥 Summoner Data received:", rawData);
 
   // Bezpieczne parsowanie
   const result = SummonerSchema.safeParse(rawData);
-  console.log(result);
+
+
+  // console.log(result);
+  
+ 
   
 
   if (!result.success) {

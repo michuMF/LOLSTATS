@@ -3,7 +3,8 @@ import { useState, useMemo } from "react";
 
 import { MatchCard } from "./MatchCard";
 import { MatchFilters } from "./MatchFilters"; // Importujemy nowy komponent
-import type { MatchDetailsType } from "../types";
+import type { MatchDetailsType } from "../api/fetchMatchDetails";
+
 
 export const MatchList = ({
   matchDetails,

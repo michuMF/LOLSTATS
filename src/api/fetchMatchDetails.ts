@@ -1,19 +1,18 @@
 import { z } from "zod";
 
 // --- Pod-schematy ---
-
 const PerkStyleSelectionSchema = z.object({
   perk: z.number(),
   var1: z.number(),
   var2: z.number(),
   var3: z.number(),
-}).passthrough(); // <--- ZMIANA: Ignoruj dziwne dodatkowe pola w runach
+}) // <--- ZMIANA: Ignoruj dziwne dodatkowe pola w runach
 
 const PerkStyleSchema = z.object({
   description: z.string(),
   selections: z.array(PerkStyleSelectionSchema),
   style: z.number(),
-}).passthrough();
+})
 
 const ParticipantSchema = z.object({
   // Pola identyfikacyjne czasem są null (np. dla botów lub odłączonych graczy)
@@ -87,14 +86,16 @@ const InfoSchema = z.object({
   gameType: z.string(),
   mapId: z.number(),
   participants: z.array(ParticipantSchema),
-  queueId: z.number(),
   platformId: z.string(),
+  gameVersion: z.string(),
+  queueId: z.number(),
   teams: z.array(TeamSchema).optional(), // Arena mode może mieć inną strukturę teamów
+  tournamentCode: z.string().nullable()
   
 }).passthrough();
 
 
-console.log(InfoSchema);
+
 
 const MatchDetailsSchema = z.object({
   metadata: MetadataSchema,
@@ -111,9 +112,13 @@ export const fetchMatchDetails = async (matchId: string, region: string): Promis
   if (!response.ok) throw new Error("Failed to fetch match details");
   
   const rawData = await response.json();
+  console.log("📥 Summoner Data received:", rawData);
 
   // DEBUG: Jeśli walidacja failuje, zobaczysz to w konsoli przeglądarki
   const result = MatchDetailsSchema.safeParse(rawData);
+
+ 
+  
   
   if (!result.success) {
     console.error(`❌ ZOD ERROR w meczu ${matchId}:`, result.error.format());

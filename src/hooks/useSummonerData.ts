@@ -41,6 +41,9 @@ export const useSummonerData = (gameName: string, tagLine: string, region: strin
     enabled: !!puuid, 
   });
   
+
+  
+  
   // 4. MATCHES
   const matchesQuery = useQuery({
     queryKey: ['matches', region, puuid],
