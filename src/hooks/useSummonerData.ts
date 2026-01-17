@@ -4,7 +4,8 @@ import { fetchSummonerDetails } from '../api/fetchSummonerDetails';
 import { fetchRankedData } from '../api/fetchRankedData';
 import { fetchMatchHistory } from '../api/fetchMatchHistory';
 import { fetchMatchDetails } from '../api/fetchMatchDetails';
-import type { RiotAccountDTO, SummonerProfileInfoType } from '../types/types';
+import type { RiotAccountDTO, SummonerProfileInfoType } from '../types';
+
 
 export const useSummonerData = (gameName: string, tagLine: string, region: string) => {
 
@@ -57,6 +58,8 @@ export const useSummonerData = (gameName: string, tagLine: string, region: strin
   // Łączymy dane z Account (name, tag) i Summoner (level, icon)
   let combinedSummonerData: SummonerProfileInfoType | null = null;
 
+ 
+  
   if (accountData && summonerQuery.data) {
     combinedSummonerData = {
         ...accountData,      // gameName, tagLine, puuid

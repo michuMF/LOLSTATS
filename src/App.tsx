@@ -1,8 +1,9 @@
 import { Routes, Route } from "react-router-dom";
 import {HomePage} from "./pages/HomePage";
 
-import LiveGamePage from "./pages/LiveGamePage";
+
 import { ProfilePage } from "./pages/ProfilPage";
+import LiveGamePage from "./pages/LiveGamePage";
 
 function App() {
   return (

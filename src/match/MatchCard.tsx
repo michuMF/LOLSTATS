@@ -1,11 +1,12 @@
 import { FaAngleDown, FaAngleUp, FaRobot } from "react-icons/fa";
-import type { MatchDetailsType } from "../types/types";
+
 import { analyzeMatch } from "../utils/analyzeMatch";
 import { spellMap } from "../utils/constants";
 import { getQueueName } from "../utils/mappers";
 import { MatchAnalysis } from "./MatchAnalysis";
 import { TeamList } from "./TeamList";
 import { useMemo } from "react";
+import type { MatchDetailsType } from "../types";
 
 interface MatchCardProps {
   match: MatchDetailsType;

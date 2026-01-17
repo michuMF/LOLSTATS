@@ -1,6 +1,6 @@
 // src/SearchBar/PlayerSummary.tsx
 import { useState, useMemo } from "react";
-import type { MatchDetailsType, RankedDataType } from "../types/types";
+
 import { FaChartPie, FaSkull, FaCrosshairs, FaGamepad } from "react-icons/fa";
 
 // --- IMPORTY EMBLEMATÓW RANG ---
@@ -16,6 +16,8 @@ import Diamond from "../assets/Ranked Emblems Latest/Rank=Diamond.png";
 import Master from "../assets/Ranked Emblems Latest/Rank=Master.png";
 import Grandmaster from "../assets/Ranked Emblems Latest/Rank=Grandmaster.png";
 import Challenger from "../assets/Ranked Emblems Latest/Rank=Challenger.png";
+import type { MatchDetailsType } from "../types";
+import type { RankedDataType } from "../api/fetchRankedData";
 
 // Mapa grafik
 const RANK_ICONS: Record<string, string> = {
@@ -49,9 +51,13 @@ interface PlayerSummaryProps {
   puuid: string;
 }
 
-export const PlayerSummary = ({ matches, leagueData, puuid }: PlayerSummaryProps) => {
+
+
+export const PlayerSummary = ({ leagueData, puuid, matches }: PlayerSummaryProps ) => {
   const [activeFilter, setActiveFilter] = useState<QueueKey>("ALL");
- 
+  
+  
+  
   
   // --- 1. FILTROWANIE MECZÓW ---
   const filteredMatches = useMemo(() => {

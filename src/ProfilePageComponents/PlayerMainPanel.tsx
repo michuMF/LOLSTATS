@@ -1,9 +1,11 @@
-import type { RankedDataType, SummonerProfileInfoType, MatchDetailsType } from "../types/types";
+
 
 // Importujemy nasze nowe komponenty
 import { PlayerIdentity } from "./PlayerIdentity";
 import { SeasonStats } from "./SeasonStats";
 import { RankDisplay } from "./RankDisplay";
+import type { MatchDetailsType, SummonerProfileInfoType } from "../types";
+import type { RankedDataType } from "../api/fetchRankedData";
 
 // Konfiguracja Sezonu
 const CURRENT_SEASON_PREFIX = "16"; 
@@ -11,10 +13,13 @@ const CURRENT_SEASON_PREFIX = "16";
 interface PlayerMainPanelProps {
   summoner: SummonerProfileInfoType;
   ranked: RankedDataType[] | undefined;
-  matches?: MatchDetailsType[];
+  matches: MatchDetailsType[];
 }
 
 export const PlayerMainPanel = ({ summoner, ranked, matches }: PlayerMainPanelProps) => {
+
+  console.log(matches);
+  
 
   // --- LOGIKA OBLICZENIOWA ---
   
@@ -35,7 +40,7 @@ export const PlayerMainPanel = ({ summoner, ranked, matches }: PlayerMainPanelPr
     
     const rankedMatches = matches.filter(m => {
         const isRankedQueue = m.info.queueId === 420 || m.info.queueId === 440;
-        const isCurrentSeason = m.info.gameVersion.startsWith(CURRENT_SEASON_PREFIX + ".");
+        const isCurrentSeason = m.info.gameVersion?.startsWith(CURRENT_SEASON_PREFIX + ".");
         return isRankedQueue && isCurrentSeason;
     });
 

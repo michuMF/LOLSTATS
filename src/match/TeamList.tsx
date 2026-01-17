@@ -1,5 +1,6 @@
 import { Link, useParams } from "react-router-dom";
-import type { ParticipantType } from "../types/types";
+import type { ParticipantType } from "../types";
+
 
 
 

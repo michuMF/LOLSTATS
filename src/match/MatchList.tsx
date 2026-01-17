@@ -1,8 +1,9 @@
 // src/match/MatchList.tsx
 import { useState, useMemo } from "react";
-import type { MatchDetailsType } from "../types/types";
+
 import { MatchCard } from "./MatchCard";
 import { MatchFilters } from "./MatchFilters"; // Importujemy nowy komponent
+import type { MatchDetailsType } from "../types";
 
 export const MatchList = ({
   matchDetails,

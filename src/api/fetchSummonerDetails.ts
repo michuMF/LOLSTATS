@@ -3,17 +3,11 @@ import { z } from "zod";
 // --- POPRAWIONY SCHEMAT ---
 // Zmieniliśmy id i accountId na .optional(), bo Twoje API ich nie zwraca.
 const SummonerSchema = z.object({
-  // Pola, które okazały się brakujące w Twoim przypadku:
-  id: z.string().optional(),        
-  accountId: z.string().optional(),
-  name: z.string().optional(),      // Riot czasem też pomija name
-
-  // Pola, które MASZ w odpowiedzi (te zostawiamy wymagane):
   puuid: z.string(),
   profileIconId: z.number(),
   revisionDate: z.number(),
   summonerLevel: z.number(),
-}).passthrough(); // .passthrough() pozwala na dodatkowe pola, jeśli się pojawią
+});
 
 export type SummonerV4DTO = z.infer<typeof SummonerSchema>;
 
@@ -30,6 +24,8 @@ export const fetchSummonerDetails = async (puuid: string, region: string): Promi
 
   // Bezpieczne parsowanie
   const result = SummonerSchema.safeParse(rawData);
+  console.log(result);
+  
 
   if (!result.success) {
     console.error("❌ ZOD ERROR (Summoner):", result.error.format());

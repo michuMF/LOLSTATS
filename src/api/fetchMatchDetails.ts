@@ -76,17 +76,25 @@ const MetadataSchema = z.object({
 }).passthrough();
 
 const InfoSchema = z.object({
+  endOfGameResult: z.string(),
   gameCreation: z.number(),
   gameDuration: z.number(),
-  gameEndTimestamp: z.number().optional(),
+  gameEndTimestamp: z.number(),
   gameId: z.number(),
   gameMode: z.string(),
+  gameName: z.string(),
+  gameStartTimestamp: z.number(),
   gameType: z.string(),
   mapId: z.number(),
   participants: z.array(ParticipantSchema),
-  teams: z.array(TeamSchema).optional(), // Arena mode może mieć inną strukturę teamów
   queueId: z.number(),
+  platformId: z.string(),
+  teams: z.array(TeamSchema).optional(), // Arena mode może mieć inną strukturę teamów
+  
 }).passthrough();
+
+
+console.log(InfoSchema);
 
 const MatchDetailsSchema = z.object({
   metadata: MetadataSchema,
