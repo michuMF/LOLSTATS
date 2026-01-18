@@ -1,16 +1,17 @@
-import type { RankedDataType } from "../types/types";
+
 
 // Importy ikon rang
-import Iron from "../assets/Ranked Emblems Latest/Rank=Iron.png";
-import Bronze from "../assets/Ranked Emblems Latest/Rank=Bronze.png";
-import Silver from "../assets/Ranked Emblems Latest/Rank=Silver.png";
-import Gold from "../assets/Ranked Emblems Latest/Rank=Gold.png";
-import Platinum from "../assets/Ranked Emblems Latest/Rank=Platinum.png";
-import Emerald from "../assets/Ranked Emblems Latest/Rank=Emerald.png";
-import Diamond from "../assets/Ranked Emblems Latest/Rank=Diamond.png";
-import Master from "../assets/Ranked Emblems Latest/Rank=Master.png";
-import Grandmaster from "../assets/Ranked Emblems Latest/Rank=Grandmaster.png";
-import Challenger from "../assets/Ranked Emblems Latest/Rank=Challenger.png";
+import Iron from "../../assets/Ranked Emblems Latest/Rank=Iron.png";
+import Bronze from "../../assets/Ranked Emblems Latest/Rank=Bronze.png";
+import Silver from "../../assets/Ranked Emblems Latest/Rank=Silver.png";
+import Gold from "../../assets/Ranked Emblems Latest/Rank=Gold.png";
+import Platinum from "../../assets/Ranked Emblems Latest/Rank=Platinum.png";
+import Emerald from "../../assets/Ranked Emblems Latest/Rank=Emerald.png";
+import Diamond from "../../assets/Ranked Emblems Latest/Rank=Diamond.png";
+import Master from "../../assets/Ranked Emblems Latest/Rank=Master.png";
+import Grandmaster from "../../assets/Ranked Emblems Latest/Rank=Grandmaster.png";
+import Challenger from "../../assets/Ranked Emblems Latest/Rank=Challenger.png";
+import type { RankedDataType } from "../../api/fetchRankedData";
 
 const rankIcons: Record<string, string> = {
   IRON: Iron,

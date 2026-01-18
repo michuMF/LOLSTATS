@@ -1,0 +1,550 @@
+{
+  "11": {
+    "meta": {
+      "championId": 11,
+      "patch": "16.1.737.4870",
+      "tier": "CHALLENGER"
+    },
+    "player": {
+      "name": "Sinerias",
+      "rank": "CHALLENGER 1340LP",
+      "teamPosition": "JUNGLE",
+      "win": true
+    },
+    "performance": {
+      "kda": "17/2/1",
+      "csPerMinute": 10.5,
+      "damageDealt": 29950
+    },
+    "combatType": {
+      "physicalDmgPct": 0.68,
+      "magicDmgPct": 0.05,
+      "trueDmgPct": 0.26
+    },
+    "build": {
+      "items": [
+        3073,
+        6672,
+        3124,
+        3111,
+        3091,
+        1028
+      ],
+      "spells": [
+        4,
+        11
+      ],
+      "runes": {
+        "primaryStyle": 8000,
+        "subStyle": 8300
+      }
+    },
+    "matchup": {
+      "enemyChampionId": 75
+    },
+    "earlyGame": {
+      "soloKills": 2
+    },
+    "vision": {
+      "score": 21
+    }
+  },
+  "30": {
+    "meta": {
+      "championId": 30,
+      "patch": "16.1.737.4870",
+      "tier": "CHALLENGER"
+    },
+    "player": {
+      "name": "Malevolence",
+      "rank": "CHALLENGER 1250LP",
+      "teamPosition": "JUNGLE",
+      "win": true
+    },
+    "performance": {
+      "kda": "15/8/11",
+      "csPerMinute": 8.6,
+      "damageDealt": 53540
+    },
+    "combatType": {
+      "physicalDmgPct": 0.01,
+      "magicDmgPct": 0.91,
+      "trueDmgPct": 0.08
+    },
+    "build": {
+      "items": [
+        3157,
+        2503,
+        6653,
+        3118,
+        3020,
+        3089
+      ],
+      "spells": [
+        4,
+        11
+      ],
+      "runes": {
+        "primaryStyle": 8300,
+        "subStyle": 8200
+      }
+    },
+    "matchup": {
+      "enemyChampionId": 246
+    },
+    "earlyGame": {
+      "soloKills": 5
+    },
+    "vision": {
+      "score": 27
+    }
+  },
+  "61": {
+    "meta": {
+      "championId": 61,
+      "patch": "16.1.737.4870",
+      "tier": "CHALLENGER"
+    },
+    "player": {
+      "name": "FEBIVEN",
+      "rank": "CHALLENGER 1483LP",
+      "teamPosition": "MIDDLE",
+      "win": true
+    },
+    "performance": {
+      "kda": "7/5/14",
+      "csPerMinute": 9.4,
+      "damageDealt": 32962
+    },
+    "combatType": {
+      "physicalDmgPct": 0.04,
+      "magicDmgPct": 0.96,
+      "trueDmgPct": 0.01
+    },
+    "build": {
+      "items": [
+        3089,
+        3157,
+        3108,
+        3171,
+        6655,
+        4645
+      ],
+      "spells": [
+        4,
+        12
+      ],
+      "runes": {
+        "primaryStyle": 8200,
+        "subStyle": 8000
+      }
+    },
+    "matchup": {
+      "enemyChampionId": 69
+    },
+    "earlyGame": {
+      "soloKills": 2
+    },
+    "vision": {
+      "score": 36
+    }
+  },
+  "69": {
+    "meta": {
+      "championId": 69,
+      "patch": "16.1.737.4870",
+      "tier": "CHALLENGER"
+    },
+    "player": {
+      "name": "Pun1sher Reborn",
+      "rank": "CHALLENGER 1628LP",
+      "teamPosition": "TOP",
+      "win": true
+    },
+    "performance": {
+      "kda": "4/4/8",
+      "csPerMinute": 8.4,
+      "damageDealt": 20430
+    },
+    "combatType": {
+      "physicalDmgPct": 0.04,
+      "magicDmgPct": 0.91,
+      "trueDmgPct": 0.05
+    },
+    "build": {
+      "items": [
+        3040,
+        6657,
+        1082,
+        1011,
+        1056,
+        3111
+      ],
+      "spells": [
+        14,
+        4
+      ],
+      "runes": {
+        "primaryStyle": 8000,
+        "subStyle": 8200
+      }
+    },
+    "matchup": {
+      "enemyChampionId": 84
+    },
+    "earlyGame": {
+      "soloKills": 2
+    },
+    "vision": {
+      "score": 20
+    }
+  },
+  "91": {
+    "meta": {
+      "championId": 91,
+      "patch": "16.1.737.4870",
+      "tier": "CHALLENGER"
+    },
+    "player": {
+      "name": "Acheron IX",
+      "rank": "CHALLENGER 1345LP",
+      "teamPosition": "JUNGLE",
+      "win": true
+    },
+    "performance": {
+      "kda": "6/3/7",
+      "csPerMinute": 8.6,
+      "damageDealt": 12845
+    },
+    "combatType": {
+      "physicalDmgPct": 0.87,
+      "magicDmgPct": 0.01,
+      "trueDmgPct": 0.11
+    },
+    "build": {
+      "items": [
+        3134,
+        3179,
+        6701,
+        1036,
+        2422
+      ],
+      "spells": [
+        14,
+        11
+      ],
+      "runes": {
+        "primaryStyle": 8200,
+        "subStyle": 8300
+      }
+    },
+    "matchup": {
+      "enemyChampionId": 76
+    },
+    "earlyGame": {
+      "soloKills": 0
+    },
+    "vision": {
+      "score": 24
+    }
+  },
+  "92": {
+    "meta": {
+      "championId": 92,
+      "patch": "16.1.737.4870",
+      "tier": "CHALLENGER"
+    },
+    "player": {
+      "name": "AloisNL",
+      "rank": "CHALLENGER 1250LP",
+      "teamPosition": "TOP",
+      "win": true
+    },
+    "performance": {
+      "kda": "14/5/5",
+      "csPerMinute": 8.3,
+      "damageDealt": 36530
+    },
+    "combatType": {
+      "physicalDmgPct": 0.94,
+      "magicDmgPct": 0,
+      "trueDmgPct": 0.06
+    },
+    "build": {
+      "items": [
+        6610,
+        3156,
+        6696,
+        3158,
+        6695,
+        6333
+      ],
+      "spells": [
+        4,
+        14
+      ],
+      "runes": {
+        "primaryStyle": 8000,
+        "subStyle": 8300
+      }
+    },
+    "matchup": {
+      "enemyChampionId": 8
+    },
+    "earlyGame": {
+      "soloKills": 9
+    },
+    "vision": {
+      "score": 28
+    }
+  },
+  "126": {
+    "meta": {
+      "championId": 126,
+      "patch": "16.1.737.4870",
+      "tier": "CHALLENGER"
+    },
+    "player": {
+      "name": "frajgo",
+      "rank": "CHALLENGER 1238LP",
+      "teamPosition": "TOP",
+      "win": true
+    },
+    "performance": {
+      "kda": "17/4/4",
+      "csPerMinute": 8.7,
+      "damageDealt": 37827
+    },
+    "combatType": {
+      "physicalDmgPct": 0.77,
+      "magicDmgPct": 0.18,
+      "trueDmgPct": 0.05
+    },
+    "build": {
+      "items": [
+        6694,
+        3009,
+        3142,
+        3042,
+        3814,
+        3156
+      ],
+      "spells": [
+        4,
+        14
+      ],
+      "runes": {
+        "primaryStyle": 8100,
+        "subStyle": 8400
+      }
+    },
+    "matchup": {
+      "enemyChampionId": 777
+    },
+    "earlyGame": {
+      "soloKills": 9
+    },
+    "vision": {
+      "score": 32
+    }
+  },
+  "134": {
+    "meta": {
+      "championId": 134,
+      "patch": "16.1.737.4870",
+      "tier": "CHALLENGER"
+    },
+    "player": {
+      "name": "Maximillion",
+      "rank": "CHALLENGER 1237LP",
+      "teamPosition": "MIDDLE",
+      "win": true
+    },
+    "performance": {
+      "kda": "5/5/16",
+      "csPerMinute": 7.3,
+      "damageDealt": 34886
+    },
+    "combatType": {
+      "physicalDmgPct": 0.02,
+      "magicDmgPct": 0.93,
+      "trueDmgPct": 0.05
+    },
+    "build": {
+      "items": [
+        3137,
+        1058,
+        3174,
+        4629,
+        3089,
+        2503
+      ],
+      "spells": [
+        12,
+        4
+      ],
+      "runes": {
+        "primaryStyle": 8200,
+        "subStyle": 8400
+      }
+    },
+    "matchup": {
+      "enemyChampionId": 166
+    },
+    "earlyGame": {
+      "soloKills": 0
+    },
+    "vision": {
+      "score": 59
+    }
+  },
+  "163": {
+    "meta": {
+      "championId": 163,
+      "patch": "16.1.737.4870",
+      "tier": "CHALLENGER"
+    },
+    "player": {
+      "name": "Odysseus",
+      "rank": "CHALLENGER 1452LP",
+      "teamPosition": "MIDDLE",
+      "win": true
+    },
+    "performance": {
+      "kda": "10/5/12",
+      "csPerMinute": 9.3,
+      "damageDealt": 31785
+    },
+    "combatType": {
+      "physicalDmgPct": 0.05,
+      "magicDmgPct": 0.95,
+      "trueDmgPct": 0
+    },
+    "build": {
+      "items": [
+        3173,
+        6657,
+        3040,
+        3137,
+        3089
+      ],
+      "spells": [
+        12,
+        4
+      ],
+      "runes": {
+        "primaryStyle": 8200,
+        "subStyle": 8000
+      }
+    },
+    "matchup": {
+      "enemyChampionId": 61
+    },
+    "earlyGame": {
+      "soloKills": 0
+    },
+    "vision": {
+      "score": 29
+    }
+  },
+  "166": {
+    "meta": {
+      "championId": 166,
+      "patch": "16.1.737.4870",
+      "tier": "CHALLENGER"
+    },
+    "player": {
+      "name": "Phanta",
+      "rank": "CHALLENGER 1797LP",
+      "teamPosition": "MIDDLE",
+      "win": true
+    },
+    "performance": {
+      "kda": "17/3/10",
+      "csPerMinute": 10.4,
+      "damageDealt": 43415
+    },
+    "combatType": {
+      "physicalDmgPct": 0.76,
+      "magicDmgPct": 0.18,
+      "trueDmgPct": 0.06
+    },
+    "build": {
+      "items": [
+        6673,
+        3094,
+        3072,
+        3173,
+        3031,
+        3036
+      ],
+      "spells": [
+        4,
+        14
+      ],
+      "runes": {
+        "primaryStyle": 8000,
+        "subStyle": 8400
+      }
+    },
+    "matchup": {
+      "enemyChampionId": 163
+    },
+    "earlyGame": {
+      "soloKills": 2
+    },
+    "vision": {
+      "score": 39
+    }
+  },
+  "238": {
+    "meta": {
+      "championId": 238,
+      "patch": "16.1.737.4870",
+      "tier": "CHALLENGER"
+    },
+    "player": {
+      "name": "TwTv BZ EUW",
+      "rank": "CHALLENGER 1263LP",
+      "teamPosition": "JUNGLE",
+      "win": true
+    },
+    "performance": {
+      "kda": "11/2/7",
+      "csPerMinute": 10,
+      "damageDealt": 27757
+    },
+    "combatType": {
+      "physicalDmgPct": 0.87,
+      "magicDmgPct": 0.04,
+      "trueDmgPct": 0.09
+    },
+    "build": {
+      "items": [
+        3142,
+        6696,
+        3179,
+        6694,
+        3158,
+        3139
+      ],
+      "spells": [
+        4,
+        11
+      ],
+      "runes": {
+        "primaryStyle": 8300,
+        "subStyle": 8100
+      }
+    },
+    "matchup": {
+      "enemyChampionId": 143
+    },
+    "earlyGame": {
+      "soloKills": 4
+    },
+    "vision": {
+      "score": 42
+    }
+  }
+}

@@ -6,10 +6,10 @@ import { SearchBar } from "../SearchBar/SearchBar";
 
 
 
-import { RankedData } from "../SearchBar/RankedData";
+
 import { MatchList } from "../match/MatchList";
-import { PlayerSummary } from "../SearchBar/PlayerSummary";
-import { PlayerMainPanel } from "../ProfilePageComponents/PlayerMainPanel";
+import { PlayerSummary } from "../Profile/SecondBlock/PlayerSummary";
+import { PlayerMainPanel } from "../Profile/PlayerMainPanel";
 import { FaGamepad } from "react-icons/fa";
 
 
@@ -59,8 +59,9 @@ export const ProfilePage = () => {
 
 
 <div className="mt-6 flex justify-center">
+  {/* ZMIANA: Przekazujemy gameName i tagLine zamiast puuid, zgodnie z nowym routingiem w App.tsx */}
   <Link 
-    to={`/live/${region}/${summoner.data.puuid}`}
+    to={`/live/${region}/${gameName}/${tagLine}`}
     className="
       group relative inline-flex items-center gap-3 px-8 py-3 
       bg-gradient-to-r from-blue-600 to-blue-500 
@@ -78,7 +79,6 @@ export const ProfilePage = () => {
     </span>
 
     <span>Live Game</span>
-    
     
     <FaGamepad className="text-xl opacity-80 group-hover:rotate-12 transition-transform" />
   </Link>
@@ -104,11 +104,7 @@ export const ProfilePage = () => {
                 )}
             </div>
 
-            <div className="lg:col-span-1">
-                {ranked.isLoading ? <LoadingSpinner /> : (
-                  ranked.data && <RankedData rankedData={ranked.data} />
-                )}
-            </div>
+           
         </div>
       </div>
     </div>

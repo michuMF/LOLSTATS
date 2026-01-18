@@ -1,4 +1,4 @@
-import type { SummonerProfileInfoType } from "../types";
+import type { SummonerProfileInfoType } from "../../types";
 
 
 export const PlayerIdentity = ({ summoner }: { summoner: SummonerProfileInfoType }) => {

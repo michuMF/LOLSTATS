@@ -1,9 +1,9 @@
 
 
 // Importujemy nasze nowe komponenty
-import { PlayerIdentity } from "./PlayerIdentity";
-import { SeasonStats } from "./SeasonStats";
-import { RankDisplay } from "./RankDisplay";
+import { PlayerIdentity } from "./FirstBlock/PlayerIdentity";
+import { SeasonStats } from "./FirstBlock/SeasonStats";
+import { RankDisplay } from "./FirstBlock/RankDisplay";
 import type { SummonerProfileInfoType } from "../types";
 import type { RankedDataType } from "../api/fetchRankedData";
 import type { MatchDetailsType } from "../api/fetchMatchDetails";
@@ -19,17 +19,9 @@ interface PlayerMainPanelProps {
 
 export const PlayerMainPanel = ({ summoner, ranked, matches }: PlayerMainPanelProps) => {
 
-  console.log(ranked);
-  
-
- 
-  
-
   // --- LOGIKA OBLICZENIOWA ---
-  
   const soloRank = ranked?.find((r) => r.queueType === "RANKED_SOLO_5x5");
   const activeRank = soloRank || ranked?.find((r) => r.queueType === "RANKED_FLEX_SR");
-
   let wins = 0;
   let losses = 0;
   let isPlacementStats = false;
@@ -82,7 +74,7 @@ export const PlayerMainPanel = ({ summoner, ranked, matches }: PlayerMainPanelPr
         seasonPrefix={CURRENT_SEASON_PREFIX}
       />
 
-      {/* 3. Ranga */}
+     
       <RankDisplay 
         activeRank={activeRank} 
         totalGames={totalGames} 

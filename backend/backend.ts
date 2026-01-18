@@ -4,6 +4,10 @@ import cors from 'cors';
 import axios from 'axios'; 
 import dotenv from 'dotenv';
 import path from 'path';
+import fs from 'fs'
+import { runOtpScraper } from './otpScraper.ts';
+
+
 
 // --- KONFIGURACJA .ENV ---
 dotenv.config();
@@ -20,7 +24,11 @@ if (!process.env.RIOT_API_KEY) {
 }
 
 const app = express();
+
 const PORT = process.env.PORT || 4000;
+
+
+
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
 
 app.use(cors({ origin: CLIENT_URL }));
@@ -143,6 +151,66 @@ app.get('/api/spectator/:region/:puuid', (req: Request, res: Response) => {
     const url = `https://${platform}.api.riotgames.com/lol/spectator/v5/active-games/by-summoner/${puuid}`;
     fetchRiot(url, res);
 });
+
+// W pliku backend.ts
+
+app.get('/api/otp-build/:championId', (req, res) => {
+  const { championId } = req.params;
+  
+  // Ważne: Odczytujemy plik V4 (ten z danymi dla AI)
+  const dbPath = path.join(__dirname, 'otp_data_v4.json');
+
+  // 1. Sprawdź czy baza istnieje
+  if (!fs.existsSync(dbPath)) {
+    // Jeśli plik nie istnieje, zwracamy 404 (Frontend użyje wtedy standardowych buildów Riotu)
+    return res.status(404).json({ error: "Baza danych jeszcze się nie zbudowała." });
+  }
+
+  try {
+    // 2. Odczytaj i sparsuj plik
+    const dbData = fs.readFileSync(dbPath, 'utf-8');
+    const db = JSON.parse(dbData);
+    
+    // 3. Pobierz dane dla konkretnego championa
+    const entry = db[championId];
+
+    if (entry) {
+      // 4. MAPOWANIE (Tłumaczenie): Backend V4 -> Frontend V1
+      // Wyciągamy to, co interesuje użytkownika "na szybko", reszta czeka w pliku dla AI.
+      
+      const responseData = {
+        playerName: entry.player.name,
+        playerRank: entry.player.rank,
+        items: entry.build.items,
+        
+        // Statystyki Combat
+        kda: entry.performance.kda,
+        csPerMin: entry.performance.csPerMinute,
+        damageDealt: entry.performance.damageDealt,
+        
+        // Kontekst
+        matchupId: entry.matchup.enemyChampionId,
+        
+        // Ponieważ V4 zapisuje snapshot jednego idealnego meczu, ustawiamy winrate symbolicznie
+        // (W przyszłości AI wyliczy prawdziwą szansę na wygraną)
+        wins: 1, 
+        losses: 0,
+
+        // Opcjonalnie: Możemy przesłać dodatkowe dane, jeśli zechcesz je kiedyś wyświetlić
+        visionScore: entry.vision.score,
+        soloKills: entry.earlyGame.soloKills
+      };
+
+      res.json(responseData);
+    } else {
+      res.status(404).json({ error: "Brak danych OTP dla tej postaci" });
+    }
+  } catch (err) {
+    console.error("Błąd odczytu bazy OTP:", err);
+    res.status(500).json({ error: "Wewnętrzny błąd serwera przy odczycie danych." });
+  }
+});
+
 
 app.listen(PORT, () => {
     console.log(`🚀 Backend running on port ${PORT}`);

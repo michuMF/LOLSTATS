@@ -26,7 +26,7 @@ export const fetchRankedData = async (puuid: string, region: string): Promise<Ra
 
   const response = await fetch(`${apiUrl}/api/ranked/${region}/${puuid}`);
 
-  console.log(response);
+ 
   
   if (!response.ok) throw new Error("Failed to fetch ranked data");
 
@@ -35,7 +35,7 @@ export const fetchRankedData = async (puuid: string, region: string): Promise<Ra
   const rawData = await response.json();
   
   const result = RankedDataArraySchema.safeParse(rawData);
-  console.log("📥 Summoner Data received:", rawData);
+  
 
   // 4. Walidacja
   if (!result.success) {
