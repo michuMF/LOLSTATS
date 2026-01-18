@@ -4,6 +4,7 @@ import {HomePage} from "./pages/HomePage";
 
 import { ProfilePage } from "./pages/ProfilPage";
 import LiveGamePage from "./pages/LiveGamePage";
+import ChampionsPage from "./pages/ChampionPage";
 
 
 function App() {
@@ -13,7 +14,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/profile/:region/:gameName/:tagLine" element={<ProfilePage />} />
         
-        {/* ZMIANA: Zamiast :puuid, używamy parametrów czytelnych dla człowieka */}
+        <Route path="/champions" element={<ChampionsPage />} />
         <Route path="/live/:region/:gameName/:tagLine" element={<LiveGamePage />} />
       </Routes>
     </div>

@@ -5,7 +5,7 @@ import axios from 'axios';
 import dotenv from 'dotenv';
 import path from 'path';
 import fs from 'fs'
-import { runOtpScraper } from './otpScraper.ts';
+
 
 
 

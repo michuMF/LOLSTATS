@@ -1,19 +1,12 @@
-import { useEffect, useState, useMemo } from "react";
+// src/LiveGame/ChampionBuilds.tsx
 
-import { FaCrown, FaTrophy, FaUserAstronaut } from "react-icons/fa"; // Upewnij się, że masz react-icons
-import { fetchChampionRecommended } from "../api/fetchChampionRecommended";
+import { useEffect, useState } from "react";
+import { FaCrown, FaUserAstronaut, FaRobot } from "react-icons/fa"; // Ikony źródła
 import { LoadingSpinner } from "../components/ui/LoadingSpinner";
+import { fetchChampionRecommended, type RecommendedBlock } from "../api/fetchChampionRecommended";
+import type { OtpDataset, OtpChampionData } from "../types/otp-types";
 
-// --- TYPY ---
-interface OtpBuildData {
-  playerName: string;
-  playerRank: string;
-  wins?: number;
-  losses?: number;
-  items: number[];
-}
-
-// --- FALLBACK GENERIC SETS (Te co miałeś wcześniej) ---
+// --- FALLBACK GENERIC SETS ---
 const GENERIC_SETS: Record<string, number[]> = {
   ADC_CRIT: [3006, 3031, 3046, 3036, 6672],
   ADC_ONHIT: [3006, 3124, 3091, 3153, 3085],
@@ -21,175 +14,151 @@ const GENERIC_SETS: Record<string, number[]> = {
   MAGE_CONTROL: [3158, 6655, 3116, 4637, 3089],
   AD_ASSASSIN: [3158, 6692, 3142, 6691, 3036],
   AP_ASSASSIN: [3020, 3152, 4645, 3100, 3089],
-  BRUISER_AD: [3111, 3078, 3053, 6333, 3156],
-  BRUISER_AP: [3111, 4633, 3157, 3089, 3135],
-  TANK_ENGAGE: [3047, 3068, 3075, 8001, 3193],
-  TANK_WARDEN: [3158, 3190, 3109, 3110, 3001],
-  ENCHANTER: [3158, 6617, 3107, 2301, 3504],
-  ENGAGE_SUPP: [3117, 3190, 3109, 3050, 3075],
+  BRUISER_AD: [3074, 3053, 3153, 6333, 3026],
+  TANK: [3068, 3075, 3111, 3065, 3001],
+  SUPPORT_ENCHANTER: [3157, 3504, 3174, 6617, 3003],
+  SUPPORT_TANK: [3867, 3190, 3107, 3050, 3001],
 };
 
-const guessRole = (spell1: number, spell2: number): keyof typeof GENERIC_SETS => {
-  const smite = 11;
-  const heal = 7;
-  const exhaust = 3;
-  const ignite = 14;
-  if (spell1 === smite || spell2 === smite) return "BRUISER_AD";
-  if (spell1 === heal || spell2 === heal) return "ADC_CRIT";
-  if (spell1 === exhaust || spell2 === exhaust) return "ENGAGE_SUPP";
-  if (spell1 === ignite || spell2 === ignite) return "MAGE_BURST";
-  return "BRUISER_AD";
-};
-
-// --- KOMPONENT ---
 interface ChampionBuildsProps {
   championId: number;
-  spell1Id: number;
-  spell2Id: number;
+  role?: string; // np. "BOTTOM", "MIDDLE" (opcjonalne)
 }
 
-export const ChampionBuilds = ({ championId, spell1Id, spell2Id }: ChampionBuildsProps) => {
-  const [items, setItems] = useState<number[]>([]);
-  const [sourceType, setSourceType] = useState<"OTP" | "RIOT" | "FALLBACK">("FALLBACK");
-  const [otpInfo, setOtpInfo] = useState<OtpBuildData | null>(null);
-  const [loading, setLoading] = useState(true);
+type SourceType = "OTP" | "RIOT" | "GENERIC";
 
-  const fallbackRole = useMemo(() => guessRole(spell1Id, spell2Id), [spell1Id, spell2Id]);
+export const ChampionBuilds = ({ championId, role }: ChampionBuildsProps) => {
+  const [items, setItems] = useState<number[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [sourceType, setSourceType] = useState<SourceType | null>(null);
+  
+  // Stan dla danych gracza PRO (jeśli źródło to OTP)
+  const [otpPlayerInfo, setOtpPlayerInfo] = useState<OtpChampionData['player'] | null>(null);
 
   useEffect(() => {
-    setLoading(true);
-    setOtpInfo(null);
-    setItems([]);
+    let isMounted = true;
 
-    const loadBuild = async () => {
-      if (!championId) { setLoading(false); return; }
+    const loadBuilds = async () => {
+      setLoading(true);
+      setOtpPlayerInfo(null);
 
-      // 1. PRÓBA OTP (Twój Backend)
       try {
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000';
-        const res = await fetch(`${apiUrl}/api/otp-build/${championId}`);
-        
-        if (res.ok) {
-          const data = await res.json();
-          if (data.items && data.items.length >= 3) {
-            setItems(data.items);
-            setOtpInfo(data);
-            setSourceType("OTP");
-            setLoading(false);
-            return; // Sukces! Kończymy.
-          }
+        // --- 1. PRÓBA: Dane OTP (Lokalny plik JSON) ---
+        // Dynamiczny import - ładuje duży plik JSON tylko wtedy, gdy ten komponent jest renderowany
+        try {
+            // UWAGA: Upewnij się, że plik jest w src/data/
+            const otpModule = await import("../data/otp_data_v4.json"); 
+            const otpData = otpModule.default as unknown as OtpDataset;
+            const champData = otpData[championId.toString()];
+
+            if (champData && champData.build?.items?.length > 0) {
+                if (isMounted) {
+                    // Bierzemy 6 przedmiotów
+                    setItems(champData.build.items.slice(0, 6));
+                    setOtpPlayerInfo(champData.player);
+                    setSourceType("OTP");
+                    setLoading(false);
+                }
+                return; // Sukces, kończymy
+            }
+        } catch (err) {
+            console.warn("Nie udało się załadować danych OTP:", err);
+            // Nie przerywamy, idziemy do kroku 2
         }
-      } catch (e) {
-        console.warn("Brak danych OTP, fallback...");
+
+        // --- 2. PRÓBA: API Riot / CommunityDragon ---
+        const riotData: RecommendedBlock[] = await fetchChampionRecommended(championId);
+        
+        // Szukamy bloku, który NIE jest startowy (chcemy core build)
+        // Prosta heurystyka: szukamy bloku, który ma najwięcej itemów albo specyficzne nazwy
+        const coreBlock = riotData.find(b => 
+            !b.title.toLowerCase().includes("starter") && 
+            !b.title.toLowerCase().includes("consumable") &&
+            b.itemIds.length >= 3
+        );
+
+        if (coreBlock && coreBlock.itemIds.length > 0) {
+            if (isMounted) {
+                setItems(coreBlock.itemIds.slice(0, 6));
+                setSourceType("RIOT");
+                setLoading(false);
+            }
+            return;
+        }
+
+      } catch (error) {
+        console.error("Błąd pobierania buildów:", error);
       }
 
-      // 2. PRÓBA RIOT (CommunityDragon)
-      try {
-        const riotData = await fetchChampionRecommended(championId);
-        const validBlock = riotData.find(b => {
-             const t = b.title.toLowerCase(); 
-             return !t.includes("starter") && !t.includes("consumable");
-        });
+      // --- 3. FALLBACK: Zestawy generyczne ---
+      // Proste mapowanie roli na klucz generic set
+      let fallbackKey = "BRUISER_AD"; // Domyślny
+      if (role) {
+          if (role === "BOTTOM" || role === "ADC") fallbackKey = "ADC_CRIT";
+          else if (role === "MIDDLE") fallbackKey = "MAGE_BURST";
+          else if (role === "UTILITY" || role === "SUPPORT") fallbackKey = "SUPPORT_ENCHANTER";
+          else if (role === "JUNGLE") fallbackKey = "BRUISER_AD";
+          else if (role === "TOP") fallbackKey = "BRUISER_AD";
+      }
 
-        if (validBlock && validBlock.itemIds.length > 0) {
-          setItems(validBlock.itemIds.slice(0, 6));
-          setSourceType("RIOT");
-          setLoading(false);
-          return;
-        }
-      } catch (e) {}
-
-      // 3. FALLBACK (Generic)
-      setItems(GENERIC_SETS[fallbackRole] || GENERIC_SETS["BRUISER_AD"]);
-      setSourceType("FALLBACK");
-      setLoading(false);
+      if (isMounted) {
+        setItems(GENERIC_SETS[fallbackKey] || GENERIC_SETS["BRUISER_AD"]);
+        setSourceType("GENERIC");
+        setLoading(false);
+      }
     };
 
-    loadBuild();
-  }, [championId, fallbackRole]);
+    loadBuilds();
 
-  if (loading) return <div className="py-4 flex justify-center"><LoadingSpinner /></div>;
+    return () => {
+      isMounted = false;
+    };
+  }, [championId, role]);
 
-  // Obliczanie Winrate gracza (jeśli dostępne)
-  const winrate = otpInfo?.wins && otpInfo?.losses 
-    ? Math.round((otpInfo.wins / (otpInfo.wins + otpInfo.losses)) * 100) 
-    : null;
+  if (loading) return <LoadingSpinner />;
 
   return (
-    <div className={`p-5 rounded-xl border mt-4 animate-fadeIn relative overflow-hidden transition-all ${
-        sourceType === "OTP" 
-            ? "bg-gradient-to-br from-slate-900 to-slate-800 border-yellow-500/40 shadow-xl shadow-yellow-900/10" 
-            : "bg-slate-800/50 border-slate-700"
-    }`}>
-      
-      {/* Tło ozdobne dla OTP */}
-      {sourceType === "OTP" && (
-          <div className="absolute -top-6 -right-6 text-yellow-500/5 rotate-12 pointer-events-none">
-              <FaCrown size={140} />
-          </div>
-      )}
-
-      {/* HEADER */}
-      <div className="flex justify-between items-start mb-4 relative z-10">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-                {sourceType === "OTP" && <FaCrown className="text-yellow-400" />}
-                <h3 className={`font-bold text-sm uppercase tracking-wider ${
-                    sourceType === "OTP" ? "text-yellow-400" : "text-slate-300"
-                }`}>
-                    {sourceType === "OTP" ? "Challenger Build" : "Recommended Build"}
-                </h3>
+    <div className="bg-black/40 p-4 rounded-lg border border-white/10 backdrop-blur-sm">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-bold text-white flex items-center gap-2">
+          {sourceType === "OTP" && <FaCrown className="text-yellow-400" />}
+          {sourceType === "RIOT" && <FaUserAstronaut className="text-blue-400" />}
+          {sourceType === "GENERIC" && <FaRobot className="text-gray-400" />}
+          
+          {sourceType === "OTP" ? "Pro Build (OTP)" : "Rekomendowane"}
+        </h3>
+        
+        {/* Wyświetlanie informacji o graczu OTP */}
+        {sourceType === "OTP" && otpPlayerInfo && (
+            <div className="text-xs text-right">
+                <div className="text-yellow-200 font-semibold">{otpPlayerInfo.name}</div>
+                <div className="text-white/60">{otpPlayerInfo.rank}</div>
             </div>
-            
-            {/* Informacje o graczu (tylko dla OTP) */}
-            {sourceType === "OTP" && otpInfo && (
-                <div className="flex flex-col gap-1">
-                    <div className="flex items-center gap-2 text-xs text-slate-300">
-                        <FaUserAstronaut className="text-slate-400"/>
-                        <span className="font-bold text-white">{otpInfo.playerName}</span>
-                        <span className="px-1.5 py-0.5 bg-yellow-500/20 text-yellow-400 rounded text-[10px] border border-yellow-500/30">
-                            {otpInfo.playerRank}
-                        </span>
-                    </div>
-                    {winrate && (
-                        <div className="text-[10px] text-slate-400 flex items-center gap-2">
-                           <FaTrophy className="text-yellow-600"/> 
-                           <span>Winrate: <span className={winrate > 55 ? "text-green-400" : "text-slate-300"}>{winrate}%</span> 
-                           <span className="opacity-50 mx-1">({otpInfo.wins}W / {otpInfo.losses}L)</span></span>
-                        </div>
-                    )}
-                </div>
-            )}
-          </div>
+        )}
       </div>
-      
-      {/* LISTA ITEMÓW */}
-      <div className="flex flex-wrap gap-3 relative z-10">
+
+      <div className="flex gap-2 justify-center flex-wrap">
         {items.map((itemId, idx) => (
-            <div key={`${itemId}-${idx}`} className="group relative">
-                <img 
-                    src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/item/${itemId}.png`}
-                    alt={`Item ${itemId}`}
-                    className={`w-12 h-12 rounded-lg border-2 transition-all cursor-help ${
-                        sourceType === "OTP" 
-                            ? 'border-yellow-900/50 group-hover:border-yellow-400 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-yellow-500/20' 
-                            : 'border-slate-600 group-hover:border-slate-400'
-                    }`}
-                    onError={(e) => (e.currentTarget.style.display = 'none')}
-                />
-                {/* Kolejność zakupu (indeks + 1) */}
-                <span className="absolute -bottom-2 -right-2 w-5 h-5 bg-slate-900 border border-slate-600 rounded-full text-[10px] flex items-center justify-center text-slate-400">
-                    {idx + 1}
-                </span>
-            </div>
+          <div key={`${itemId}-${idx}`} className="relative group">
+            <img
+              src={`https://ddragon.leagueoflegends.com/cdn/14.24.1/img/item/${itemId}.png`} // Warto zaktualizować wersję patcha dynamicznie
+              alt={`Item ${itemId}`}
+              className="w-12 h-12 rounded border border-white/20 hover:border-yellow-400 transition-colors"
+              onError={(e) => {
+                // Obsługa błędu obrazka (np. stary ID)
+                (e.target as HTMLImageElement).style.display = 'none';
+              }}
+            />
+            {/* Tooltip on hover logic could go here */}
+          </div>
         ))}
       </div>
       
-      {/* STOPKA */}
-      <div className="mt-4 pt-3 border-t border-white/5 flex justify-between items-center text-[10px] text-slate-500">
-        <span>Based on: {sourceType === "OTP" ? "High Elo Analysis" : sourceType === "RIOT" ? "Official Data" : "Standard Meta"}</span>
-        {sourceType === "OTP" && <span className="text-yellow-600/50 uppercase font-bold tracking-widest">Premium Data</span>}
-      </div>
+      {sourceType === "GENERIC" && (
+          <p className="text-center text-xs text-gray-500 mt-2">Brak danych specyficznych, wyświetlam standardowy zestaw.</p>
+      )}
     </div>
   );
 };
+
+export default ChampionBuilds;
