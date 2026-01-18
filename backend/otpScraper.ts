@@ -4,210 +4,254 @@ import path from 'path';
 import fs from 'fs';
 import dotenv from 'dotenv';
 
-// --- 1. KONFIGURACJA ŚRODOWISKA ---
+// --- KONFIGURACJA ---
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-// Próbujemy załadować .env z katalogu backend
 const envPath = path.resolve(__dirname, '.env');
 dotenv.config({ path: envPath });
 
-// --- 2. USTAWIENIA GŁÓWNE ---
 const API_KEY = process.env.RIOT_API_KEY;
-
-// WAŻNE: Upewnij się, że Twój klucz obsługuje ten region.
-// Jeśli masz klucz EUNE, a ustawisz tu euw1, dostaniesz błąd 403.
+// Pamiętaj: Link z błędu sugeruje region EUW lub EUNE. Ustaw właściwy dla swojego klucza.
 const REGION_ID = "euw1";      
 const REGION_ROUTING = "europe"; 
 
-// Ścieżki do plików
 const WEBSITE_DB_PATH = path.join(__dirname, 'otp_data_v4.json');
 const AI_DATASET_PATH = path.join(__dirname, 'ai_dataset_raw.jsonl');
 
-// Konfiguracja skanowania
 const TIERS_TO_SCAN = ["CHALLENGER", "GRANDMASTER", "MASTER"];
-const MAX_PAGES_PER_TIER = 2; // Ile stron pobierać z każdej dywizji (1 strona = ok 200 graczy)
+const MAX_PAGES_PER_TIER = 5; // Zwiększamy zasięg
 
-// --- 3. FUNKCJE POMOCNICZE (HELPERY) ---
+// --- HELPERY ---
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
 const fetchJson = async (url: string) => {
-  const headers = { 
-      "X-Riot-Token": API_KEY || "",
-      "User-Agent": "Mozilla/5.0 (Node.js) LOLStats/1.0"
-  };
-
+  const headers = { "X-Riot-Token": API_KEY || "" };
   try {
       const res = await fetch(url, { headers });
-
-      // OBSŁUGA BŁĘDÓW (DEBUGOWANIE)
       if (res.status === 403) {
-          console.error(`\n⛔ BŁĄD 403 (Forbidden) na URL: ${url}`);
-          console.error(`   -> Twój klucz API nie działa na regionie ${REGION_ID} lub wygasł.`);
-          console.error(`   -> Spróbuj zmienić REGION_ID na 'eun1' w kodzie.`);
-          throw new Error("API Key Error");
-      }
-      if (res.status === 404) {
-          // 404 jest OK tylko jeśli po prostu nie ma danych, ale warto to zalogować w trybie debug
-          // console.warn(`   -> Info: Brak danych pod adresem (404).`);
-          return null;
+        // Rzucamy specyficzny błąd, żeby go obsłużyć wyżej
+        throw new Error("403_FORBIDDEN"); 
       }
       if (res.status === 429) {
-          console.warn("⏳ Limit API (429)! Czekam 10 sekund...");
+          console.warn("⏳ Limit API! Czekam 10s...");
           await delay(10000);
-          return fetchJson(url); // Retry
+          return fetchJson(url);
       }
-      if (!res.ok) {
-          console.error(`❌ BŁĄD HTTP ${res.status}: ${url}`);
-          return null;
-      }
-
+      if (!res.ok) return null;
       return res.json();
   } catch (e: any) { 
-      // Jeśli to nasz rzucony błąd, ignorujemy logowanie (już zalogowane wyżej)
-      if (e.message !== "API Key Error") {
-          console.error(`❌ Błąd połączenia (Fetch Error): ${e.message}`);
-      }
+      if (e.message === "403_FORBIDDEN") throw e; // Przekazujemy krytyczny błąd dalej
       return null; 
   }
 };
 
-// Typy danych (Uproszczone dla czytelności kodu, ale zachowujące strukturę)
-type OtpBuildFull = any; 
+let websiteDatabase: Record<number, any> = {};
 
-let websiteDatabase: Record<number, OtpBuildFull> = {};
-
-// --- 4. GŁÓWNA LOGIKA ---
 export const runOtpScraper = async () => {
-  console.log(`👑 Start Scrapera V5.1 (Debug Mode)...`);
-  console.log(`🌍 Region: ${REGION_ID} | Routing: ${REGION_ROUTING}`);
+  console.log(`🌌 Start Scrapera V6 (Black Hole Edition)...`);
   
-  if (!API_KEY) {
-      console.error("❌ KRYTYCZNY BŁĄD: Nie znaleziono VITE_API_KEY w pliku .env!");
-      console.error("   Upewnij się, że plik .env jest w folderze backend.");
-      return;
-  }
-  
-  // Ładowanie bazy
+  // Ładowanie bazy WWW (żeby nie tracić Challengerów)
   if (fs.existsSync(WEBSITE_DB_PATH)) {
-      try { 
-          websiteDatabase = JSON.parse(fs.readFileSync(WEBSITE_DB_PATH, 'utf-8')); 
-          console.log(`✅ Załadowano obecną bazę: ${Object.keys(websiteDatabase).length} postaci.`);
-      } catch(e) {}
+      try { websiteDatabase = JSON.parse(fs.readFileSync(WEBSITE_DB_PATH, 'utf-8')); } catch(e) {}
   }
 
   try {
-    // PĘTLA PO DYWIZJACH
     for (const tier of TIERS_TO_SCAN) {
         console.log(`\n🛡️ --- SKANOWANIE: ${tier} ---`);
         
         for (let page = 1; page <= MAX_PAGES_PER_TIER; page++) {
-            const url = `https://${REGION_ID}.api.riotgames.com/lol/league-exp/v4/entries/RANKED_SOLO_5x5/${tier}/I?page=${page}`;
-            console.log(`📄 Pobieranie strony ${page}...`);
-            
-            const players = await fetchJson(url);
+            const players = await fetchJson(`https://${REGION_ID}.api.riotgames.com/lol/league-exp/v4/entries/RANKED_SOLO_5x5/${tier}/I?page=${page}`);
 
-            // Jeśli fetch zwrócił null (błąd) lub pustą tablicę
             if (!players || players.length === 0) {
-                console.log(`   -> Brak graczy lub błąd API dla ${tier}. Przerywam tę dywizję.`);
+                console.log(` -> Brak graczy w ${tier} (strona ${page}).`);
                 break;
             }
 
-            // Sortujemy po LP
             players.sort((a: any, b: any) => b.leaguePoints - a.leaguePoints);
-            console.log(`🔥 Znaleziono ${players.length} graczy. Analizuję...`);
+            console.log(`🔥 Znaleziono ${players.length} graczy. Pobieram dane...`);
 
             let counter = 0;
             for (const player of players) {
                 counter++;
-                const puuid = player.puuid;
+                // ZABEZPIECZENIE PRZED CRASHEM: Cała logika gracza w try-catch
+                try {
+                    const puuid = player.puuid;
+                    process.stdout.write(`\r   [${tier} ${page}] ${counter}/${players.length}: ${player.summonerName || "Unknown"}`);
 
-                // Status w jednej linii
-                process.stdout.write(`\r   [${tier} ${page}] ${counter}/${players.length}: ${player.summonerName || "Unknown"}`);
+                    // 1. Mastery
+                    const mastery = await fetchJson(`https://${REGION_ID}.api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-puuid/${puuid}/top?count=1`);
+                    if (!mastery || mastery.length === 0) continue;
 
-                // A. Mastery
-                const mastery = await fetchJson(`https://${REGION_ID}.api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-puuid/${puuid}/top?count=1`);
-                if (!mastery || mastery.length === 0) continue;
+                    const mainId = mastery[0].championId;
+                    const pts = mastery[0].championPoints;
+                    const minPts = tier === "CHALLENGER" ? 30000 : 45000;
 
-                const mainId = mastery[0].championId;
-                const pts = mastery[0].championPoints;
-                const minPts = tier === "CHALLENGER" ? 30000 : 50000;
+                    if (pts < minPts) continue;
 
-                if (pts < minPts) continue;
+                    // 2. Historia
+                    const history = await fetchJson(`https://${REGION_ROUTING}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?queue=420&start=0&count=10`);
+                    if (!history) continue;
 
-                // Sprawdzamy czy mamy już lepszy build
-                const currentDbEntry = websiteDatabase[mainId];
-                // Jeśli mamy challengera, a skanujemy mastera -> nie nadpisujemy (chyba że nie mamy nic)
-                const isBetterRank = !currentDbEntry || (tier === "CHALLENGER" && !currentDbEntry.player.rank.includes("Challenger"));
-                
-                // Optymalizacja: Pomiń pobieranie historii, jeśli już mamy Challengera i nie zależy nam na AI Dataset
-                if (!isBetterRank && currentDbEntry) {
-                   // continue; // Odkomentuj, żeby przyspieszyć (pominie Masterów jeśli mamy Challengera)
-                }
+                    for (const matchId of history) {
+                        const match = await fetchJson(`https://${REGION_ROUTING}.api.riotgames.com/lol/match/v5/matches/${matchId}`);
+                        if (!match) continue;
 
-                // B. Historia
-                const history = await fetchJson(`https://${REGION_ROUTING}.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?queue=420&start=0&count=10`);
-                if (!history) continue;
-
-                for (const matchId of history) {
-                    const match = await fetchJson(`https://${REGION_ROUTING}.api.riotgames.com/lol/match/v5/matches/${matchId}`);
-                    if (!match) continue;
-
-                    const p = match.info.participants.find((x: any) => x.puuid === puuid);
-                    
-                    // KRYTERIA DOBREGO BUILDU
-                    const kda = (p.kills + p.assists) / (p.deaths || 1);
-                    if (p && p.championId === mainId && p.win && match.info.gameDuration > 1100 && kda > 2.5) {
+                        // FIX BŁĘDU "UNDEFINED": Znajdź gracza bezpiecznie
+                        const p = match.info.participants.find((x: any) => x.puuid === puuid);
                         
-                        const items = [p.item0, p.item1, p.item2, p.item3, p.item4, p.item5].filter(i => i !== 0);
-                        if (items.length < 3) continue;
+                        // JEŚLI NIE MA GRACZA W DANYCH MECZU -> POMIŃ
+                        if (!p) continue; 
 
-                        const enemy = match.info.participants.find((e: any) => e.teamId !== p.teamId && e.teamPosition === p.teamPosition);
-                        const chall = p.challenges || {};
-                        
-                        const dataEntry = {
-                            meta: { championId: mainId, patch: match.info.gameVersion, tier: tier },
-                            player: { name: p.riotIdGameName || player.summonerName, rank: `${tier} ${player.leaguePoints}LP`, teamPosition: p.teamPosition, win: p.win },
-                            performance: { 
-                                kda: `${p.kills}/${p.deaths}/${p.assists}`, 
-                                csPerMinute: Number(((p.totalMinionsKilled + p.neutralMinionsKilled) / (match.info.gameDuration / 60)).toFixed(1)),
-                                damageDealt: p.totalDamageDealtToChampions
-                            },
-                            // Reszta pól zgodna z V4
-                            combatType: {
-                                physicalDmgPct: Number((p.physicalDamageDealtToChampions / p.totalDamageDealtToChampions).toFixed(2)),
-                                magicDmgPct: Number((p.magicDamageDealtToChampions / p.totalDamageDealtToChampions).toFixed(2)),
-                                trueDmgPct: Number((p.trueDamageDealtToChampions / p.totalDamageDealtToChampions).toFixed(2))
-                            },
-                            build: { items: items, spells: [p.summoner1Id, p.summoner2Id], runes: { primaryStyle: p.perks.styles[0].style, subStyle: p.perks.styles[1].style } },
-                            matchup: { enemyChampionId: enemy ? enemy.championId : -1 },
-                            earlyGame: { soloKills: chall.soloKills || 0 },
-                            vision: { score: p.visionScore }
-                        };
+                        const kda = (p.kills + p.assists) / (p.deaths || 1);
 
-                        // 1. ZAPIS DO PLIKU AI (Append)
-                        fs.appendFileSync(AI_DATASET_PATH, JSON.stringify(dataEntry) + '\n');
+                        // Kryteria jakości pod AI
+                        if (p.championId === mainId && p.win && match.info.gameDuration > 1000 && kda > 2.0) {
+                            
+                            const items = [p.item0, p.item1, p.item2, p.item3, p.item4, p.item5].filter((i: number) => i !== 0);
+                            if (items.length < 3) continue;
 
-                        // 2. AKTUALIZACJA WWW (Overwrite)
-                        if (isBetterRank) {
-                            websiteDatabase[mainId] = dataEntry;
-                            // Czyścimy linię konsoli i wypisujemy sukces
-                            process.stdout.write(`\r✅ UPDATE: ${p.riotIdGameName} (${tier}) -> Champ ${mainId}      \n`);
-                            fs.writeFileSync(WEBSITE_DB_PATH, JSON.stringify(websiteDatabase, null, 2));
+                            const enemy = match.info.participants.find((e: any) => e.teamId !== p.teamId && e.teamPosition === p.teamPosition);
+                            
+                            // --- EKSTRAKCJA WSZYSTKIEGO (FULL DATA) ---
+                            const fullDataEntry = {
+                                meta: { 
+                                    matchId: matchId,
+                                    championId: mainId, 
+                                    patch: match.info.gameVersion, 
+                                    tier: tier,
+                                    duration: match.info.gameDuration
+                                },
+                                player: { 
+                                    name: p.riotIdGameName || player.summonerName, 
+                                    rank: `${tier} ${player.leaguePoints}LP`, 
+                                    position: p.teamPosition, 
+                                    win: p.win 
+                                },
+                                // Podstawy
+                                performance: { 
+                                    kda: `${p.kills}/${p.deaths}/${p.assists}`, 
+                                    kdaRatio: Number(kda.toFixed(2)),
+                                    csPerMin: Number(((p.totalMinionsKilled + p.neutralMinionsKilled) / (match.info.gameDuration / 60)).toFixed(2)),
+                                    goldPerMin: Number((p.goldEarned / (match.info.gameDuration / 60)).toFixed(2)),
+                                    damageDealt: p.totalDamageDealtToChampions,
+                                    damageTaken: p.totalDamageTaken,
+                                    healing: p.totalHeal,
+                                    shields: p.totalDamageShieldedOnTeammates
+                                },
+                                // Szczegółowe Combat
+                                combatDetails: {
+                                    soloKills: p.challenges?.soloKills || 0,
+                                    multikills: p.largestMultiKill,
+                                    killingSprees: p.killingSprees,
+                                    skillshotsDodged: p.challenges?.skillshotsDodged || 0,
+                                    skillshotsHit: p.challenges?.skillshotsHit || 0,
+                                    damageSelfMitigated: p.damageSelfMitigated,
+                                    timeCCingOthers: p.timeCCingOthers
+                                },
+                                // Agresja / Skille (Ważne dla AI - styl gry)
+                                spellCasting: {
+                                    q: p.spell1Casts,
+                                    w: p.spell2Casts,
+                                    e: p.spell3Casts,
+                                    r: p.spell4Casts,
+                                    summ1: p.summoner1Casts,
+                                    summ2: p.summoner2Casts
+                                },
+                                // Komunikacja (Pingi) - czy toksyczny? czy lider?
+                                behavior: {
+                                    allInPings: p.allInPings,
+                                    assistPings: p.assistPings,
+                                    commandPings: p.commandPings,
+                                    enemyMissingPings: p.enemyMissingPings,
+                                    dangerPings: p.dangerPings,
+                                    visionPings: p.visionPings,
+                                    pushPings: p.pushPings
+                                },
+                                // Objectives & Turrets
+                                objectives: {
+                                    turretPlates: p.challenges?.turretPlatesTaken || 0,
+                                    turretsDestroyed: p.turretKills,
+                                    inhibitorsDestroyed: p.inhibitorKills,
+                                    damageToTurrets: p.damageDealtToTurrets,
+                                    damageToObjectives: p.damageDealtToObjectives,
+                                    dragonKills: p.dragonKills || 0,
+                                    baronKills: p.baronKills || 0,
+                                    scuttleCrabKills: p.challenges?.scuttleCrabKills || 0
+                                },
+                                // Vision
+                                vision: { 
+                                    score: p.visionScore,
+                                    wardsPlaced: p.wardsPlaced,
+                                    wardsKilled: p.wardsKilled,
+                                    controlWardsBought: p.visionWardsBoughtInGame
+                                },
+                                // Build
+                                build: { 
+                                    items: items, 
+                                    spells: [p.summoner1Id, p.summoner2Id], 
+                                    runes: { 
+                                        primaryStyle: p.perks.styles[0].style, 
+                                        primarySelections: p.perks.styles[0].selections.map((s:any) => s.perk),
+                                        subStyle: p.perks.styles[1].style,
+                                        subSelections: p.perks.styles[1].selections.map((s:any) => s.perk)
+                                    } 
+                                },
+                                // Early Game (Laning Phase)
+                                earlyGame: {
+                                    goldDiff10: p.challenges?.goldDiffAt15 || 0, // API często ma tylko at 15
+                                    xpDiff10: p.challenges?.xpDiffAt15 || 0,
+                                    csDiff10: p.challenges?.csDiffAt15 || 0,
+                                    firstBloodKill: p.firstBloodKill,
+                                    firstBloodAssist: p.firstBloodAssist,
+                                    laneMinionsFirst10min: p.challenges?.laneMinionsFirst10Minutes || 0
+                                },
+                                // Kontekst
+                                matchup: { 
+                                    enemyChampionId: enemy ? enemy.championId : -1,
+                                    enemyKdaRatio: enemy ? Number(((enemy.kills + enemy.assists) / (enemy.deaths || 1)).toFixed(2)) : 0
+                                },
+                                // FULL DUMP (Dla pewności wrzucamy cały obiekt challenges, gdybyśmy o czymś zapomnieli)
+                                rawChallenges: p.challenges 
+                            };
+
+                            // ZAPIS AI (Append)
+                            fs.appendFileSync(AI_DATASET_PATH, JSON.stringify(fullDataEntry) + '\n');
+
+                            // ZAPIS WWW (Overwrite jeśli lepsza ranga)
+                            // Jeśli mamy Challengera w bazie, a skanujemy Mastera -> nie nadpisuj WWW
+                            const currentDbEntry = websiteDatabase[mainId];
+                            const isBetter = !currentDbEntry || (tier === "CHALLENGER" && !currentDbEntry.player.rank.includes("Challenger"));
+
+                            if (isBetter) {
+                                websiteDatabase[mainId] = fullDataEntry;
+                                process.stdout.write(`\r✅ WWW UPDATE: ${p.riotIdGameName} (${tier}) -> Champ ${mainId}      \n`);
+                                fs.writeFileSync(WEBSITE_DB_PATH, JSON.stringify(websiteDatabase, null, 2));
+                            }
+                            
+                            break; // Znaleziono mecz, next player
                         }
-                        
-                        break; // Mamy mecz, lecimy do następnego gracza
                     }
+                } catch (playerError) {
+                    // CICHY BŁĄD GRACZA: Jeśli ten konkretny gracz wywali błąd, logujemy i lecimy dalej
+                    // Nie przerywamy pętli głównej!
+                    // console.error(` -> Błąd przy graczu: ${playerError}`); 
                 }
-                await delay(50); // Delay między graczami
+                
+                await delay(50);
             }
         }
     }
-    console.log(`\n🎉 Skanowanie zakończone!`);
+    console.log(`\n🎉 Skanowanie zakończone! Twoja baza AI jest teraz ogromna.`);
 
-  } catch (err) { console.error("\n❌ Błąd główny:", err); }
+  } catch (err: any) {
+      if (err.message === "403_FORBIDDEN") {
+          console.error("\n⛔ CRITICAL 403: Twój klucz API nie pasuje do regionu (Sprawdź euw1 vs eun1)!");
+      } else {
+          console.error("\n❌ Błąd główny:", err);
+      }
+  }
 };
 
-// Autostart przy wywołaniu bezpośrednim
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
     runOtpScraper();
 }
