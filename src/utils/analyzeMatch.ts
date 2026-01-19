@@ -1,5 +1,7 @@
 // src/utils/analyzeMatch.ts
-import type { ParticipantType } from "../types/types";
+
+import type { ParticipantType } from "../api/fetchMatchDetails";
+
 
 interface AnalysisResult {
   totalScore: number;

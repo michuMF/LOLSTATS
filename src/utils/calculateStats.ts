@@ -1,6 +1,8 @@
 // src/utils/calculateStats.ts
 
-import type { MatchDTO, ParticipantType } from "../types/types";
+import type { MatchDetailsType, ParticipantType } from "../api/fetchMatchDetails";
+
+
 
 
 export interface ChampionStats {
@@ -22,7 +24,7 @@ export interface PlayerSummaryStats {
   preferredRole: string;
 }
 
-export const calculatePlayerStats = (matches: MatchDTO[], puuid: string): PlayerSummaryStats => {
+export const calculatePlayerStats = (matches: MatchDetailsType[], puuid: string): PlayerSummaryStats => {
   let totalWins = 0;
   let totalKills = 0;
   let totalDeaths = 0;

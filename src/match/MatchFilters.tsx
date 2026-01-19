@@ -1,6 +1,7 @@
 // src/match/MatchFilters.tsx
 import { useMemo } from "react";
-import type { MatchDetailsType } from "../types/types";
+import type { MatchDetailsType } from "../api/fetchMatchDetails";
+
 
 interface MatchFiltersProps {
   matches: MatchDetailsType[] | undefined;

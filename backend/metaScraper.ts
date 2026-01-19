@@ -30,8 +30,8 @@ const PLATFORM = "eun1";
 // Możesz tu dodać: 'IRON', 'BRONZE', 'SILVER', 'GOLD', 'PLATINUM', 'EMERALD', 'DIAMOND', 'MASTER', 'GRANDMASTER', 'CHALLENGER'
 const TIERS_TO_SCRAPE = ['IRON', 'BRONZE', 'SILVER', 'GOLD', 'PLATINUM', 'EMERALD', 'DIAMOND', 'MASTER', 'GRANDMASTER', 'CHALLENGER']; 
 // Ile graczy z każdej ligi bierzemy? (Zalecane małe liczby na start)
-const PLAYERS_PER_TIER = 50; 
-const MATCHES_PER_PLAYER = 20;
+const PLAYERS_PER_TIER = 200; 
+const MATCHES_PER_PLAYER = 50;
 
 // --- TYPY ---
 interface ItemStat { picks: number; wins: number; }

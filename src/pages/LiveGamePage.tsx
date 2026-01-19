@@ -10,6 +10,7 @@ import { getQueueName } from "../utils/mappers";
 import { type MatchDetailsType } from "../api/fetchMatchDetails"; // Potrzebny typ do cache
 import { PlayerDetailModal } from "../LiveGame/PlayerDetailModal";
 
+
 // ... (getMapName, ParticipantRow, BannedChamp - bez zmian, skopiuj ze starego pliku lub zostaw jak są) ...
 
 // Kopiujemy pomocnicze komponenty żeby plik był kompletny:

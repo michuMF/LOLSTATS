@@ -49,7 +49,8 @@ export const MatchCard = ({ match, puuid, isExpanded, onToggle }: MatchCardProps
         <div className="w-full sm:w-32 flex flex-row sm:flex-col justify-between sm:justify-center items-center sm:items-start text-xs text-slate-500">
           <div className="text-left mb-1">
             <p className="font-bold text-slate-700 text-sm">{getQueueName(match.info.queueId)}</p>
-            <p>{new Date(match.info.gameEndTimestamp).toLocaleDateString()}</p>
+           {/* Używamy operatora ?? (Nullish Coalescing), aby w razie braku gameEndTimestamp użyć gameStartTimestamp */}
+            <p>{new Date(match.info.gameEndTimestamp ?? match.info.gameStartTimestamp).toLocaleDateString()}</p>
           </div>
           <div className="text-right sm:text-left">
              <span className={`font-bold px-2 py-0.5 rounded text-xs ${badgeBg}`}>

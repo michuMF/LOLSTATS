@@ -1,5 +1,5 @@
 // src/pages/HomePage.tsx
-import { useState } from "react";
+
 import { Link } from "react-router-dom";
 import { FaSearch, FaTrophy, FaArrowRight } from "react-icons/fa";
 import { SearchBar } from "../SearchBar/SearchBar";
