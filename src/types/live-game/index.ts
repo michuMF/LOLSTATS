@@ -1,43 +1,49 @@
- // Reużywamy typu Run z folderu match
+// src/types/live-game/index.ts
+import { z } from "zod";
 
-import type { PerksType } from "../match";
+import { RankedDataSchema } from "../summoner";
 
+// --- Schematy Pomocnicze ---
 
+// Perki mogą w ogóle nie istnieć (dla botów)
+export const PerksSchema = z.object({
+  perkIds: z.array(z.number()).optional(),
+  perkStyle: z.number().optional(),
+  perkSubStyle: z.number().optional(),
+}).optional().nullable(); // .nullable() ważne, bo API czasem zwraca null
 
-export interface BannedChampion {
-  championId: number;
-  teamId: number;
-  pickTurn: number;
-}
+export const LiveParticipantSchema = z.object({
+  teamId: z.number(),
+  spell1Id: z.number().optional().default(0),
+  spell2Id: z.number().optional().default(0),
+  championId: z.number(),
+  profileIconId: z.number().optional().default(29),
+  summonerName: z.string().optional(),
+  riotId: z.string().optional(),
+  puuid: z.string().optional(),
+  summonerId: z.string().optional(), // <--- DODAJEMY TO (Ważne!)
+  bot: z.boolean().optional().default(false),
+  perks: PerksSchema,
+}).passthrough();
 
-export interface Observer {
-  encryptionKey: string;
-}
+export const BannedChampionSchema = z.object({
+  championId: z.number(),
+  teamId: z.number(),
+  pickTurn: z.number(),
+});
 
-export interface CurrentGameParticipant {
-  championId: number;
-  perks: PerksType; 
-  profileIconId: number;
-  bot: boolean;
-  teamId: number;
-  summonerName: string;
-  summonerId: string;
-  spell1Id: number;
-  spell2Id: number;
-  riotId: string; 
-  gameCustomizationObjects: any[]; 
-}
+export const LiveGameInfoSchema = z.object({
+  gameId: z.number(),
+  mapId: z.number(),
+  gameMode: z.string(),
+  gameType: z.string(),
+  gameQueueConfigId: z.number().optional().nullable(),
+  participants: z.array(LiveParticipantSchema),
+  bannedChampions: z.array(BannedChampionSchema).default([]),
+  gameStartTime: z.number().default(0),
+  gameLength: z.number().default(0),
+}).passthrough();
 
-export interface LiveGameDTO {
-  gameId: number;
-  mapId: number;
-  gameMode: string;
-  gameType: string;
-  gameQueueConfigId?: number;
-  participants: CurrentGameParticipant[];
-  observers: Observer;
-  platformId: string;
-  bannedChampions: BannedChampion[];
-  gameStartTime: number;
-  gameLength: number;
-}
+export type LiveGameDTO = z.infer<typeof LiveGameInfoSchema>;
+export type LiveParticipantDTO = z.infer<typeof LiveParticipantSchema>;
+export type ParticipantsRanksMap = Record<string, z.infer<typeof RankedDataSchema>[]>;

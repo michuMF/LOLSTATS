@@ -3,8 +3,11 @@ import {HomePage} from "./pages/HomePage";
 
 
 import { ProfilePage } from "./pages/ProfilPage";
-import LiveGamePage from "./pages/LiveGamePage";
-import ChampionsPage from "./pages/ChampionPage";
+
+
+import { LiveGamePage } from "./pages/LiveGamePage";
+import  { MetaAnalysisPage } from "./pages/MetaAnalysisPage";
+
 
 
 function App() {
@@ -14,7 +17,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/profile/:region/:gameName/:tagLine" element={<ProfilePage />} />
         
-        <Route path="/champions" element={<ChampionsPage />} />
+        <Route path="/champions" element={<MetaAnalysisPage />} />
         <Route path="/live/:region/:gameName/:tagLine" element={<LiveGamePage />} />
       </Routes>
     </div>

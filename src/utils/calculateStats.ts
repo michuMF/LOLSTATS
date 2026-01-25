@@ -104,3 +104,20 @@ export const calculatePlayerStats = (matches: MatchDetailsType[], puuid: string)
     preferredRole: bestRole,
   };
 };
+
+
+export const formatDuration = (seconds: number): string => {
+  if (seconds < 0) return "00:00";
+  
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = Math.floor(seconds % 60);
+
+  const mStr = m.toString().padStart(2, '0');
+  const sStr = s.toString().padStart(2, '0');
+
+  if (h > 0) {
+    return `${h}:${mStr}:${sStr}`;
+  }
+  return `${mStr}:${sStr}`;
+};

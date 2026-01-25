@@ -1,15 +1,10 @@
-
-
-// Importujemy nasze nowe komponenty
+// src/Profile/PlayerMainPanel.tsx
 import { PlayerIdentity } from "./FirstBlock/PlayerIdentity";
 import { SeasonStats } from "./FirstBlock/SeasonStats";
 import { RankDisplay } from "./FirstBlock/RankDisplay";
-import type { SummonerProfileInfoType } from "../types";
-import type { RankedDataType } from "../api/fetchRankedData";
+import { useSeasonStats } from "../hooks/useSeasonStats"; // Import hooka
+import type { SummonerProfileInfoType, RankedDataType } from "../types/summoner";
 import type { MatchDetailsType } from "../api/fetchMatchDetails";
-
-// Konfiguracja Sezonu
-const CURRENT_SEASON_PREFIX = "16"; 
 
 interface PlayerMainPanelProps {
   summoner: SummonerProfileInfoType;
@@ -18,68 +13,27 @@ interface PlayerMainPanelProps {
 }
 
 export const PlayerMainPanel = ({ summoner, ranked, matches }: PlayerMainPanelProps) => {
-
-  // --- LOGIKA OBLICZENIOWA ---
-  const soloRank = ranked?.find((r) => r.queueType === "RANKED_SOLO_5x5");
-  const activeRank = soloRank || ranked?.find((r) => r.queueType === "RANKED_FLEX_SR");
-  let wins = 0;
-  let losses = 0;
-  let isPlacementStats = false;
-
-  if (activeRank) {
-    // 1. Mamy rangę -> dane z API ligowego
-    wins = activeRank.wins;
-    losses = activeRank.losses;
-  } else if (matches) {
-    // 2. Brak rangi -> obliczamy z historii dla Sezonu 16
-    isPlacementStats = true;
-    
-    const rankedMatches = matches.filter(m => {
-        const isRankedQueue = m.info.queueId === 420 || m.info.queueId === 440;
-        
-        
-        const isCurrentSeason = m.info.gameVersion?.startsWith(CURRENT_SEASON_PREFIX + ".");
-        return isRankedQueue && isCurrentSeason;
-    });
-
-    rankedMatches.forEach(game => {
-        const participant = game.info.participants.find(p => p.puuid === summoner.puuid);
-        if (participant) {
-            if (participant.win) wins++;
-            else losses++;
-        }
-    });
-  }
-
-  const totalGames = wins + losses;
-  const winRate = totalGames > 0 ? Math.round((wins / totalGames) * 100) : 0;
-  const hasRankedData = !!activeRank || totalGames > 0;
-
-  // --- WIDOK ---
+  // Cała logika zamknięta w jednej linijce
+  const stats = useSeasonStats(summoner.puuid, ranked, matches);
 
   return (
     <div className="w-full flex flex-row items-center justify-between p-6 bg-white rounded-xl shadow-md border border-slate-200">
-      
-      {/* 1. Tożsamość Gracza */}
       <PlayerIdentity summoner={summoner} />
 
-      {/* 2. Statystyki Sezonu */}
       <SeasonStats 
-        wins={wins}
-        losses={losses}
-        winRate={winRate}
-        totalGames={totalGames}
-        isPlacementStats={isPlacementStats}
-        hasRankedData={hasRankedData}
-        seasonPrefix={CURRENT_SEASON_PREFIX}
+        wins={stats.wins}
+        losses={stats.losses}
+        winRate={stats.winRate}
+        totalGames={stats.totalGames}
+        isPlacementStats={stats.isPlacementStats}
+        hasRankedData={stats.hasRankedData}
+        seasonPrefix={stats.seasonPrefix}
       />
 
-     
       <RankDisplay 
-        activeRank={activeRank} 
-        totalGames={totalGames} 
+        activeRank={stats.activeRank} 
+        totalGames={stats.totalGames} 
       />
-      
     </div>
   );
 };

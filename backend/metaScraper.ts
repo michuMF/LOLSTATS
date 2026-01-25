@@ -28,7 +28,7 @@ const PLATFORM = "eun1";
 
 // --- KONFIGURACJA SKRAPOWANIA ---
 // Możesz tu dodać: 'IRON', 'BRONZE', 'SILVER', 'GOLD', 'PLATINUM', 'EMERALD', 'DIAMOND', 'MASTER', 'GRANDMASTER', 'CHALLENGER'
-const TIERS_TO_SCRAPE = ['IRON', 'BRONZE', 'SILVER', 'GOLD', 'PLATINUM', 'EMERALD', 'DIAMOND', 'MASTER', 'GRANDMASTER', 'CHALLENGER']; 
+const TIERS_TO_SCRAPE = [ 'CHALLENGER','GRANDMASTER','MASTER','DIAMOND','PLATINUM' ,'GOLD','SILVER','BRONZE','IRON' ]; 
 // Ile graczy z każdej ligi bierzemy? (Zalecane małe liczby na start)
 const PLAYERS_PER_TIER = 200; 
 const MATCHES_PER_PLAYER = 50;

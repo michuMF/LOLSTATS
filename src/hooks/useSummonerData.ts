@@ -1,10 +1,10 @@
 // src/hooks/useSummonerData.ts
 import { useQuery } from '@tanstack/react-query';
 import { fetchSummonerDetails } from '../api/fetchSummonerDetails';
-import { fetchRankedData } from '../api/fetchRankedData';
 import { fetchMatchHistory } from '../api/fetchMatchHistory';
 import { fetchMatchDetails } from '../api/fetchMatchDetails';
 import type { RiotAccountDTO, SummonerProfileInfoType } from '../types';
+import { useRankedData } from './useRankedData';
 
 
 export const useSummonerData = (gameName: string, tagLine: string, region: string) => {
@@ -35,11 +35,7 @@ export const useSummonerData = (gameName: string, tagLine: string, region: strin
   });
 
   // 3. RANKED DATA 
-  const rankedQuery = useQuery({
-    queryKey: ['ranked', region, puuid],
-    queryFn: () => fetchRankedData(puuid!, region),
-    enabled: !!puuid, 
-  });
+  const rankedQuery = useRankedData(puuid, region);
   
 
   
