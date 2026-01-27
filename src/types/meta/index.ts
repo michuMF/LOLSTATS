@@ -5,10 +5,22 @@ export const ItemStatSchema = z.object({
   wins: z.number(),
 });
 
+export const MarketingStatSchema = z.object({
+  picks: z.number(),
+  wins: z.number(),
+});
+
 export const ChampionMetaSchema = z.object({
-  matchesAnalyzed: z.number(),
-  
+  matchesAnalyzed: z.number().optional(), // Deprecated (V1)
+  matches: z.number().optional(), // V2
+  wins: z.number().optional(), // V2
+
   items: z.record(z.string(), ItemStatSchema), // Key: ItemID, Value: Stats
+  marketing: z.object({
+    keystones: z.record(z.string(), MarketingStatSchema),
+    secondaryTrees: z.record(z.string(), MarketingStatSchema),
+    spells: z.record(z.string(), MarketingStatSchema),
+  }).optional(),
 });
 
 // Np. "CHALLENGER": { "Aatrox": { ... } }

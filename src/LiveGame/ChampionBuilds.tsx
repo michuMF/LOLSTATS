@@ -1,8 +1,11 @@
 // Upewnij się, że ten plik jest w tym samym folderze co PlayerDetailModal!
 import { useEffect, useState, useMemo } from "react";
-import { FaCrown, FaTrophy, FaUserAstronaut } from "react-icons/fa";
+import { FaCrown, FaTrophy, FaUserAstronaut, FaFire } from "react-icons/fa";
 import { fetchChampionRecommended } from "../api/fetchChampionRecommended";
 import { LoadingSpinner } from "../components/ui/LoadingSpinner";
+import { metaDataService } from "../services/metaData";
+import { analyzeMeta } from "../utils/metaAnalysis";
+import type { AnalysisResult } from "../utils/metaAnalysis";
 
 // --- TYPY ---
 interface OtpBuildData {
@@ -42,7 +45,6 @@ const guessRole = (spell1: number, spell2: number): keyof typeof GENERIC_SETS =>
 };
 
 // --- KOMPONENT ---
-// WAŻNE: Tu muszą być zdefiniowane spell1Id i spell2Id
 interface ChampionBuildsProps {
   championId: number;
   spell1Id: number;
@@ -51,8 +53,9 @@ interface ChampionBuildsProps {
 
 export const ChampionBuilds = ({ championId, spell1Id, spell2Id }: ChampionBuildsProps) => {
   const [items, setItems] = useState<number[]>([]);
-  const [sourceType, setSourceType] = useState<"OTP" | "RIOT" | "FALLBACK">("FALLBACK");
+  const [sourceType, setSourceType] = useState<"OTP" | "META" | "RIOT" | "FALLBACK">("FALLBACK");
   const [otpInfo, setOtpInfo] = useState<OtpBuildData | null>(null);
+  const [metaInfo, setMetaInfo] = useState<AnalysisResult | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Używamy useMemo, żeby nie przeliczać roli przy każdym renderze
@@ -62,140 +65,247 @@ export const ChampionBuilds = ({ championId, spell1Id, spell2Id }: ChampionBuild
     let isMounted = true;
     setLoading(true);
     setOtpInfo(null);
+    setMetaInfo(null);
     setItems([]);
 
-    const loadBuild = async () => {
-      if (!championId) { 
-        if(isMounted) setLoading(false); 
-        return; 
-      }
+    // Improved logic with local variables
+    const robustLoad = async () => {
+      let foundItems: number[] = [];
+      let type: "OTP" | "META" | "RIOT" | "FALLBACK" = "FALLBACK";
 
-      // 1. PRÓBA OTP
+      // A. OTP
       try {
         const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000';
         const res = await fetch(`${apiUrl}/api/otp-build/${championId}`);
-        
         if (res.ok) {
           const data = await res.json();
           if (data.items && data.items.length >= 3) {
-            if(isMounted) {
-                setItems(data.items);
-                setOtpInfo(data);
-                setSourceType("OTP");
-                setLoading(false);
+            foundItems = data.items;
+            type = "OTP";
+            if (isMounted) {
+              setOtpInfo(data);
             }
-            return;
           }
         }
-      } catch (e) {
-        // console.warn("Brak danych OTP");
+      } catch { }
+
+      // B. META
+      try {
+        // Zawsze pobieramy metę dla Run i Winrate
+        const metaRaw = await metaDataService.getChampionStats("CHALLENGER", championId);
+        if (metaRaw) {
+          const analysis = analyzeMeta(metaRaw);
+          if (isMounted) setMetaInfo(analysis);
+
+          // Jeśli nie mamy itemów z OTP, bierzemy z Mety
+          if (foundItems.length === 0 && analysis && analysis.coreItems.length > 0) {
+            foundItems = analysis.coreItems.map(i => Number(i.id));
+            type = "META";
+          }
+        }
+      } catch { }
+
+      // C. RIOT
+      if (foundItems.length === 0) {
+        try {
+          const riotData = await fetchChampionRecommended(championId);
+          const validBlock = riotData.find(b => !b.title.toLowerCase().includes("starter"));
+          if (validBlock && validBlock.itemIds.length > 0) {
+            foundItems = validBlock.itemIds.slice(0, 6);
+            type = "RIOT";
+          }
+        } catch { }
       }
 
-      // 2. PRÓBA RIOT
-      try {
-        const riotData = await fetchChampionRecommended(championId);
-        const validBlock = riotData.find(b => {
-             const t = b.title.toLowerCase(); 
-             return !t.includes("starter") && !t.includes("consumable");
-        });
+      // D. FALLBACK
+      if (foundItems.length === 0) {
+        foundItems = GENERIC_SETS[fallbackRole] || GENERIC_SETS["BRUISER_AD"];
+        // type stays FALLBACK
+      }
 
-        if (validBlock && validBlock.itemIds.length > 0) {
-          if(isMounted) {
-            setItems(validBlock.itemIds.slice(0, 6));
-            setSourceType("RIOT");
-            setLoading(false);
-          }
-          return;
-        }
-      } catch (e) {}
-
-      // 3. FALLBACK
-      if(isMounted) {
-        setItems(GENERIC_SETS[fallbackRole] || GENERIC_SETS["BRUISER_AD"]);
-        setSourceType("FALLBACK");
+      if (isMounted) {
+        setItems(foundItems);
+        setSourceType(type);
         setLoading(false);
       }
-    };
+    }
 
-    loadBuild();
-    
+    robustLoad();
     return () => { isMounted = false; };
   }, [championId, fallbackRole]);
 
   if (loading) return <div className="py-4 flex justify-center"><LoadingSpinner /></div>;
 
-  const winrate = otpInfo?.wins && otpInfo?.losses 
-    ? Math.round((otpInfo.wins / (otpInfo.wins + otpInfo.losses)) * 100) 
-    : null;
+  // Obliczanie winrate
+  let winrate = null;
+  let winrateSource = "";
+
+  if (otpInfo?.wins && otpInfo?.losses) {
+    winrate = Math.round((otpInfo.wins / (otpInfo.wins + otpInfo.losses)) * 100);
+    winrateSource = "OTP";
+  } else if (metaInfo?.winRate) {
+    winrate = Math.round(metaInfo.winRate);
+    winrateSource = "META";
+  }
+
+  // Kolory tła
+  const getBgClass = () => {
+    switch (sourceType) {
+      case "OTP": return "bg-gradient-to-br from-slate-900 to-slate-800 border-yellow-500/40 shadow-xl shadow-yellow-900/10";
+      case "META": return "bg-gradient-to-br from-indigo-950 to-slate-900 border-indigo-500/40 shadow-xl shadow-indigo-900/10";
+      default: return "bg-slate-800/50 border-slate-700";
+    }
+  }
 
   return (
-    <div className={`p-5 rounded-xl border mt-4 animate-fadeIn relative overflow-hidden transition-all ${
-        sourceType === "OTP" 
-            ? "bg-gradient-to-br from-slate-900 to-slate-800 border-yellow-500/40 shadow-xl shadow-yellow-900/10" 
-            : "bg-slate-800/50 border-slate-700"
-    }`}>
-      
+    <div className={`p-5 rounded-xl border mt-4 animate-fadeIn relative overflow-hidden transition-all ${getBgClass()}`}>
+
       {sourceType === "OTP" && (
-          <div className="absolute -top-6 -right-6 text-yellow-500/5 rotate-12 pointer-events-none">
-              <FaCrown size={140} />
-          </div>
+        <div className="absolute -top-6 -right-6 text-yellow-500/5 rotate-12 pointer-events-none">
+          <FaCrown size={140} />
+        </div>
+      )}
+      {sourceType === "META" && (
+        <div className="absolute -top-6 -right-6 text-indigo-500/5 rotate-12 pointer-events-none">
+          <FaFire size={140} />
+        </div>
       )}
 
+      {/* HEADER */}
       <div className="flex justify-between items-start mb-4 relative z-10">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-                {sourceType === "OTP" && <FaCrown className="text-yellow-400" />}
-                <h3 className={`font-bold text-sm uppercase tracking-wider ${
-                    sourceType === "OTP" ? "text-yellow-400" : "text-slate-300"
-                }`}>
-                    {sourceType === "OTP" ? "Challenger Build" : "Recommended Build"}
-                </h3>
-            </div>
-            
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            {sourceType === "OTP" && <FaCrown className="text-yellow-400" />}
+            {sourceType === "META" && <FaFire className="text-indigo-400" />}
+
+            <h3 className={`font-bold text-sm uppercase tracking-wider ${sourceType === "OTP" ? "text-yellow-400" :
+              sourceType === "META" ? "text-indigo-400" : "text-slate-300"
+              }`}>
+              {sourceType === "OTP" ? "Challenger OTP Build" :
+                sourceType === "META" ? "Challenger Meta Build" : "Recommended Build"}
+            </h3>
+          </div>
+
+          <div className="flex flex-col gap-1">
+            {/* OTP INFO */}
             {sourceType === "OTP" && otpInfo && (
-                <div className="flex flex-col gap-1">
-                    <div className="flex items-center gap-2 text-xs text-slate-300">
-                        <FaUserAstronaut className="text-slate-400"/>
-                        <span className="font-bold text-white">{otpInfo.playerName}</span>
-                        <span className="px-1.5 py-0.5 bg-yellow-500/20 text-yellow-400 rounded text-[10px] border border-yellow-500/30">
-                            {otpInfo.playerRank}
-                        </span>
-                    </div>
-                    {winrate && (
-                        <div className="text-[10px] text-slate-400 flex items-center gap-2">
-                           <FaTrophy className="text-yellow-600"/> 
-                           <span>Winrate: <span className={winrate > 55 ? "text-green-400" : "text-slate-300"}>{winrate}%</span> 
-                           <span className="opacity-50 mx-1">({otpInfo.wins}W / {otpInfo.losses}L)</span></span>
-                        </div>
-                    )}
-                </div>
+              <div className="flex items-center gap-2 text-xs text-slate-300">
+                <FaUserAstronaut className="text-slate-400" />
+                <span className="font-bold text-white">{otpInfo.playerName}</span>
+                <span className="px-1.5 py-0.5 bg-yellow-500/20 text-yellow-400 rounded text-[10px] border border-yellow-500/30">
+                  {otpInfo.playerRank}
+                </span>
+              </div>
+            )}
+
+            {/* WINRATE INFO */}
+            {winrate !== null && (
+              <div className="text-[10px] text-slate-400 flex items-center gap-2">
+                <FaTrophy className={winrateSource === "OTP" ? "text-yellow-600" : "text-indigo-500"} />
+                <span>Winrate: <span className={winrate > 55 ? "text-green-400" : "text-slate-300"}>{winrate}%</span>
+                  {winrateSource === "OTP"
+                    ? <span className="opacity-50 mx-1">({otpInfo?.wins}W / {otpInfo?.losses}L)</span>
+                    : <span className="opacity-50 mx-1">({metaInfo?.matchesAnalyzed} Matches)</span>
+                  }
+                </span>
+              </div>
             )}
           </div>
+        </div>
+
+        {/* RUNES & SPELLS DISPLAY (From META) */}
+        {metaInfo && (
+          <div className="flex gap-4">
+            {/* SPELLS */}
+            {metaInfo.spells.length > 0 && (
+              <div className="flex gap-1 items-center bg-black/20 p-1.5 rounded-lg border border-white/5">
+                {metaInfo.spells[0].ids.map(id => (
+                  <img
+                    key={id}
+                    src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/spell/Summoner${id === 4 ? "Flash" :
+                      id === 14 ? "Dot" :
+                        id === 11 ? "Smite" :
+                          id === 12 ? "Teleport" :
+                            id === 6 ? "Haste" :
+                              id === 7 ? "Heal" :
+                                id === 3 ? "Exhaust" :
+                                  id === 21 ? "Barrier" :
+                                    id === 1 ? "Boost" : "Flash" // Fallback naming logic needed properly
+                      // Uproszczenie: mapping ID -> Nazwa pliku to spory słownik.
+                      // Dla demo użyjemy placeholder lub prosty mapping w src/utils, ale tutaj
+                      // spróbujemy trafić.
+                      }.png`}
+                    // Hack: DDragon wymaga nazw (SummonerFlash), a my mamy ID.
+                    // W realnym app potrzebny util `spellIdToName`.
+                    // Tutaj używamy generycznego fallbacku dla ikony jeśli URL padnie
+                    onError={(e) => {
+                      // Awaryjnie schowaj lub pokaż ikonę standardową
+                      e.currentTarget.style.display = 'none';
+                    }}
+                    className="w-8 h-8 rounded"
+                    title={`Spell ID: ${id}`}
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* RUNES */}
+            {metaInfo.runes.keystone && (
+              <div className="flex gap-1 items-center bg-black/20 p-1.5 rounded-lg border border-white/5">
+                <img
+                  src={`https://ddragon.leagueoflegends.com/cdn/img/perk-images/Styles/${
+                    // To jest trudne, bo ścieżki do run są skomplikowane w DDragon.
+                    // 8000 -> Precision -> ...
+                    // ID -> Icon Path mapping jest w `runesRefforged.json`.
+                    // Jeśli nie mamy tego, nie wyświetlimy obrazka łatwo.
+                    // Placeholder for now.
+                    metaInfo.runes.keystone.id
+                    }.png`}
+                  onError={(e) => {
+                    // Fallback na tekst jak nie działa obrazek
+                    e.currentTarget.style.display = 'none';
+                  }}
+                  className="w-8 h-8 rounded-full"
+                />
+                <div className="flex flex-col text-[10px] leading-tight">
+                  <span className="text-slate-300 font-bold">Rune</span>
+                  <span className="text-slate-500">#{metaInfo.runes.keystone.id}</span>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
       </div>
-      
+
+      {/* ITEMS */}
       <div className="flex flex-wrap gap-3 relative z-10">
         {items.map((itemId, idx) => (
-            <div key={`${itemId}-${idx}`} className="group relative">
-                <img 
-                    src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/item/${itemId}.png`}
-                    alt={`Item ${itemId}`}
-                    className={`w-12 h-12 rounded-lg border-2 transition-all cursor-help ${
-                        sourceType === "OTP" 
-                            ? 'border-yellow-900/50 group-hover:border-yellow-400 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-yellow-500/20' 
-                            : 'border-slate-600 group-hover:border-slate-400'
-                    }`}
-                    onError={(e) => (e.currentTarget.style.display = 'none')}
-                />
-                <span className="absolute -bottom-2 -right-2 w-5 h-5 bg-slate-900 border border-slate-600 rounded-full text-[10px] flex items-center justify-center text-slate-400">
-                    {idx + 1}
-                </span>
-            </div>
+          <div key={`${itemId}-${idx}`} className="group relative">
+            <img
+              src={`https://ddragon.leagueoflegends.com/cdn/14.3.1/img/item/${itemId}.png`}
+              alt={`Item ${itemId}`}
+              className={`w-12 h-12 rounded-lg border-2 transition-all cursor-help ${sourceType === "OTP" ? 'border-yellow-900/50 group-hover:border-yellow-400 group-hover:scale-110' :
+                sourceType === "META" ? 'border-indigo-900/50 group-hover:border-indigo-400 group-hover:scale-110' :
+                  'border-slate-600 group-hover:border-slate-400'
+                }`}
+              onError={(e) => (e.currentTarget.style.display = 'none')}
+            />
+            <span className="absolute -bottom-2 -right-2 w-5 h-5 bg-slate-900 border border-slate-600 rounded-full text-[10px] flex items-center justify-center text-slate-400">
+              {idx + 1}
+            </span>
+          </div>
         ))}
       </div>
-      
+
       <div className="mt-4 pt-3 border-t border-white/5 flex justify-between items-center text-[10px] text-slate-500">
-        <span>Based on: {sourceType === "OTP" ? "High Elo Analysis" : sourceType === "RIOT" ? "Official Data" : "Standard Meta"}</span>
+        <span>Based on: {
+          sourceType === "OTP" ? "High Elo One-Trick" :
+            sourceType === "META" ? "Challenger Aggregate" :
+              sourceType === "RIOT" ? "Official Data" : "Standard Meta"
+        }</span>
         {sourceType === "OTP" && <span className="text-yellow-600/50 uppercase font-bold tracking-widest">Premium Data</span>}
+        {sourceType === "META" && <span className="text-indigo-500/50 uppercase font-bold tracking-widest">Meta Data</span>}
       </div>
     </div>
   );

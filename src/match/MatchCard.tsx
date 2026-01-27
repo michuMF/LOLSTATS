@@ -3,10 +3,11 @@ import { FaAngleDown, FaAngleUp, FaRobot } from "react-icons/fa";
 import { analyzeMatch } from "../utils/analyzeMatch";
 import { spellMap } from "../utils/constants";
 import { getQueueName } from "../utils/mappers";
-import { MatchAnalysis } from "./MatchAnalysis";
+
 import { TeamList } from "./TeamList";
 import { useMemo } from "react";
 import type { MatchDetailsType } from "../api/fetchMatchDetails";
+import MatchAnalysis from "./MatchAnalysis";
 
 
 interface MatchCardProps {
@@ -138,7 +139,7 @@ export const MatchCard = ({ match, puuid, isExpanded, onToggle }: MatchCardProps
       {/* 2. ROZWINIĘCIE */}
       {isExpanded && (
         <div className="bg-slate-50 border-t border-slate-200 animate-in fade-in slide-in-from-top-1 duration-200">
-          <MatchAnalysis ai={ai} />
+          <MatchAnalysis match={match} puuid={puuid} />
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 lg:gap-px bg-slate-200">
             <TeamList teamName="Blue Team" color="text-blue-600" participants={match.info.participants.filter(p => p.teamId === 100)} puuid={puuid} />

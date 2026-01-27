@@ -1,5 +1,5 @@
-// src/components/player-summary/StatsDisplay.tsx
 import { FaChartPie, FaCrosshairs, FaSkull } from "react-icons/fa";
+import type { ReactNode } from "react";
 
 interface StatsDisplayProps {
   kda: number | string;
@@ -29,9 +29,8 @@ export const StatsDisplay = ({
             <FaCrosshairs /> KDA Ratio
           </p>
           <p
-            className={`text-3xl font-black ${
-              Number(kda) >= 3 ? "text-blue-600" : "text-slate-700"
-            }`}
+            className={`text-3xl font-black ${Number(kda) >= 3 ? "text-blue-600" : "text-slate-700"
+              }`}
           >
             {kda}
           </p>
@@ -64,7 +63,7 @@ const StatRow = ({
 }: {
   label: string;
   value: string | number;
-  icon: any;
+  icon: ReactNode;
 }) => (
   <div className="flex items-center justify-between w-full text-sm">
     <span className="text-slate-500 flex items-center gap-2">

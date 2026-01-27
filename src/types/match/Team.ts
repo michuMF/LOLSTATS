@@ -1,15 +1,7 @@
-import type { Objectives } from "./Objectives";
+import { z } from "zod";
+import { TeamSchema, BanSchema, ObjectivesSchema } from "../../schemas/matchSchemas";
 
-
-
-export interface Ban {
-  championId: number;
-  pickTurn: number;
-}
-
-export interface Team {
-  bans?: Ban[];           // Opcjonalne
-  objectives?: Objectives; // Opcjonalne
-  teamId: number;
-  win: boolean;
-}
+// Inferencja typów z Zod
+export type Team = z.infer<typeof TeamSchema>;
+export type Ban = z.infer<typeof BanSchema>;
+export type Objectives = z.infer<typeof ObjectivesSchema>;

@@ -1,37 +1,8 @@
-// import type { ParticipantType } from "./Participant";
-// import type { Team } from "./Team";
+import { z } from "zod";
+import { MatchDetailsSchema, MetadataSchema, InfoSchema } from "../../schemas/matchSchemas";
 
-
-
-// export interface MetadataType {
-//   dataVersion: string;
-//   matchId: string;
-//   participants: string[];
-// }
-
-// export interface Info {
-//   endOfGameResult: string; 
-//   gameCreation: number;
-//   gameDuration: number;
-//   gameEndTimestamp: number; 
-//   gameId: number;
-//   gameMode: string;
-//   gameName: string;        
-//   gameStartTimestamp: number; 
-//   gameType: string;
-//   gameVersion: string;      
-//   mapId: number;
-//   participants: ParticipantType[];
-//   platformId: string;      
-//   queueId: number;
-//   teams: Team[];            
-//   tournamentCode?: string;   
-// }
-
-// export interface MatchDTO {
-//   metadata: MetadataType;
-//   info: Info;
-// }
-
-
-// export type MatchDetailsType = MatchDTO;
+// Inferencja typów z Zod
+export type Match = z.infer<typeof MatchDetailsSchema>;
+export type MatchDTO = Match; // Alias
+export type MetadataType = z.infer<typeof MetadataSchema>;
+export type Info = z.infer<typeof InfoSchema>;

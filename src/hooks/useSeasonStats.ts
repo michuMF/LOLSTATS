@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import type { RankedDataType } from "../types/summoner";
 import type { MatchDetailsType } from "../api/fetchMatchDetails";
 
-const CURRENT_SEASON_PREFIX = "16"; 
+const CURRENT_SEASON_PREFIX = "16";
 
 export const useSeasonStats = (
   summonerPuuid: string,
@@ -24,18 +24,22 @@ export const useSeasonStats = (
     } else if (matches && matches.length > 0) {
       // Obliczanie z historii (Placement/Unranked)
       isPlacementStats = true;
-      
+
       const rankedMatches = matches.filter(m => {
-          const isRankedQueue = m.info.queueId === 420 || m.info.queueId === 440;
-          const isCurrentSeason = m.info.gameVersion?.startsWith(CURRENT_SEASON_PREFIX + ".");
-          return isRankedQueue && isCurrentSeason;
+        const isRankedQueue = m.info.queueId === 420 || m.info.queueId === 440;
+        const isCurrentSeason = m.info.gameVersion?.startsWith(CURRENT_SEASON_PREFIX + ".");
+        return isRankedQueue && isCurrentSeason;
       });
 
       rankedMatches.forEach(game => {
-          const participant = game.info.participants.find(p => p.puuid === summonerPuuid);
-          if (participant) {
-              participant.win ? wins++ : losses++;
+        const participant = game.info.participants.find(p => p.puuid === summonerPuuid);
+        if (participant) {
+          if (participant.win) {
+            wins++;
+          } else {
+            losses++;
           }
+        }
       });
     }
 

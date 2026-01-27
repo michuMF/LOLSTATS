@@ -8,54 +8,119 @@ export interface ProcessedItem {
   score: number;
 }
 
-// Definiujemy dokładnie co zwracamy, żeby TS nie zgadywał
-export interface AnalysisResult {
-  matchesAnalyzed: number;
-  coreItems: ProcessedItem[];
-  winningItems: ProcessedItem[];
+export interface ProcessedRune {
+  id: string;
+  pickRate: number;
+  winRate: number;
+  picks: number;
 }
 
-export const analyzeMeta = (rawStats: any): AnalysisResult | null => {
-  // FIX 1: Jeśli brak danych, zwracamy null (nie []), żeby "if (!analysis)" w komponencie zadziałało
-  if (!rawStats || !rawStats.matchesAnalyzed) return null;
+export interface ProcessedSpell {
+  ids: number[]; // [Summoner1Id, Summoner2Id]
+  pickRate: number;
+  winRate: number;
+  picks: number;
+}
 
-  const totalGames = rawStats.matchesAnalyzed;
-  
-  // Opcjonalnie: Ignoruj małe próbki
-  if (totalGames < 5) return null;
+export interface AnalysisResult {
+  matchesAnalyzed: number;
+  winRate: number; // Global Winrate
+  coreItems: ProcessedItem[];
+  situationalItems: ProcessedItem[];
+  runes: {
+    keystone: ProcessedRune | null;
+    secondaryTree: ProcessedRune | null;
+  };
+  spells: ProcessedSpell[];
+}
 
-  // Konwersja obiektu items na tablicę
-  const items: ProcessedItem[] = Object.entries(rawStats.items).map(([itemId, stats]: [string, any]) => {
+interface RawBucket { picks: number; wins: number; }
+
+export interface RawStats {
+  matches: number; // Zmiana z matchesAnalyzed na matches (zgodnie z V2)
+  wins?: number;   // Dodane wins globalne
+  items: Record<string, RawBucket>;
+  marketing?: {
+    keystones: Record<string, RawBucket>;
+    secondaryTrees: Record<string, RawBucket>;
+    spells: Record<string, RawBucket>;
+  };
+}
+
+const processBucket = (bucket: Record<string, RawBucket>, totalGames: number, minPickRate = 1.0) => {
+  return Object.entries(bucket).map(([id, stats]) => {
     const pickRate = (stats.picks / totalGames) * 100;
     const winRate = stats.picks > 0 ? (stats.wins / stats.picks) * 100 : 0;
-
     return {
-      id: itemId,
+      id,
       pickRate: parseFloat(pickRate.toFixed(1)),
       winRate: parseFloat(winRate.toFixed(1)),
       picks: stats.picks,
-      score: pickRate * winRate 
+      score: pickRate * winRate
     };
-  });
+  }).filter(i => i.pickRate >= minPickRate).sort((a, b) => b.picks - a.picks);
+};
 
-  // FILTROWANIE
+export const analyzeMeta = (rawStats: RawStats | null): AnalysisResult | null => {
+  if (!rawStats || !rawStats.matches) return null;
 
-  // 1. Core Items (Najpopularniejsze)
+  const totalGames = rawStats.matches;
+  if (totalGames < 5) return null;
+
+  // Global WR
+  const globalWins = rawStats.wins || 0;
+  const globalWR = (globalWins / totalGames) * 100;
+
+  // 1. ITEMS
+  const items = processBucket(rawStats.items, totalGames);
+
   const coreItems = items
-    .filter(i => i.pickRate > 15) // Musi być popularny
-    .sort((a, b) => b.picks - a.picks)
+    .filter(i => i.pickRate > 15) // Podwyższony próg dla Core
     .slice(0, 6);
 
-  // 2. Winning Items (Wysokie Winrate)
-  const winningItems = items
-    .filter(i => i.pickRate > 5 && i.winRate > 50) // Przynajmniej 5% pick rate i dodatnie WR
-    .sort((a, b) => b.winRate - a.winRate)
-    .slice(0, 4);
+  const coreIds = new Set(coreItems.map(i => i.id));
 
-  // FIX 2: Zwracamy obiekt z nazwami kluczy, których oczekuje ChampionsPage.tsx
+  const situationalItems = items
+    .filter(i => !coreIds.has(i.id))
+    .sort((a, b) => b.winRate - a.winRate)
+    .slice(0, 10);
+
+  // 2. RUNES
+  let bestKeystone: ProcessedRune | null = null;
+  let bestSecondary: ProcessedRune | null = null;
+
+  if (rawStats.marketing) {
+    const keystones = processBucket(rawStats.marketing.keystones, totalGames);
+    if (keystones.length > 0) bestKeystone = keystones[0]; // Najpopularniejszy
+
+    const secondaries = processBucket(rawStats.marketing.secondaryTrees, totalGames);
+    if (secondaries.length > 0) bestSecondary = secondaries[0];
+  }
+
+  // 3. SPELLS
+  const spells: ProcessedSpell[] = [];
+  if (rawStats.marketing?.spells) {
+    const rawSpells = processBucket(rawStats.marketing.spells, totalGames, 5.0); // Min 5% pickrate
+    rawSpells.slice(0, 3).forEach(s => {
+      const [id1, id2] = s.id.split('_').map(Number);
+      spells.push({
+        ids: [id1, id2],
+        pickRate: s.pickRate,
+        winRate: s.winRate,
+        picks: s.picks
+      });
+    });
+  }
+
   return {
     matchesAnalyzed: totalGames,
-    coreItems: coreItems,       // Komponent szuka .coreItems
-    winningItems: winningItems  // Komponent szuka .winningItems
+    winRate: parseFloat(globalWR.toFixed(1)),
+    coreItems,
+    situationalItems,
+    runes: {
+      keystone: bestKeystone,
+      secondaryTree: bestSecondary
+    },
+    spells
   };
 };

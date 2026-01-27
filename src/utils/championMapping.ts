@@ -5,7 +5,7 @@ export const normalizeChampionName = (name: string): string => {
 
   // 1. Usuń spacje i znaki specjalne (proste czyszczenie)
   // Np. "Dr. Mundo" -> "DrMundo", "Kog'Maw" -> "KogMaw"
-  let cleanName = name.replace(/[^a-zA-Z0-9]/g, "");
+  const cleanName = name.replace(/[^a-zA-Z0-9]/g, "");
 
   // 2. Mapa wyjątków (Kluczowe dla DDragon!)
   const exceptions: Record<string, string> = {
@@ -19,7 +19,7 @@ export const normalizeChampionName = (name: string): string => {
   };
 
   const lowerName = cleanName.toLowerCase();
-  
+
   if (exceptions[lowerName]) {
     return exceptions[lowerName];
   }
