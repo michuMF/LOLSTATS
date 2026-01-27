@@ -1,3 +1,4 @@
+import { memo, useMemo } from "react";
 import { FaAngleDown, FaAngleUp, FaRobot } from "react-icons/fa";
 
 import { analyzeMatch } from "../utils/analyzeMatch";
@@ -5,7 +6,6 @@ import { spellMap } from "../utils/constants";
 import { getQueueName } from "../utils/mappers";
 
 import { TeamList } from "./TeamList";
-import { useMemo } from "react";
 import type { MatchDetailsType } from "../api/fetchMatchDetails";
 import MatchAnalysis from "./MatchAnalysis";
 
@@ -16,7 +16,7 @@ interface MatchCardProps {
   onToggle: () => void;
 }
 
-export const MatchCard = ({ match, puuid, isExpanded, onToggle }: MatchCardProps) => {
+const MatchCardComponent = ({ match, puuid, isExpanded, onToggle }: MatchCardProps) => {
   const self = match.info.participants.find((p) => p.puuid === puuid);
   const isWin = self?.win || false;
 
@@ -172,3 +172,6 @@ export const MatchCard = ({ match, puuid, isExpanded, onToggle }: MatchCardProps
     </li>
   );
 };
+
+// Wrap with memo to prevent re-renders when match hasn't changed
+export const MatchCard = memo(MatchCardComponent);

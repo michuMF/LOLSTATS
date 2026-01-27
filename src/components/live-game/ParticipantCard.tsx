@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Link } from "react-router-dom";
 import { useRankedData } from "../../hooks/useRankedData"; // <--- Importujemy nasz nowy hook
 import type { LiveParticipantDTO } from "../../types/live-game";
@@ -12,7 +13,7 @@ interface ParticipantCardProps {
   version: string;
 }
 
-export const ParticipantCard = ({
+const ParticipantCardComponent = ({
   participant,
   isBlueTeam,
   region,
@@ -76,6 +77,7 @@ export const ParticipantCard = ({
                 "https://ddragon.leagueoflegends.com/cdn/14.1.1/img/profileicon/29.png";
             }}
             alt={championName}
+            loading="lazy"
             className="w-12 h-12 rounded-full border-2 border-slate-200"
           />
         </div>
@@ -87,6 +89,7 @@ export const ParticipantCard = ({
                 src={`https://ddragon.leagueoflegends.com/cdn/${version}/img/spell/${spell1}.png`}
                 className="w-5 h-5 rounded"
                 alt="Spell1"
+                loading="lazy"
               />
             )}
             {spell2 && (
@@ -94,6 +97,7 @@ export const ParticipantCard = ({
                 src={`https://ddragon.leagueoflegends.com/cdn/${version}/img/spell/${spell2}.png`}
                 className="w-5 h-5 rounded"
                 alt="Spell2"
+                loading="lazy"
               />
             )}
           </div>
@@ -103,6 +107,7 @@ export const ParticipantCard = ({
                 src={`https://ddragon.leagueoflegends.com/cdn/img/${keystoneIcon}`}
                 className="w-5 h-5 bg-slate-800 rounded-full p-0.5"
                 alt="Key"
+                loading="lazy"
               />
             )}
             {subStyleIcon && (
@@ -110,6 +115,7 @@ export const ParticipantCard = ({
                 src={`https://ddragon.leagueoflegends.com/cdn/img/${subStyleIcon}`}
                 className="w-5 h-5 bg-slate-800 rounded-full p-1 opacity-90"
                 alt="Sub"
+                loading="lazy"
               />
             )}
           </div>
@@ -157,3 +163,6 @@ export const ParticipantCard = ({
     </div>
   );
 };
+
+// Wrap with memo to prevent unnecessary re-renders
+export const ParticipantCard = memo(ParticipantCardComponent);

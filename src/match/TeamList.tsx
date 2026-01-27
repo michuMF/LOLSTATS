@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Link, useParams } from "react-router-dom";
 import type { ParticipantType } from "../api/fetchMatchDetails";
 
@@ -22,6 +23,7 @@ const ParticipantRow = ({
           src={`https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${participant.championName}_0.jpg`}
           alt={participant.championName}
           className="w-8 h-8 rounded bg-slate-300 object-cover"
+          loading="lazy"
         />
       </div>
       <div className="flex-grow ...">
@@ -61,7 +63,7 @@ const ParticipantRow = ({
   );
 };
 
-export const TeamList = ({
+const TeamListComponent = ({
   teamName,
   color,
   participants,
@@ -85,3 +87,6 @@ export const TeamList = ({
     </div>
   </div>
 );
+
+// Wrap with memo to prevent unnecessary re-renders
+export const TeamList = memo(TeamListComponent);
