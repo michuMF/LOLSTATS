@@ -92,15 +92,30 @@ export const ChampionBuilds = ({ championId, spell1Id, spell2Id }: ChampionBuild
       // B. META
       try {
         // Zawsze pobieramy metę dla Run i Winrate
-        const metaRaw = await metaDataService.getChampionStats("CHALLENGER", championId);
-        if (metaRaw) {
-          const analysis = analyzeMeta(metaRaw);
-          if (isMounted) setMetaInfo(analysis);
+        const metaDataMap = await metaDataService.getChampionStats("CHALLENGER", championId);
 
-          // Jeśli nie mamy itemów z OTP, bierzemy z Mety
-          if (foundItems.length === 0 && analysis && analysis.coreItems.length > 0) {
-            foundItems = analysis.coreItems.map(i => Number(i.id));
-            type = "META";
+        if (metaDataMap) {
+          // Znajdź najpopularniejszą rolę (najwięcej meczów)
+          let bestStats: any = null; // TODO: Use proper RoleStats type if imported
+          let maxMatches = -1;
+
+          Object.values(metaDataMap).forEach((stats) => {
+            const m = stats.matches || 0;
+            if (m > maxMatches) {
+              maxMatches = m;
+              bestStats = stats;
+            }
+          });
+
+          if (bestStats) {
+            const analysis = analyzeMeta(bestStats);
+            if (isMounted) setMetaInfo(analysis);
+
+            // Jeśli nie mamy itemów z OTP, bierzemy z Mety
+            if (foundItems.length === 0 && analysis && analysis.coreItems.length > 0) {
+              foundItems = analysis.coreItems.map(i => Number(i.id));
+              type = "META";
+            }
           }
         }
       } catch { }

@@ -58,7 +58,7 @@ const MATCHES_PER_PLAYER = 20;
 
 // --- TYPY DANYCH ---
 interface StatBucket { picks: number; wins: number; }
-interface ChampionMeta {
+interface RoleStats {
     matches: number;
     wins: number;
     items: Record<string, StatBucket>;
@@ -68,7 +68,8 @@ interface ChampionMeta {
         spells: Record<string, StatBucket>;
     }
 }
-type MetaDatabase = Record<string, Record<string, ChampionMeta>>; // Tier -> ChampId -> Data
+type ChampionData = Record<string, RoleStats>; // Role -> Stats
+type MetaDatabase = Record<string, Record<string, ChampionData>>; // Tier -> ChampId -> Role -> Stats
 
 interface LeagueEntry {
     puuid?: string;
@@ -195,10 +196,17 @@ async function processMatch(matchId: string, currentTier: string) {
                 const champId = p.championId.toString();
                 const win = p.win;
 
-                // Init struktury
+                // Wykrywanie roli (TOP, JUNGLE, MIDDLE, BOTTOM, UTILITY)
+                let position = p.teamPosition;
+                if (!position || position === '') position = 'UNKNOWN';
+
+                // Init Tier -> Champ
                 if (!database[currentTier]) database[currentTier] = {};
-                if (!database[currentTier][champId]) {
-                    database[currentTier][champId] = {
+                if (!database[currentTier][champId]) database[currentTier][champId] = {}; // Champ -> Role Map
+
+                // Init Role Stats
+                if (!database[currentTier][champId][position]) {
+                    database[currentTier][champId][position] = {
                         matches: 0,
                         wins: 0,
                         items: {},
@@ -206,16 +214,10 @@ async function processMatch(matchId: string, currentTier: string) {
                     };
                 }
 
-                const champStats = database[currentTier][champId];
+                const roleStats = database[currentTier][champId][position];
 
-                // MIGRATION: Ensure new fields exist if we loaded old data
-                if (!champStats.items) champStats.items = {};
-                if (!champStats.marketing) {
-                    champStats.marketing = { keystones: {}, secondaryTrees: {}, spells: {} };
-                }
-
-                champStats.matches++;
-                if (win) champStats.wins++;
+                roleStats.matches++;
+                if (win) roleStats.wins++;
 
                 const updateBucket = (bucket: Record<string, StatBucket>, key: string) => {
                     if (!bucket[key]) bucket[key] = { picks: 0, wins: 0 };
@@ -225,23 +227,23 @@ async function processMatch(matchId: string, currentTier: string) {
 
                 // 1. Items
                 const items = [p.item0, p.item1, p.item2, p.item3, p.item4, p.item5].filter((id: number) => id > 0);
-                items.forEach((id: number) => updateBucket(champStats.items, id.toString()));
+                items.forEach((id: number) => updateBucket(roleStats.items, id.toString()));
 
                 // 2. Runes
                 const primaryStyle = p.perks.styles[0];
                 const subStyle = p.perks.styles[1];
                 if (primaryStyle && primaryStyle.selections[0]) {
-                    updateBucket(champStats.marketing.keystones, primaryStyle.selections[0].perk.toString());
+                    updateBucket(roleStats.marketing.keystones, primaryStyle.selections[0].perk.toString());
                 }
                 if (subStyle) {
-                    updateBucket(champStats.marketing.secondaryTrees, subStyle.style.toString());
+                    updateBucket(roleStats.marketing.secondaryTrees, subStyle.style.toString());
                 }
 
                 // 3. Spells
                 const s1 = p.summoner1Id;
                 const s2 = p.summoner2Id;
                 const spellKey = s1 < s2 ? `${s1}_${s2}` : `${s2}_${s1}`; // Normalizacja kolejności
-                updateBucket(champStats.marketing.spells, spellKey);
+                updateBucket(roleStats.marketing.spells, spellKey);
             }
             return true;
         }

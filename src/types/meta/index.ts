@@ -10,7 +10,7 @@ export const MarketingStatSchema = z.object({
   wins: z.number(),
 });
 
-export const ChampionMetaSchema = z.object({
+export const RoleStatsSchema = z.object({
   matchesAnalyzed: z.number().optional(), // Deprecated (V1)
   matches: z.number().optional(), // V2
   wins: z.number().optional(), // V2
@@ -23,14 +23,21 @@ export const ChampionMetaSchema = z.object({
   }).optional(),
 });
 
-// Np. "CHALLENGER": { "Aatrox": { ... } }
-export const TierDataSchema = z.record(z.string(), ChampionMetaSchema);
+// Mapa ról dla postaci: { "TOP": RoleStats, "JUNGLE": RoleStats }
+export const ChampionDataSchema = z.record(z.string(), RoleStatsSchema);
+
+// Np. "CHALLENGER": { "Aatrox": { "TOP": ... } }
+export const TierDataSchema = z.record(z.string(), ChampionDataSchema);
 
 // Cała baza: { "CHALLENGER": ..., "DIAMOND": ... }
 export const MetaDatabaseSchema = z.record(z.string(), TierDataSchema);
 
 export type MetaDatabase = z.infer<typeof MetaDatabaseSchema>;
-export type ChampionMeta = z.infer<typeof ChampionMetaSchema>;
+export type RoleStats = z.infer<typeof RoleStatsSchema>;
+export type ChampionData = z.infer<typeof ChampionDataSchema>;
+
+// Alias dla kompatybilności wstecznej (w miejscach gdzie używamy pojedynczego obiektu statystyk)
+export type ChampionMeta = RoleStats;
 
 export interface ChampionBase {
   id: string;

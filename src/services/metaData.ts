@@ -1,16 +1,4 @@
-export interface MetaChampionData {
-    matches: number;
-    wins: number;
-    items: Record<string, { picks: number; wins: number }>;
-    marketing?: {
-        keystones: Record<string, { picks: number; wins: number }>;
-        secondaryTrees: Record<string, { picks: number; wins: number }>;
-        spells: Record<string, { picks: number; wins: number }>;
-    };
-}
-
-// Typ dla całego pliku JSON
-type MetaDatabase = Record<string, Record<string, MetaChampionData>>;
+import type { MetaDatabase, ChampionData, RoleStats } from "../types/meta";
 
 let cachedData: MetaDatabase | null = null;
 
@@ -30,7 +18,7 @@ export const metaDataService = {
         }
     },
 
-    async getChampionStats(tier: string, championId: number): Promise<MetaChampionData | null> {
+    async getChampionStats(tier: string, championId: number): Promise<ChampionData | null> {
         const data = await this.loadData();
         if (!data) return null;
 

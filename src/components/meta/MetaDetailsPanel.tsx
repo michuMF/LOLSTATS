@@ -1,7 +1,7 @@
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { FaFire, FaChartLine, FaTimes, FaLayerGroup, FaMagic, FaGem } from "react-icons/fa";
 import { analyzeMeta } from "../../utils/metaAnalysis";
-import type { ChampionBase, MetaDatabase, ChampionMeta } from "../../types/meta";
+import type { ChampionBase, MetaDatabase, RoleStats } from "../../types/meta";
 
 interface MetaDetailsPanelProps {
     champion: ChampionBase;
@@ -12,33 +12,65 @@ interface MetaDetailsPanelProps {
 }
 
 export const MetaDetailsPanel = ({ champion, tier, metaData, version, onClose }: MetaDetailsPanelProps) => {
+    const [selectedRole, setSelectedRole] = useState<string | null>(null);
+
+    // --- 1. DETERMINE AVAILABLE ROLES & DEFAULT SELECTION ---
+    const availableRoles = useMemo(() => {
+        if (!metaData) return [];
+        const championId = champion.key;
+        const rolesMap: Record<string, number> = {}; // Role -> Total Matches
+
+        Object.values(metaData).forEach((tierData) => {
+            const champRoles = tierData?.[championId];
+            if (champRoles) {
+                Object.entries(champRoles).forEach(([role, stats]) => {
+                    if (role === 'UNKNOWN') return;
+                    rolesMap[role] = (rolesMap[role] || 0) + (stats.matches || 0);
+                });
+            }
+        });
+
+        return Object.entries(rolesMap)
+            .sort((a, b) => b[1] - a[1]) // Sort by popularity
+            .map(([role]) => role);
+    }, [champion, metaData]);
+
+    // Auto-select most popular role on open
+    useEffect(() => {
+        if (availableRoles.length > 0 && !selectedRole) {
+            setSelectedRole(availableRoles[0]);
+        } else if (availableRoles.length > 0 && selectedRole && !availableRoles.includes(selectedRole)) {
+            setSelectedRole(availableRoles[0]); // Reset if current role invalid for new champ
+        }
+    }, [availableRoles, selectedRole]);
+
 
     const analysis = useMemo(() => {
-        if (!metaData) return null;
+        if (!metaData || !selectedRole) return null;
         const championId = champion.key;
 
-        let rawStats: ChampionMeta | null = null;
+        let rawStats: RoleStats | null = null;
         let estimatedWinRate = 0;
 
         try {
-            // --- 1. AGREGACJA DANYCH ---
+            // --- 2. AGREGACJA DANYCH DLA WYBRANEJ ROLI ---
             if (tier === 'ALL') {
                 // Inicjalizacja: matches=0, items={}, marketing={}
-                const aggregated: ChampionMeta = {
+                const aggregated: RoleStats = {
                     matches: 0,
-                    matchesAnalyzed: 0,
+                    wins: 0,
                     items: {},
                     marketing: { keystones: {}, secondaryTrees: {}, spells: {} }
                 };
 
                 Object.values(metaData).forEach((tierData) => {
-                    const stats = tierData?.[championId];
+                    const champRoles = tierData?.[championId];
+                    const stats = champRoles?.[selectedRole];
+
                     if (stats) {
-                        // Obsługa V1 matchesAnalyzed vs V2 matches
-                        const m = stats.matches ?? stats.matchesAnalyzed ?? 0;
+                        const m = stats.matches || 0;
                         aggregated.matches = (aggregated.matches || 0) + m;
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        (aggregated as any).matchesAnalyzed = aggregated.matches; // backward compat
+                        aggregated.wins = (aggregated.wins || 0) + (stats.wins || 0);
 
                         // Sumujemy itemy
                         if (stats.items) {
@@ -51,7 +83,6 @@ export const MetaDetailsPanel = ({ champion, tier, metaData, version, onClose }:
 
                         // Sumujemy marketing (Runy i Spelle)
                         if (stats.marketing && aggregated.marketing) {
-                            // Helper do sumowania bucketów
                             const sumBucket = (target: Record<string, { picks: number, wins: number }>, source: Record<string, { picks: number, wins: number }>) => {
                                 Object.entries(source).forEach(([k, v]) => {
                                     if (!target[k]) target[k] = { picks: 0, wins: 0 };
@@ -68,11 +99,11 @@ export const MetaDetailsPanel = ({ champion, tier, metaData, version, onClose }:
                 });
                 if ((aggregated.matches || 0) > 0) rawStats = aggregated;
             } else {
-                rawStats = metaData[tier]?.[championId] || null;
+                rawStats = metaData[tier]?.[championId]?.[selectedRole] || null;
             }
 
-            // --- 2. WYLICZANIE WINRATE Z ITEMÓW ---
-            const matchesCount = rawStats?.matches ?? rawStats?.matchesAnalyzed ?? 0;
+            // --- 3. WYLICZANIE WINRATE Z ITEMÓW ---
+            const matchesCount = rawStats?.matches || 0;
 
             if (rawStats && matchesCount > 0) {
                 let totalItemPicks = 0;
@@ -90,16 +121,9 @@ export const MetaDetailsPanel = ({ champion, tier, metaData, version, onClose }:
                 }
             }
 
-            // Konwersja do RawStats (wymagane przez analyzeMeta)
             if (rawStats) {
-                // Upewniamy się, że matches jest ustawione
-                if (!rawStats.matches && rawStats.matchesAnalyzed) {
-                    rawStats.matches = rawStats.matchesAnalyzed;
-                }
-
-                // TypeScript workaround: rzutowanie na any/RawStats bo definicje mogą się lekko różnić (optional fields)
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const details = analyzeMeta(rawStats as any);
+                const details = analyzeMeta(rawStats as any); // Type cast for backward compatibility in util
                 return details ? { ...details, overallWinRate: estimatedWinRate } : null;
             }
             return null;
@@ -108,7 +132,7 @@ export const MetaDetailsPanel = ({ champion, tier, metaData, version, onClose }:
             console.error("Analysis Error:", e);
             return null;
         }
-    }, [champion, tier, metaData]);
+    }, [champion, tier, metaData, selectedRole]);
 
     const getWrColor = (wr: number) => {
         if (wr >= 53) return "text-blue-400"; // Wybitne
@@ -145,13 +169,22 @@ export const MetaDetailsPanel = ({ champion, tier, metaData, version, onClose }:
                         <h2 className="text-4xl font-black text-white tracking-tight">{champion.name}</h2>
                         <p className="text-yellow-500 font-mono text-sm uppercase tracking-wider opacity-80">{champion.title}</p>
 
-                        <div className="flex flex-wrap gap-2 mt-3">
-                            <span className="px-3 py-1 bg-slate-900/60 rounded-lg text-xs font-medium text-slate-300 border border-slate-700/50">
-                                {tier === 'ALL' ? "GLOBAL DATA" : tier}
-                            </span>
-                            <span className="px-3 py-1 bg-slate-900/60 rounded-lg text-xs font-medium text-slate-300 border border-slate-700/50">
-                                {analysis?.matchesAnalyzed.toLocaleString() || 0} Matches
-                            </span>
+                        {/* Roles Tabs */}
+                        <div className="flex flex-wrap gap-2 mt-4">
+                            {availableRoles.length > 0 ? availableRoles.map(role => (
+                                <button
+                                    key={role}
+                                    onClick={() => setSelectedRole(role)}
+                                    className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${selectedRole === role
+                                            ? "bg-yellow-500 text-black shadow-lg shadow-yellow-500/20"
+                                            : "bg-slate-900/60 text-slate-400 hover:text-white border border-slate-700/50"
+                                        }`}
+                                >
+                                    {role}
+                                </button>
+                            )) : (
+                                <span className="text-xs text-slate-500 italic">No role data</span>
+                            )}
                         </div>
                     </div>
 
