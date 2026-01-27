@@ -142,3 +142,5 @@ export const LiveGamePage = () => {
     </div>
   );
 };
+
+export default LiveGamePage;

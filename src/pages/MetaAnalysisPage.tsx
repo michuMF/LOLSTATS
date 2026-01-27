@@ -135,3 +135,5 @@ export const MetaAnalysisPage = () => {
     </div>
   );
 };
+
+export default MetaAnalysisPage;

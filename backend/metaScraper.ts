@@ -51,7 +51,7 @@ const PAGES_ARG = Number(getArg("pages")) || 1;
 // --- KONFIGURACJA SKRAPOWANIA ---
 const TIERS_TO_SCRAPE = TARGET_TIER_ARG
   ? [TARGET_TIER_ARG]
-  : ["CHALLENGER", "grandmaster", "MASTER", "EMERALD"];
+  : ["CHALLENGER", "GRANDMASTER", "MASTER", "EMERALD"];
 
 const PLAYERS_PER_TIER = 50 * PAGES_ARG; // Skalowalne ilością stron
 const MATCHES_PER_PLAYER = 20;
