@@ -2,8 +2,6 @@ import { Link } from "react-router-dom";
 import { FaGamepad } from "react-icons/fa";
 import { SearchBar } from "../../SearchBar/SearchBar";
 
-
-
 interface ProfileHeaderProps {
   region: string;
   gameName: string;
@@ -16,13 +14,13 @@ export const ProfileHeader = ({ region, gameName, tagLine }: ProfileHeaderProps)
       <Link to="/" className="text-3xl font-black text-slate-800 hover:text-blue-600 transition">
         LOL<span className="text-blue-600">STATS</span>
       </Link>
-      
+
       <div className="w-full md:w-auto">
         <SearchBar />
       </div>
 
       <div className="mt-6 flex justify-center">
-        <Link 
+        <Link
           to={`/live/${region}/${gameName}/${tagLine}`}
           className="
             group relative inline-flex items-center gap-3 px-8 py-3 

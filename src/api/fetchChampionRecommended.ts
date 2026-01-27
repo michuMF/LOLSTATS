@@ -39,7 +39,7 @@ export const fetchChampionRecommended = async (championId: number): Promise<Reco
       return [];
     }
 
-    const data = await response.json() as CDragonResponse; // Rzutowanie na nasz typ
+    const data = (await response.json()) as CDragonResponse; // Rzutowanie na nasz typ
     console.log("📦 [CDragon] Raw Data:", data); // Odkomentuj, jeśli chcesz widzieć cały JSON
 
     // Sprawdzamy czy istnieje tablica itemSets
@@ -52,9 +52,10 @@ export const fetchChampionRecommended = async (championId: number): Promise<Reco
 
     // Szukamy zestawu, który pasuje do Summoner's Rift (mapId 11) lub bierzemy pierwszy
     // Riot często wrzuca tu zestawy dla map 11 (SR) i 12 (ARAM)
-    const srItemSet = itemSets.find((set: CDragonItemSet) =>
-      set.associatedMaps && set.associatedMaps.includes(11)
-    ) || itemSets[0];
+    const srItemSet =
+      itemSets.find(
+        (set: CDragonItemSet) => set.associatedMaps && set.associatedMaps.includes(11)
+      ) || itemSets[0];
 
     const blocks = srItemSet.blocks || [];
 
@@ -67,13 +68,12 @@ export const fetchChampionRecommended = async (championId: number): Promise<Reco
       title: block.type || "Recommended",
       // Parsujemy ID i filtrujemy błędne (NaN)
       itemIds: block.items
-        .map((item: CDragonItem) => typeof item.id === 'string' ? parseInt(item.id) : item.id)
-        .filter((id: number) => !isNaN(id))
+        .map((item: CDragonItem) => (typeof item.id === "string" ? parseInt(item.id) : item.id))
+        .filter((id: number) => !isNaN(id)),
     }));
 
     console.log(`✅ [CDragon] Parsed ${result.length} blocks successfully.`);
     return result;
-
   } catch (error) {
     console.error("❌ [CDragon] Error fetching recommended items:", error);
     return [];

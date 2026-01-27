@@ -1,0 +1,24 @@
+# Build artifacts
+dist
+build
+.vite
+
+# Dependencies
+node_modules
+
+# Cache
+.cache
+*.log
+
+# Data files (too large to format)
+src/data/*.json
+backend/*.json
+backend/processed_cache.json
+
+# Test reports
+playwright-report
+test-results
+
+# Generated files
+*.min.js
+*.bundle.js

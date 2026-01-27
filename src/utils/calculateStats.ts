@@ -2,9 +2,6 @@
 
 import type { MatchDetailsType, ParticipantType } from "../api/fetchMatchDetails";
 
-
-
-
 export interface ChampionStats {
   championName: string;
   games: number;
@@ -24,19 +21,24 @@ export interface PlayerSummaryStats {
   preferredRole: string;
 }
 
-export const calculatePlayerStats = (matches: MatchDetailsType[], puuid: string): PlayerSummaryStats => {
+export const calculatePlayerStats = (
+  matches: MatchDetailsType[],
+  puuid: string
+): PlayerSummaryStats => {
   let totalWins = 0;
   let totalKills = 0;
   let totalDeaths = 0;
   let totalAssists = 0;
   let totalCs = 0;
-  
+
   const championMap = new Map<string, ChampionStats>();
   const roleMap = new Map<string, number>();
 
   matches.forEach((match) => {
     // W Twoim typie MatchDTO dostęp do uczestników jest przez match.info.participants
-    const participant: ParticipantType | undefined = match.info.participants.find((p) => p.puuid === puuid);
+    const participant: ParticipantType | undefined = match.info.participants.find(
+      (p) => p.puuid === puuid
+    );
     if (!participant) return;
 
     // Statystyki ogólne
@@ -44,7 +46,7 @@ export const calculatePlayerStats = (matches: MatchDetailsType[], puuid: string)
     totalKills += participant.kills;
     totalDeaths += participant.deaths;
     totalAssists += participant.assists;
-    
+
     // Suma minionów (lane + jungle)
     totalCs += participant.totalMinionsKilled + participant.neutralMinionsKilled;
 
@@ -92,7 +94,14 @@ export const calculatePlayerStats = (matches: MatchDetailsType[], puuid: string)
 
   const totalGames = matches.length;
   if (totalGames === 0) {
-    return { totalGames: 0, winRate: 0, avgKda: "0.0", avgCs: 0, topChampions: [], preferredRole: "None" };
+    return {
+      totalGames: 0,
+      winRate: 0,
+      avgKda: "0.0",
+      avgCs: 0,
+      topChampions: [],
+      preferredRole: "None",
+    };
   }
 
   return {
@@ -105,16 +114,15 @@ export const calculatePlayerStats = (matches: MatchDetailsType[], puuid: string)
   };
 };
 
-
 export const formatDuration = (seconds: number): string => {
   if (seconds < 0) return "00:00";
-  
+
   const h = Math.floor(seconds / 3600);
   const m = Math.floor((seconds % 3600) / 60);
   const s = Math.floor(seconds % 60);
 
-  const mStr = m.toString().padStart(2, '0');
-  const sStr = s.toString().padStart(2, '0');
+  const mStr = m.toString().padStart(2, "0");
+  const sStr = s.toString().padStart(2, "0");
 
   if (h > 0) {
     return `${h}:${mStr}:${sStr}`;

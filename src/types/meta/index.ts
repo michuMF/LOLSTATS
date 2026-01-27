@@ -16,11 +16,13 @@ export const RoleStatsSchema = z.object({
   wins: z.number().optional(), // V2
 
   items: z.record(z.string(), ItemStatSchema), // Key: ItemID, Value: Stats
-  marketing: z.object({
-    keystones: z.record(z.string(), MarketingStatSchema),
-    secondaryTrees: z.record(z.string(), MarketingStatSchema),
-    spells: z.record(z.string(), MarketingStatSchema),
-  }).optional(),
+  marketing: z
+    .object({
+      keystones: z.record(z.string(), MarketingStatSchema),
+      secondaryTrees: z.record(z.string(), MarketingStatSchema),
+      spells: z.record(z.string(), MarketingStatSchema),
+    })
+    .optional(),
 });
 
 // Mapa ról dla postaci: { "TOP": RoleStats, "JUNGLE": RoleStats }

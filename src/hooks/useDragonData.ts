@@ -39,9 +39,15 @@ export const useDragonData = () => {
         // KROK 3: Pobierz dane dla NAJNOWSZEJ wersji
         const lang = "pl_PL"; // lub en_US
         const [resChamps, resSpells, resRunes] = await Promise.all([
-          fetch(`https://ddragon.leagueoflegends.com/cdn/${latestVersion}/data/${lang}/champion.json`),
-          fetch(`https://ddragon.leagueoflegends.com/cdn/${latestVersion}/data/${lang}/summoner.json`),
-          fetch(`https://ddragon.leagueoflegends.com/cdn/${latestVersion}/data/${lang}/runesReforged.json`)
+          fetch(
+            `https://ddragon.leagueoflegends.com/cdn/${latestVersion}/data/${lang}/champion.json`
+          ),
+          fetch(
+            `https://ddragon.leagueoflegends.com/cdn/${latestVersion}/data/${lang}/summoner.json`
+          ),
+          fetch(
+            `https://ddragon.leagueoflegends.com/cdn/${latestVersion}/data/${lang}/runesReforged.json`
+          ),
         ]);
 
         if (!resChamps.ok || !resSpells.ok || !resRunes.ok) {
@@ -53,11 +59,26 @@ export const useDragonData = () => {
         const jsonRunes = await resRunes.json();
 
         // Interfaces for internal usage
-        interface DDragonChampion { key: string; id: string; }
-        interface DDragonSpell { key: string; id: string; }
-        interface DDragonRune { id: number; icon: string; }
-        interface DDragonRuneSlot { runes: DDragonRune[]; }
-        interface DDragonRuneTree { id: number; icon: string; slots: DDragonRuneSlot[]; }
+        interface DDragonChampion {
+          key: string;
+          id: string;
+        }
+        interface DDragonSpell {
+          key: string;
+          id: string;
+        }
+        interface DDragonRune {
+          id: number;
+          icon: string;
+        }
+        interface DDragonRuneSlot {
+          runes: DDragonRune[];
+        }
+        interface DDragonRuneTree {
+          id: number;
+          icon: string;
+          slots: DDragonRuneSlot[];
+        }
 
         // Mapowanie Championów
         const cMap: IdMap = {};
@@ -89,8 +110,10 @@ export const useDragonData = () => {
         setRuneMap(rMap);
 
         // Zapisz do cache
-        localStorage.setItem(cacheKey, JSON.stringify({ champions: cMap, spells: sMap, runes: rMap }));
-
+        localStorage.setItem(
+          cacheKey,
+          JSON.stringify({ champions: cMap, spells: sMap, runes: rMap })
+        );
       } catch (err) {
         console.error("Błąd pobierania DragonData:", err);
       } finally {

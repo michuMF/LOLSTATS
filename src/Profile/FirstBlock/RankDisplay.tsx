@@ -1,5 +1,3 @@
-
-
 // Importy ikon rang
 import Iron from "../../assets/Ranked Emblems Latest/Rank=Iron.png";
 import Bronze from "../../assets/Ranked Emblems Latest/Rank=Bronze.png";
@@ -40,9 +38,7 @@ export const RankDisplay = ({ activeRank, totalGames }: RankDisplayProps) => {
             <p className="text-lg font-extrabold text-slate-700 leading-none">
               {activeRank.tier} {activeRank.rank}
             </p>
-            <p className="text-sm font-bold text-slate-500">
-              {activeRank.leaguePoints} LP
-            </p>
+            <p className="text-sm font-bold text-slate-500">{activeRank.leaguePoints} LP</p>
           </div>
           <img
             src={rankIcons[activeRank.tier]}

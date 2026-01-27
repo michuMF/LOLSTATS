@@ -5,33 +5,34 @@ import { z } from "zod";
 // ==========================================
 
 export const PerkStyleSelectionSchema = z.object({
-    perk: z.number(),
-    var1: z.number(),
-    var2: z.number(),
-    var3: z.number(),
+  perk: z.number(),
+  var1: z.number(),
+  var2: z.number(),
+  var3: z.number(),
 });
 
 export const PerkStyleSchema = z.object({
-    description: z.string(),
-    selections: z.array(PerkStyleSelectionSchema),
-    style: z.number(),
+  description: z.string(),
+  selections: z.array(PerkStyleSelectionSchema),
+  style: z.number(),
 });
 
 export const StatPerksSchema = z.object({
-    defense: z.number().optional(),
-    flex: z.number().optional(),
-    offense: z.number().optional(),
+  defense: z.number().optional(),
+  flex: z.number().optional(),
+  offense: z.number().optional(),
 });
 
 export const PerksSchema = z.object({
-    statPerks: StatPerksSchema.optional(),
-    styles: z.array(PerkStyleSchema).optional().default([]),
+  statPerks: StatPerksSchema.optional(),
+  styles: z.array(PerkStyleSchema).optional().default([]),
 });
 
 // ==========================================
 // 2. MISSIONS SCHEMA
 // ==========================================
-export const MissionsSchema = z.object({
+export const MissionsSchema = z
+  .object({
     playerScore0: z.number().optional().default(0),
     playerScore1: z.number().optional().default(0),
     playerScore2: z.number().optional().default(0),
@@ -44,13 +45,15 @@ export const MissionsSchema = z.object({
     playerScore9: z.number().optional().default(0),
     playerScore10: z.number().optional().default(0),
     playerScore11: z.number().optional().default(0),
-}).passthrough();
+  })
+  .passthrough();
 
 // ==========================================
 // 3. PARTICIPANT SCHEMA
 // ==========================================
 
-export const ParticipantSchema = z.object({
+export const ParticipantSchema = z
+  .object({
     // --- Identyfikacja ---
     participantId: z.number(),
     teamId: z.number(),
@@ -236,7 +239,8 @@ export const ParticipantSchema = z.object({
     perks: PerksSchema.optional(),
     missions: MissionsSchema.optional(),
     challenges: z.record(z.string(), z.number()).optional().catch({}),
-}).passthrough();
+  })
+  .passthrough();
 
 // ==========================================
 // 4. TEAM & OBJECTIVES SCHEMA
@@ -245,24 +249,29 @@ export const ParticipantSchema = z.object({
 export const ObjectivesSchema = z.record(z.string(), z.any()).optional();
 export const BanSchema = z.object({ championId: z.number(), pickTurn: z.number() });
 
-export const TeamSchema = z.object({
+export const TeamSchema = z
+  .object({
     teamId: z.number(),
     win: z.boolean(),
     bans: z.array(BanSchema).optional().default([]),
     objectives: ObjectivesSchema,
-}).passthrough();
+  })
+  .passthrough();
 
 // ==========================================
 // 5. MATCH DETAILS SCHEMA
 // ==========================================
 
-export const MetadataSchema = z.object({
+export const MetadataSchema = z
+  .object({
     dataVersion: z.string(),
     matchId: z.string(),
     participants: z.array(z.string()),
-}).passthrough();
+  })
+  .passthrough();
 
-export const InfoSchema = z.object({
+export const InfoSchema = z
+  .object({
     gameCreation: z.number(),
     gameDuration: z.number(),
     gameEndTimestamp: z.number().optional(),
@@ -278,9 +287,10 @@ export const InfoSchema = z.object({
     queueId: z.number(),
     teams: z.array(TeamSchema).optional(),
     tournamentCode: z.string().nullable().optional(),
-}).passthrough();
+  })
+  .passthrough();
 
 export const MatchDetailsSchema = z.object({
-    metadata: MetadataSchema,
-    info: InfoSchema,
+  metadata: MetadataSchema,
+  info: InfoSchema,
 });

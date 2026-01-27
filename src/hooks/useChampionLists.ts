@@ -1,5 +1,5 @@
 // src/hooks/useChampionsList.ts
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 // Typy dla DDragon Champion List
 interface ChampionBasicInfo {
@@ -26,15 +26,17 @@ export const useChampionsList = () => {
       try {
         // Pobieramy najnowsze dane. W produkcji warto cachować ten request.
         // Używamy wersji hardcoded lub dynamicznej.
-        const response = await fetch('https://ddragon.leagueoflegends.com/cdn/14.24.1/data/en_US/champion.json');
+        const response = await fetch(
+          "https://ddragon.leagueoflegends.com/cdn/14.24.1/data/en_US/champion.json"
+        );
         const json = (await response.json()) as DDragonResponse;
-        
+
         // Konwertujemy obiekt na tablicę dla łatwiejszego mapowania
         const championsArray = Object.values(json.data);
-        
+
         // Sortujemy alfabetycznie
         championsArray.sort((a, b) => a.name.localeCompare(b.name));
-        
+
         setChampions(championsArray);
       } catch (error) {
         console.error("Failed to fetch champion list", error);

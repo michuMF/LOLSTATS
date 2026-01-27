@@ -2,7 +2,7 @@
 import { useState, useMemo } from "react";
 import { FaGamepad } from "react-icons/fa";
 
- // <-- Dostosuj importy
+// <-- Dostosuj importy
 import type { RankedDataType } from "../../api/fetchRankedData";
 
 // Komponenty składowe
@@ -21,9 +21,6 @@ interface PlayerSummaryProps {
 
 export const PlayerSummary = ({ leagueData, puuid, matches }: PlayerSummaryProps) => {
   const [activeFilter, setActiveFilter] = useState<QueueKey>("ALL");
-
-  
-  
 
   // --- 1. FILTROWANIE ---
   const filteredMatches = useMemo(() => {
@@ -62,7 +59,7 @@ export const PlayerSummary = ({ leagueData, puuid, matches }: PlayerSummaryProps
       wins,
       losses: games - wins,
       winrate: Math.round((wins / games) * 100),
-      kda: deaths === 0 ? (kills + assists) : ((kills + assists) / deaths).toFixed(2),
+      kda: deaths === 0 ? kills + assists : ((kills + assists) / deaths).toFixed(2),
       avgKills: (kills / games).toFixed(1),
       avgDeaths: (deaths / games).toFixed(1),
       avgAssists: (assists / games).toFixed(1),
@@ -76,17 +73,13 @@ export const PlayerSummary = ({ leagueData, puuid, matches }: PlayerSummaryProps
   const currentRank = useMemo(() => {
     if (activeFilter === "ALL") return null; // Dla ALL nie szukamy rangi
     if (!leagueData) return null;
-    if (activeFilter === "SOLO") return leagueData.find(l => l.queueType === "RANKED_SOLO_5x5");
-    if (activeFilter === "FLEX") return leagueData.find(l => l.queueType === "RANKED_FLEX_SR");
+    if (activeFilter === "SOLO") return leagueData.find((l) => l.queueType === "RANKED_SOLO_5x5");
+    if (activeFilter === "FLEX") return leagueData.find((l) => l.queueType === "RANKED_FLEX_SR");
     return null;
   }, [leagueData, activeFilter]);
 
-
-  
-  
   return (
     <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden font-sans">
-      
       {/* 1. ZAKŁADKI */}
       <QueueTabs activeFilter={activeFilter} onFilterChange={setActiveFilter} />
 
@@ -94,17 +87,16 @@ export const PlayerSummary = ({ leagueData, puuid, matches }: PlayerSummaryProps
       <div className="p-6">
         {stats ? (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-center">
-            
             {/* KOLUMNA 1: WINRATE */}
-            <WinRateChart 
-              wins={stats.wins} 
-              losses={stats.losses} 
-              games={stats.games} 
-              winrate={stats.winrate} 
+            <WinRateChart
+              wins={stats.wins}
+              losses={stats.losses}
+              games={stats.games}
+              winrate={stats.winrate}
             />
 
             {/* KOLUMNY 2 i 3: STANDARDOWE STATYSTYKI */}
-            <StatsDisplay 
+            <StatsDisplay
               kda={stats.kda}
               avgKills={stats.avgKills}
               avgDeaths={stats.avgDeaths}
@@ -116,22 +108,24 @@ export const PlayerSummary = ({ leagueData, puuid, matches }: PlayerSummaryProps
 
             {/* KOLUMNA 4: RANGA LUB DODATKOWE STATYSTYKI */}
             <div className="h-full flex items-center justify-center">
-                {activeFilter === "ALL" ? (
-                    // Jeśli "Wszystkie" -> Pokaż Extra Stats
-                    <ExtraStats matches={filteredMatches} puuid={puuid} />
-                ) : (
-                    // Jeśli Solo/Flex -> Pokaż Rangę
-                    <RankCard rankData={currentRank} />
-                )}
-                {}
+              {activeFilter === "ALL" ? (
+                // Jeśli "Wszystkie" -> Pokaż Extra Stats
+                <ExtraStats matches={filteredMatches} puuid={puuid} />
+              ) : (
+                // Jeśli Solo/Flex -> Pokaż Rangę
+                <RankCard rankData={currentRank} />
+              )}
+              {}
             </div>
-            
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center py-10 text-slate-400">
-             <FaGamepad size={40} className="mb-3 opacity-20" />
-             <p>Brak zagranych gier w trybie: <span className="font-bold text-slate-600">{QUEUE_FILTERS[activeFilter].label}</span></p>
-             <p className="text-xs mt-1">w ostatnich 20 meczach.</p>
+            <FaGamepad size={40} className="mb-3 opacity-20" />
+            <p>
+              Brak zagranych gier w trybie:{" "}
+              <span className="font-bold text-slate-600">{QUEUE_FILTERS[activeFilter].label}</span>
+            </p>
+            <p className="text-xs mt-1">w ostatnich 20 meczach.</p>
           </div>
         )}
       </div>

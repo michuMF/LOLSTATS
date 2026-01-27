@@ -92,11 +92,13 @@ export const RecommendedBuildSchema = z.object({
   winRate: z.number().optional(), // lub string, zależy od API
   pickRate: z.number().optional(),
   items: z.array(z.string()), // ID przedmiotów
-  runes: z.object({
-    primary: z.string(),
-    sub: z.string(),
-    perks: z.array(z.string()),
-  }).optional(),
+  runes: z
+    .object({
+      primary: z.string(),
+      sub: z.string(),
+      perks: z.array(z.string()),
+    })
+    .optional(),
   skillOrder: z.array(z.string()).optional(), // np. ["Q", "E", "W", ...]
 });
 

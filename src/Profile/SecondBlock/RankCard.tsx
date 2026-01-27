@@ -29,17 +29,28 @@ const RANK_ICONS: Record<string, string> = {
 
 const getColorForTier = (tier: string) => {
   switch (tier) {
-    case "IRON": return "text-zinc-500";
-    case "BRONZE": return "text-amber-700";
-    case "SILVER": return "text-slate-400";
-    case "GOLD": return "text-yellow-500";
-    case "PLATINUM": return "text-cyan-500";
-    case "EMERALD": return "text-emerald-500";
-    case "DIAMOND": return "text-blue-400";
-    case "MASTER": return "text-purple-500";
-    case "GRANDMASTER": return "text-red-500";
-    case "CHALLENGER": return "text-amber-300";
-    default: return "text-slate-800";
+    case "IRON":
+      return "text-zinc-500";
+    case "BRONZE":
+      return "text-amber-700";
+    case "SILVER":
+      return "text-slate-400";
+    case "GOLD":
+      return "text-yellow-500";
+    case "PLATINUM":
+      return "text-cyan-500";
+    case "EMERALD":
+      return "text-emerald-500";
+    case "DIAMOND":
+      return "text-blue-400";
+    case "MASTER":
+      return "text-purple-500";
+    case "GRANDMASTER":
+      return "text-red-500";
+    case "CHALLENGER":
+      return "text-amber-300";
+    default:
+      return "text-slate-800";
   }
 };
 
@@ -53,7 +64,11 @@ export const RankCard = ({ rankData }: RankCardProps) => {
       <div className="flex flex-col items-center justify-center pl-0 md:pl-6 pt-4 md:pt-0 border-t md:border-t-0 border-slate-100 md:border-none">
         <div className="text-center text-slate-400 opacity-60">
           <FaGamepad size={32} className="mx-auto mb-2" />
-          <p className="text-xs font-medium">Brak danych rankingowych<br />dla tej kolejki</p>
+          <p className="text-xs font-medium">
+            Brak danych rankingowych
+            <br />
+            dla tej kolejki
+          </p>
         </div>
       </div>
     );
@@ -69,7 +84,9 @@ export const RankCard = ({ rankData }: RankCardProps) => {
         />
       </div>
 
-      <p className={`text-xl font-black tracking-tighter uppercase ${getColorForTier(rankData.tier)}`}>
+      <p
+        className={`text-xl font-black tracking-tighter uppercase ${getColorForTier(rankData.tier)}`}
+      >
         {rankData.tier} {rankData.rank}
       </p>
       <p className="text-xs text-slate-500 font-bold">{rankData.leaguePoints} LP</p>

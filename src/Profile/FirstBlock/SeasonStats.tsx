@@ -8,20 +8,19 @@ interface SeasonStatsProps {
   seasonPrefix: string;
 }
 
-export const SeasonStats = ({ 
-  wins, 
-  losses, 
-  winRate, 
-  totalGames, 
-  isPlacementStats, 
+export const SeasonStats = ({
+  wins,
+  losses,
+  winRate,
+  totalGames,
+  isPlacementStats,
   hasRankedData,
-  seasonPrefix
+  seasonPrefix,
 }: SeasonStatsProps) => {
-
   if (!hasRankedData) {
     return (
       <div className="flex flex-col items-center justify-center w-1/3 border-l border-r border-slate-100 px-4">
-         <span className="text-slate-300 font-medium italic">No ranked stats yet</span>
+        <span className="text-slate-300 font-medium italic">No ranked stats yet</span>
       </div>
     );
   }
@@ -32,7 +31,6 @@ export const SeasonStats = ({
         <span className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">
           {isPlacementStats ? "Placement Games" : `Season ${seasonPrefix} Performance`}
         </span>
-        
       </div>
 
       <div className="flex items-end gap-1 mb-1">
@@ -43,7 +41,7 @@ export const SeasonStats = ({
       {/* Pasek Winrate */}
       <div className="w-full max-w-[120px] h-2 bg-slate-100 rounded-full overflow-hidden flex mb-1">
         <div
-          className={`${winRate >= 50 ? 'bg-green-500' : 'bg-orange-400'} h-full transition-all duration-500`}
+          className={`${winRate >= 50 ? "bg-green-500" : "bg-orange-400"} h-full transition-all duration-500`}
           style={{ width: `${winRate}%` }}
         ></div>
       </div>

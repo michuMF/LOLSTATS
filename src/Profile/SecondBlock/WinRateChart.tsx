@@ -44,9 +44,7 @@ export const WinRateChart = ({ wins, losses, games, winrate }: WinRateChartProps
         </svg>
         <div className="absolute inset-0 flex items-center justify-center flex-col">
           <span className="text-xl font-black text-slate-800">{winrate}%</span>
-          <span className="text-[10px] uppercase text-slate-400 font-bold">
-            Winrate
-          </span>
+          <span className="text-[10px] uppercase text-slate-400 font-bold">Winrate</span>
         </div>
       </div>
       <div className="text-xs text-slate-500 font-medium">

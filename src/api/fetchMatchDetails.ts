@@ -6,7 +6,10 @@ import { MatchDetailsSchema, ParticipantSchema } from "../schemas/matchSchemas";
 export type MatchDetailsType = z.infer<typeof MatchDetailsSchema>;
 export type ParticipantType = z.infer<typeof ParticipantSchema>;
 
-export const fetchMatchDetails = async (matchId: string, region: string): Promise<MatchDetailsType> => {
+export const fetchMatchDetails = async (
+  matchId: string,
+  region: string
+): Promise<MatchDetailsType> => {
   const apiUrl = import.meta.env.VITE_API_URL;
   const response = await fetch(`${apiUrl}/api/matches/details/${region}/${matchId}`);
   if (!response.ok) throw new Error("Failed to fetch match details");

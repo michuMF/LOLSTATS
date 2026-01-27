@@ -11,20 +11,20 @@ export const ChampionSpells = ({ champion }: ChampionSpellsProps) => {
   return (
     <div className="bg-white p-6 rounded-xl shadow-md border border-slate-200">
       <h3 className="text-xl font-bold text-slate-800 mb-6 border-b pb-2">Umiejętności</h3>
-      
+
       <div className="space-y-6">
         {/* Pasywka */}
         <div className="flex gap-4 items-start group">
-          <img 
+          <img
             src={`https://ddragon.leagueoflegends.com/cdn/${version}/img/passive/${champion.passive.image.full}`}
             alt={champion.passive.name}
             className="w-16 h-16 rounded border-2 border-slate-300 group-hover:border-yellow-500 transition"
           />
           <div>
             <h4 className="font-bold text-slate-700">Pasywna: {champion.passive.name}</h4>
-            <div 
-                className="text-sm text-slate-500 mt-1"
-                dangerouslySetInnerHTML={{ __html: champion.passive.description }} 
+            <div
+              className="text-sm text-slate-500 mt-1"
+              dangerouslySetInnerHTML={{ __html: champion.passive.description }}
             />
           </div>
         </div>
@@ -35,7 +35,7 @@ export const ChampionSpells = ({ champion }: ChampionSpellsProps) => {
           return (
             <div key={spell.id} className="flex gap-4 items-start group">
               <div className="relative">
-                <img 
+                <img
                   src={`https://ddragon.leagueoflegends.com/cdn/${version}/img/spell/${spell.image.full}`}
                   alt={spell.name}
                   className="w-16 h-16 rounded border-2 border-slate-300 group-hover:border-blue-500 transition"
@@ -47,11 +47,11 @@ export const ChampionSpells = ({ champion }: ChampionSpellsProps) => {
               <div>
                 <h4 className="font-bold text-slate-700">{spell.name}</h4>
                 <p className="text-xs text-slate-400 mb-1">
-                    Cooldown: {spell.cooldown.join(" / ")}s
+                  Cooldown: {spell.cooldown.join(" / ")}s
                 </p>
-                <div 
-                    className="text-sm text-slate-500"
-                    dangerouslySetInnerHTML={{ __html: spell.description }} 
+                <div
+                  className="text-sm text-slate-500"
+                  dangerouslySetInnerHTML={{ __html: spell.description }}
                 />
               </div>
             </div>

@@ -9,19 +9,31 @@ import { PlayerSummary } from "../Profile/SecondBlock/PlayerSummary";
 import { PlayerMainPanel } from "../Profile/PlayerMainPanel";
 import { ProfileHeader } from "../components/header/ProfileHeader";
 
-
 export const ProfilePage = () => {
   const { region, gameName, tagLine } = useParams();
-  const { summoner, ranked, matches, isLoading, error } = useSummonerData(gameName!, tagLine!, region!);
+  const { summoner, ranked, matches, isLoading, error } = useSummonerData(
+    gameName!,
+    tagLine!,
+    region!
+  );
   const dataMatches = matches.data || [];
 
-  if (isLoading) return <div className="min-h-screen flex items-center justify-center"><LoadingSpinner /></div>;
+  if (isLoading)
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
 
   if (error || summoner.isError || !summoner.data) {
     return (
       <div className="min-h-[50vh] flex flex-col items-center justify-center">
-        <ErrorMessage message={`Nie znaleziono gracza ${gameName}#${tagLine} na serwerze ${region}.`} />
-        <div className="mt-6"><SearchBar /></div>
+        <ErrorMessage
+          message={`Nie znaleziono gracza ${gameName}#${tagLine} na serwerze ${region}.`}
+        />
+        <div className="mt-6">
+          <SearchBar />
+        </div>
       </div>
     );
   }
@@ -31,11 +43,7 @@ export const ProfilePage = () => {
       <ProfileHeader region={region!} gameName={gameName!} tagLine={tagLine!} />
 
       <div className="space-y-8">
-        <PlayerMainPanel
-          summoner={summoner.data}
-          ranked={ranked.data}
-          matches={dataMatches}
-        />
+        <PlayerMainPanel summoner={summoner.data} ranked={ranked.data} matches={dataMatches} />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div className="lg:col-span-2 space-y-8">

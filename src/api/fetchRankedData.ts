@@ -22,19 +22,19 @@ export type RankedDataType = z.infer<typeof RankedEntrySchema>;
 // To jest czysta funkcja JS/TS. Nie używa hooków.
 export const fetchRankedData = async (puuid: string, region: string): Promise<RankedDataType[]> => {
   const apiUrl = import.meta.env.VITE_API_URL;
-  
+
   const response = await fetch(`${apiUrl}/api/ranked/${region}/${puuid}`);
   if (!response.ok) throw new Error("Failed to fetch ranked data");
 
   const rawData = await response.json();
-  
+
   // Walidacja Zod
   const result = RankedDataArraySchema.safeParse(rawData);
-  
+
   if (!result.success) {
-      console.error("❌ ZOD ERROR (Ranked):", result.error.format());
-      return rawData as RankedDataType[]; // Fallback
+    console.error("❌ ZOD ERROR (Ranked):", result.error.format());
+    return rawData as RankedDataType[]; // Fallback
   }
-  
+
   return result.data;
 };

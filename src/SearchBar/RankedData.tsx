@@ -1,5 +1,3 @@
-
-
 // export const RankedData = ({
 //   rankedData,
 // }: {
@@ -38,10 +36,10 @@
 //           ranked.veteran || ranked.inactive || ranked.freshBlood || ranked.hotStreak;
 
 //         // Formatowanie nazwy kolejki
-//         const queueName = ranked.queueType === "RANKED_SOLO_5x5" 
-//           ? "Ranked Solo" 
-//           : ranked.queueType === "RANKED_FLEX_SR" 
-//             ? "Ranked Flex" 
+//         const queueName = ranked.queueType === "RANKED_SOLO_5x5"
+//           ? "Ranked Solo"
+//           : ranked.queueType === "RANKED_FLEX_SR"
+//             ? "Ranked Flex"
 //             : ranked.queueType;
 
 //         return (

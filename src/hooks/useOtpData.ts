@@ -1,6 +1,6 @@
 // src/hooks/useOtpData.ts
-import { useState, useEffect } from 'react';
-import type { OtpDataset } from '../types/otp-types'; // Upewnij się, że masz ten typ z poprzedniego kroku
+import { useState, useEffect } from "react";
+import type { OtpDataset } from "../types/otp-types"; // Upewnij się, że masz ten typ z poprzedniego kroku
 
 export const useOtpData = () => {
   const [data, setData] = useState<OtpDataset | null>(null);
@@ -14,8 +14,8 @@ export const useOtpData = () => {
       try {
         // Dynamiczny import dla code-splittingu
         // Zakładamy, że plik jest w src/data/otp_data_v4.json
-        const module = await import('../data/otp_data_v4.json');
-        
+        const module = await import("../data/otp_data_v4.json");
+
         if (isMounted) {
           // Rzutowanie, bo import JSON w TS bywa traktowany jako ogólny obiekt
           setData(module.default as unknown as OtpDataset);

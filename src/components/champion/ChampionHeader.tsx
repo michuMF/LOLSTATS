@@ -11,7 +11,7 @@ export const ChampionHeader = ({ champion }: ChampionHeaderProps) => {
   return (
     <div className="relative w-full h-[400px] rounded-2xl overflow-hidden shadow-2xl mb-8 group">
       {/* Tło */}
-      <div 
+      <div
         className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
         style={{ backgroundImage: `url(${splashUrl})` }}
       />
@@ -22,15 +22,16 @@ export const ChampionHeader = ({ champion }: ChampionHeaderProps) => {
         <h2 className="text-yellow-400 font-bold uppercase tracking-widest text-sm mb-2">
           {champion.title}
         </h2>
-        <h1 className="text-6xl font-black text-white mb-4 drop-shadow-lg">
-          {champion.name}
-        </h1>
+        <h1 className="text-6xl font-black text-white mb-4 drop-shadow-lg">{champion.name}</h1>
         <div className="flex gap-2 mb-4">
-            {champion.tags.map(tag => (
-                <span key={tag} className="px-3 py-1 bg-slate-800/80 text-blue-300 rounded text-xs font-bold border border-slate-700">
-                    {tag}
-                </span>
-            ))}
+          {champion.tags.map((tag) => (
+            <span
+              key={tag}
+              className="px-3 py-1 bg-slate-800/80 text-blue-300 rounded text-xs font-bold border border-slate-700"
+            >
+              {tag}
+            </span>
+          ))}
         </div>
         <p className="text-slate-300 text-sm leading-relaxed line-clamp-3 md:line-clamp-none">
           {champion.lore}

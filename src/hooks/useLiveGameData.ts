@@ -12,9 +12,9 @@ export const useLiveGameData = (puuid: string | undefined, region: string) => {
   useEffect(() => {
     // JEŚLI NIE MA PUUID, NIE RÓB NIC (czekamy na useSummonerData)
     if (!puuid || !region) {
-        setGameData(null);
-        setIsInGame(false);
-        return;
+      setGameData(null);
+      setIsInGame(false);
+      return;
     }
 
     const loadData = async () => {
@@ -22,7 +22,7 @@ export const useLiveGameData = (puuid: string | undefined, region: string) => {
       setError(null);
       try {
         const data = await fetchLiveGame(puuid, region);
-        
+
         if (data) {
           setGameData(data);
           setIsInGame(true);
@@ -40,7 +40,6 @@ export const useLiveGameData = (puuid: string | undefined, region: string) => {
     };
 
     loadData();
-
   }, [puuid, region]);
 
   return { gameData, isLoading, error, isInGame };

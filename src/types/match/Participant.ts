@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { ParticipantSchema, PerksSchema, PerkStyleSchema, StatPerksSchema } from "../../schemas/matchSchemas";
+import {
+  ParticipantSchema,
+  PerksSchema,
+  PerkStyleSchema,
+  StatPerksSchema,
+} from "../../schemas/matchSchemas";
 
 // Inferencja typów z Zod
 export type ParticipantType = z.infer<typeof ParticipantSchema>;

@@ -29,8 +29,9 @@ export const StatsDisplay = ({
             <FaCrosshairs /> KDA Ratio
           </p>
           <p
-            className={`text-3xl font-black ${Number(kda) >= 3 ? "text-blue-600" : "text-slate-700"
-              }`}
+            className={`text-3xl font-black ${
+              Number(kda) >= 3 ? "text-blue-600" : "text-slate-700"
+            }`}
           >
             {kda}
           </p>
@@ -44,11 +45,7 @@ export const StatsDisplay = ({
 
       {/* KOLUMNA 3: CS i DMG */}
       <div className="space-y-3 px-0 md:px-6 border-r-0 md:border-r border-slate-100">
-        <StatRow
-          label="Avg. CS"
-          value={`${avgCs} (${csPerMin}/min)`}
-          icon={<FaChartPie />}
-        />
+        <StatRow label="Avg. CS" value={`${avgCs} (${csPerMin}/min)`} icon={<FaChartPie />} />
         <StatRow label="Avg. Damage" value={avgDmg} icon={<FaSkull />} />
       </div>
     </>

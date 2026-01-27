@@ -25,14 +25,14 @@ export const useSeasonStats = (
       // Obliczanie z historii (Placement/Unranked)
       isPlacementStats = true;
 
-      const rankedMatches = matches.filter(m => {
+      const rankedMatches = matches.filter((m) => {
         const isRankedQueue = m.info.queueId === 420 || m.info.queueId === 440;
         const isCurrentSeason = m.info.gameVersion?.startsWith(CURRENT_SEASON_PREFIX + ".");
         return isRankedQueue && isCurrentSeason;
       });
 
-      rankedMatches.forEach(game => {
-        const participant = game.info.participants.find(p => p.puuid === summonerPuuid);
+      rankedMatches.forEach((game) => {
+        const participant = game.info.participants.find((p) => p.puuid === summonerPuuid);
         if (participant) {
           if (participant.win) {
             wins++;
@@ -55,7 +55,7 @@ export const useSeasonStats = (
       winRate,
       isPlacementStats,
       hasRankedData,
-      seasonPrefix: CURRENT_SEASON_PREFIX
+      seasonPrefix: CURRENT_SEASON_PREFIX,
     };
   }, [summonerPuuid, rankedData, matches]);
 };

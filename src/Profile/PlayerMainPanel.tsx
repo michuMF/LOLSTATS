@@ -20,7 +20,7 @@ export const PlayerMainPanel = ({ summoner, ranked, matches }: PlayerMainPanelPr
     <div className="w-full flex flex-row items-center justify-between p-6 bg-white rounded-xl shadow-md border border-slate-200">
       <PlayerIdentity summoner={summoner} />
 
-      <SeasonStats 
+      <SeasonStats
         wins={stats.wins}
         losses={stats.losses}
         winRate={stats.winRate}
@@ -30,10 +30,7 @@ export const PlayerMainPanel = ({ summoner, ranked, matches }: PlayerMainPanelPr
         seasonPrefix={stats.seasonPrefix}
       />
 
-      <RankDisplay 
-        activeRank={stats.activeRank} 
-        totalGames={stats.totalGames} 
-      />
+      <RankDisplay activeRank={stats.activeRank} totalGames={stats.totalGames} />
     </div>
   );
 };

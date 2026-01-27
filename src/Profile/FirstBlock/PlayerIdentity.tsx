@@ -1,6 +1,5 @@
 import type { SummonerProfileInfoType } from "../../types";
 
-
 export const PlayerIdentity = ({ summoner }: { summoner: SummonerProfileInfoType }) => {
   return (
     <div className="flex items-center gap-5 w-1/3">
@@ -23,9 +22,7 @@ export const PlayerIdentity = ({ summoner }: { summoner: SummonerProfileInfoType
         <h1 className="text-2xl font-black text-slate-800 tracking-tight leading-none">
           {summoner.gameName}
         </h1>
-        <span className="text-sm font-semibold text-slate-400">
-          #{summoner.tagLine}
-        </span>
+        <span className="text-sm font-semibold text-slate-400">#{summoner.tagLine}</span>
       </div>
     </div>
   );

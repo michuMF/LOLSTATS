@@ -5,7 +5,7 @@ import { REGIONS } from "../utils/constants";
 
 // Definiujemy, co przechowujemy w historii
 interface HistoryItem {
-  name: string;   // np. "Faker#KR1"
+  name: string; // np. "Faker#KR1"
   region: string; // np. "KR"
 }
 
@@ -41,15 +41,15 @@ export const SearchBar = () => {
 
     // B. Logika zapisu do historii
     const newItem: HistoryItem = { name: searchName, region: searchRegion };
-    
+
     // Filtrujemy, aby usunąć duplikaty (ten sam nick I ten sam region)
-    const filteredHistory = recent.filter(item => 
-      !(item.name === searchName && item.region === searchRegion)
+    const filteredHistory = recent.filter(
+      (item) => !(item.name === searchName && item.region === searchRegion)
     );
-    
+
     // Dodajemy nowy na początek i ucinamy do 5 elementów
     const newHistory = [newItem, ...filteredHistory].slice(0, 5);
-    
+
     setRecent(newHistory);
     localStorage.setItem("lolstats_recent_v2", JSON.stringify(newHistory));
 
@@ -62,31 +62,34 @@ export const SearchBar = () => {
     <div className="flex flex-col w-full max-w-xl gap-3">
       {/* GLÓWNY PASEK WYSZUKIWANIA */}
       <div className="flex items-center bg-white rounded-lg border border-slate-300 overflow-hidden shadow-sm w-full transition-all focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent">
-        
         {/* SELECT REGIONU */}
         <div className="relative border-r border-slate-200 bg-slate-50">
-           <select 
-             value={region}
-             onChange={(e) => setRegion(e.target.value)} // Tutaj jest Twój setRegion, którego brakowało w logice historii
-             className="appearance-none bg-transparent py-3 pl-8 pr-8 text-slate-700 font-bold text-sm outline-none cursor-pointer hover:bg-slate-100 transition"
-           >
-             {REGIONS.map(r => (
-               <option key={r.value} value={r.value}>{r.label}</option>
-             ))}
-           </select>
-           <FaGlobe className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs" />
+          <select
+            value={region}
+            onChange={(e) => setRegion(e.target.value)} // Tutaj jest Twój setRegion, którego brakowało w logice historii
+            className="appearance-none bg-transparent py-3 pl-8 pr-8 text-slate-700 font-bold text-sm outline-none cursor-pointer hover:bg-slate-100 transition"
+          >
+            {REGIONS.map((r) => (
+              <option key={r.value} value={r.value}>
+                {r.label}
+              </option>
+            ))}
+          </select>
+          <FaGlobe className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs" />
         </div>
 
-        <span className="pl-3 text-slate-400 font-bold text-xs uppercase hidden sm:inline">Search:</span>
+        <span className="pl-3 text-slate-400 font-bold text-xs uppercase hidden sm:inline">
+          Search:
+        </span>
         <input
           type="text"
           placeholder="Nick#TAG"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && performSearch(input, region)}
+          onKeyDown={(e) => e.key === "Enter" && performSearch(input, region)}
           className="flex-grow p-3 outline-none text-slate-800 placeholder-slate-400 font-medium"
         />
-        <button 
+        <button
           onClick={() => performSearch(input, region)}
           className="bg-blue-600 text-white px-6 py-3 hover:bg-blue-700 transition cursor-pointer font-bold flex items-center gap-2"
         >
@@ -101,7 +104,7 @@ export const SearchBar = () => {
             <FaHistory /> Recent:
           </span>
           {recent.map((item, index) => (
-            <button 
+            <button
               key={index}
               // KLUCZOWE: Przekazujemy region z historii do funkcji wyszukującej!
               onClick={() => performSearch(item.name, item.region)}
